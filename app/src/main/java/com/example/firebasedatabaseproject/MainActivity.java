@@ -394,6 +394,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.btnAdd:
                 showDialog();
+                //
                 break;
 
             case R.id.ivBack:
