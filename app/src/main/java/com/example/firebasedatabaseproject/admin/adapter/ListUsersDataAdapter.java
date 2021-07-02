@@ -62,24 +62,6 @@ public class ListUsersDataAdapter extends RecyclerView.Adapter<ListUsersDataAdap
         holder.binding.edtGetHours.setText(childText.getOutTime());
         holder.binding.edtGetDailyTask.setText(childText.getMonth());*/
 
-        /*String time1= childText.getOutTime();
-        Log.e("time1time1",""+time1);
-        String time2= "08:00";
-        Date date1 = null;
-        Date date2 = null;
-
-        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
-        try {
-            date1 = timeFormat.parse(time1);
-        } catch (ParseException e) { e.printStackTrace(); }
-        try {
-            date2 = timeFormat.parse(time2);
-        } catch (ParseException e) { e.printStackTrace(); }
-
-        long difference = date1.getTime() - date2.getTime();
-        long diffHours = difference / (60 * 60 * 1000) % 24;*/
-
-      //  holder.binding.txtExtraHour.setText(diffHours+"");
     }
 
     @Override

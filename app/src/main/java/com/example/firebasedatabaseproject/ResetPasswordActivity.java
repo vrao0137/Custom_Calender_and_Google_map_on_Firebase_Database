@@ -56,10 +56,6 @@ public class ResetPasswordActivity extends AppCompatActivity implements View.OnC
 
     private void resetPassMethod(){
         String email = binding.email.getText().toString().trim();
-        /*if (TextUtils.isEmpty(email)) {
-            Toast.makeText(context, "Enter your registered email id", Toast.LENGTH_SHORT).show();
-            return;
-        }*/
         if (binding.email.getText().toString().trim().isEmpty()){
             Utils.showToastMessage(context,"Please Enter Email Address");
         }else {
@@ -69,9 +65,9 @@ public class ResetPasswordActivity extends AppCompatActivity implements View.OnC
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                Toast.makeText(ResetPasswordActivity.this, "We have sent you instructions to reset your password!", Toast.LENGTH_SHORT).show();
+                                Utils.showToastMessage(ResetPasswordActivity.this,"We have sent you instructions to reset your password!");
                             } else {
-                                Toast.makeText(ResetPasswordActivity.this, "Failed to send reset email!", Toast.LENGTH_SHORT).show();
+                                Utils.showToastMessage(ResetPasswordActivity.this,"Failed to send reset email!");
                             }
                             dismissProgressHud();
                         }

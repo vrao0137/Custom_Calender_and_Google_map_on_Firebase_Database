@@ -82,17 +82,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private NotesDataAdapter notesDataAdapter;
     private UserHeadingDataAdapter userHeadingDataAdapter;
     private static String sID = null;
-    private static final String INSTALLATION = "INSTALLATION";
     private String android_id = "";
     private PopupMenu popActDeact;
-    static boolean calledAlready = false;
     private long pressedTime;
     FirebaseAuth auth;
     FirebaseUser currentUser;
     String currenUserKey = "";
-    String otherTime = "8";
     private PrograssBar prograssBar;
-    final Calendar myCalendar = Calendar.getInstance();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -166,33 +162,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             prograssBar.dismiss();
     }
 
-    private void getAdminValues(){
-        databaseReference = firebaseDatabase.getReference().child("UserTable");
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                lstNotesData.clear();
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()){
-                    String pProjectName = dataSnapshot.child("projectName").getValue(String.class);
-                    String dDate = dataSnapshot.child("date").getValue(String.class);
-                    String iInTime = dataSnapshot.child("inTime").getValue(String.class);
-                    String oOutTime = dataSnapshot.child("outTime").getValue(String.class);
-                    String hHours = dataSnapshot.child("hours").getValue(String.class);
-                    String dayOfTheWeek = dataSnapshot.child("day").getValue(String.class);
-                    String mMonth = dataSnapshot.child("month").getValue(String.class);
-                    String tTask = dataSnapshot.child("task").getValue(String.class);
-                    String sKey = dataSnapshot.child("uniqKey").getValue(String.class);
-                    lstNotesData.add(new NotesDataModel(pProjectName,dDate,iInTime,oOutTime,hHours,dayOfTheWeek,mMonth,tTask,sKey));
-                }binding.rcvListData.setAdapter(notesDataAdapter);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getApplicationContext(),error.getMessage(),Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
     private void getValue() {
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -223,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 //Display Toast
-                Toast.makeText(getApplicationContext(),error.getMessage(),Toast.LENGTH_SHORT).show();
+                Utils.showToastMessage(MainActivity.this,""+error.getMessage());
             }
         });
     }
@@ -282,17 +251,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String tTask = pickerBinding.edtDailyTast.getText().toString().trim();
 
                 if (pickerBinding.edtProjectName.getText().toString().trim().isEmpty()){
-                    Utils.showToastMessage(context,"Please Enter Project Name");
+                    Utils.showToastMessage(MainActivity.this,"Please Enter Project Name");
                 }else if (pickerBinding.edtDate.getText().toString().trim().isEmpty()){
-                    Utils.showToastMessage(context,"Please Select Date");
+                    Utils.showToastMessage(MainActivity.this,"Please Select Date");
                 }else if (pickerBinding.edtInTime.getText().toString().trim().isEmpty()){
-                    Utils.showToastMessage(context,"Please Select In-Time");
+                    Utils.showToastMessage(MainActivity.this,"Please Select In-Time");
                 }else if (pickerBinding.edtOutTime.getText().toString().trim().isEmpty()){
-                    Utils.showToastMessage(context,"Please Select Out-Time");
+                    Utils.showToastMessage(MainActivity.this,"Please Select Out-Time");
                 }else if (pickerBinding.edtHours.getText().toString().trim().isEmpty()){
-                    Utils.showToastMessage(context,"Please Enter Total Working Hours");
+                    Utils.showToastMessage(MainActivity.this,"Please Enter Total Working Hours");
                 }else if (pickerBinding.edtDailyTast.getText().toString().trim().isEmpty()){
-                    Utils.showToastMessage(context,"Please Enter Task");
+                    Utils.showToastMessage(MainActivity.this,"Please Enter Task");
                 }else {
                     // String currentTime = new SimpleDateFormat("h:mm a", Locale.getDefault()).format(new Date());
                     Calendar c = Calendar.getInstance();
@@ -325,43 +294,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         pickerBinding.edtHours.setText("");
                         pickerBinding.edtDailyTast.setText("");
                     }
+                    Utils.showToastMessage(MainActivity.this,"Task Save ");
                     dialog.dismiss();
                 }
             }
         });
         dialog.show();
         dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-    }
-
-    private void getSearchNote(){
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    lstNotesData.clear();
-                    for (DataSnapshot dataSnapshot1 : snapshot.getChildren()){
-                        String pProjectName = dataSnapshot1.child("projectName").getValue(String.class);
-                        String dDate = dataSnapshot1.child("date").getValue(String.class);
-                        String iInTime = dataSnapshot1.child("inTime").getValue(String.class);
-                        String oOutTime = dataSnapshot1.child("outTime").getValue(String.class);
-                        String hHours = dataSnapshot1.child("hours").getValue(String.class);
-                        String dayOfTheWeek = dataSnapshot1.child("day").getValue(String.class);
-                        String mMonth = dataSnapshot1.child("month").getValue(String.class);
-                        String tTask = dataSnapshot1.child("task").getValue(String.class);
-                        String sKey = dataSnapshot1.child("uniqKey").getValue(String.class);
-                        lstNotesData.add(new NotesDataModel(pProjectName,dDate,iInTime,oOutTime,hHours,dayOfTheWeek,mMonth,tTask,sKey));
-                    }
-                    if (snapshot.getKey() == currenUserKey){
-                        binding.rcvListData.setAdapter(notesDataAdapter);
-                    }
-                }else Toast.makeText(context, "NO DATA FOUND", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getApplicationContext(),error.getMessage(),Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private void filter(String text) {
@@ -482,15 +421,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 showPopWindows().showAsDropDown(binding.ivSearchIcon);
                 break;
 
-            case R.id.cvBtnSearchData:
-                //Quary initilize
-                /*filter(binding.edtSearchingText.getText().toString());
-                searchData = binding.edtSearchingText.getText().toString();
-                Log.e("searchData",""+searchData);
-                query = databaseReference.orderByChild("title").equalTo(searchData);
-                getSearchNote();*/
-                break;
-
             case R.id.drawerButton:
                 binding.sideDrawer.openDrawer(GravityCompat.START);
                 break;
@@ -608,12 +538,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                                         for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
                                                             appleSnapshot.getRef().removeValue();
-                                                            Toast.makeText(context, "Deleted", Toast.LENGTH_SHORT).show();
-                                                            /*notesDataAdapter.notifyDataSetChanged();*/
+                                                            Utils.showToastMessage(MainActivity.this,"Deleted");
                                                         }
                                                     }
                                                     @Override
                                                     public void onCancelled(DatabaseError databaseError) {
+                                                        Utils.showToastMessage(MainActivity.this,"onCancelled"+databaseError.toException());
                                                         Log.e("onCancelled", "", databaseError.toException());
                                                     }
                                                 });
@@ -712,12 +642,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                                         databaseReference.child(updateKey).child("task").setValue(tTask);
                                                         databaseReference.child(updateKey).child("uniqKey").setValue(getUniKey);
                                                     }
+                                                    Utils.showToastMessage(MainActivity.this,"Update Successfull");
                                                 }
                                                 dialog.dismiss();
                                             }
                                             @Override
                                             public void onCancelled(@NonNull DatabaseError databaseError) {
-                                                Toast.makeText(getApplicationContext(),databaseError.getMessage(),Toast.LENGTH_SHORT).show();
+                                                Utils.showToastMessage(MainActivity.this,"onCancelled"+databaseError.getMessage());
                                             }
                                         });
                                     }
@@ -747,7 +678,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //Visibility gone Edittext then close Inpute keyboard......
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(binding.edtSearchingText.getWindowToken(), 0);
-            Toast.makeText(getBaseContext(), "Press back again to exit", Toast.LENGTH_SHORT).show();
+            Utils.showToastMessage(MainActivity.this,"Press back again to exit");
         }
         pressedTime = System.currentTimeMillis();
     }

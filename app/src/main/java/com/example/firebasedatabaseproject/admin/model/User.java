@@ -47,35 +47,4 @@ public class User {
 
     public void setDepartment(String department) { Department = department; }
 
-
-    /*@Override
-    public boolean equals(Object obj) {
-        if (obj instanceof User) {
-            return ((User) obj).getDepartment() == getDepartment();
-        }
-        return false;
-    }
-    @Override
-    public int hashCode() {
-        return (this.getDepartment().hashCode());
-    }*/
-
-   /* @Override
-    public boolean equals(Object obj) {
-        // TODO Auto-generated method stub
-        if(obj instanceof User)
-        {
-            User temp = (User) obj;
-            if(this.getUserUID().equals(temp.getUserUID()) && this.getMobileNumber().equals(temp.getMobileNumber()) && this.getDepartment().equals(temp.getDepartment()) && this.getPassword().equals(temp.getPassword()) && this.getUserName().equals(temp.getUserName()) && this.getEmail().equals(temp.getEmail()))
-                return true;
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        // TODO Auto-generated method stub
-
-        return (this.getUserUID().hashCode() + this.getMobileNumber().hashCode() + this.getDepartment().hashCode() + this.getPassword().hashCode() + this.getUserName().hashCode() + this.getEmail().hashCode());
-    }*/
 }

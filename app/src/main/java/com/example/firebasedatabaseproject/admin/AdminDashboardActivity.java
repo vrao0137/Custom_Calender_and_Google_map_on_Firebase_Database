@@ -17,6 +17,7 @@ import com.example.firebasedatabaseproject.LoginActivity;
 import com.example.firebasedatabaseproject.MainActivity;
 import com.example.firebasedatabaseproject.PrograssBar;
 import com.example.firebasedatabaseproject.R;
+import com.example.firebasedatabaseproject.UserShowDetailsDataActivity;
 import com.example.firebasedatabaseproject.Utils;
 import com.example.firebasedatabaseproject.admin.adapter.AllUserListAdapter;
 import com.example.firebasedatabaseproject.admin.adapter.ExpandableListAdapter;
@@ -113,7 +114,6 @@ public class AdminDashboardActivity extends AppCompatActivity implements View.On
                // Toast.makeText(getApplicationContext(),listDataHeader.get(groupPosition) +":"+listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition),Toast.LENGTH_SHORT).show();
 
                 String UserUID = listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition).getUserUID();
-                Log.e("UserNamenn",""+UserUID);
                 checkDataReference = firebaseDatabase.getReference().child("users").child(UserUID).child("UserTable");
                 startProgressHud();
                 new java.util.Timer().schedule(
@@ -255,7 +255,7 @@ public class AdminDashboardActivity extends AppCompatActivity implements View.On
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getApplicationContext(),error.getMessage(),Toast.LENGTH_SHORT).show();
+                Utils.showToastMessage(getApplicationContext(),""+error.getMessage());
             }
         });
     }
@@ -274,10 +274,6 @@ public class AdminDashboardActivity extends AppCompatActivity implements View.On
     public void onBackPressed() {
         if (pressedTime + 2000 > System.currentTimeMillis()) {
             super.onBackPressed();
-            /*auth.signOut();
-            startActivity(new Intent(AdminDashboardActivity.this, LoginActivity.class));
-            finish();*/
-            //finishAffinity();
         }else
             pressedTime = System.currentTimeMillis();
     }

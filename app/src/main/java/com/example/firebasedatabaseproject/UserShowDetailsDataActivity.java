@@ -33,7 +33,6 @@ import java.util.Date;
 
 public class UserShowDetailsDataActivity extends AppCompatActivity {
     private ActivityUserShowDetailsDataBinding binding;
-    private Context context;
     private ArrayList<NotesDataModel> listUserDetailsData = new ArrayList<>();
     private FirebaseDatabase firebaseDatabase = Utils.getDatabase();
     private DatabaseReference databaseReference;
@@ -135,7 +134,7 @@ public class UserShowDetailsDataActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getApplicationContext(),error.getMessage(),Toast.LENGTH_SHORT).show();
+                Utils.showToastMessage(UserShowDetailsDataActivity.this,""+error.getMessage());
             }
         });
     }

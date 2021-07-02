@@ -30,7 +30,6 @@ import java.util.Date;
 
 public class AdminDeshboardUserDataActivity extends AppCompatActivity {
     private ActivityAdminDeshboardUserDataBinding binding;
-    private Context context;
     private ArrayList<NotesDataModel> listUserDetailsData = new ArrayList<>();
     private FirebaseDatabase firebaseDatabase = Utils.getDatabase();
     private DatabaseReference databaseReference;
@@ -123,16 +122,12 @@ public class AdminDeshboardUserDataActivity extends AppCompatActivity {
                     }else{
                         binding.txvOverTime.setText(differenceInHours+":"+differenceInMinutes+"");
                     }
-
-                    Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                    String ABC = gson.toJson(listUserDetailsData);
-                    Log.e("listUserDetailsData",""+ABC);
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getApplicationContext(),error.getMessage(),Toast.LENGTH_SHORT).show();
+                Utils.showToastMessage(getApplicationContext(),""+error.getMessage());
             }
         });
     }

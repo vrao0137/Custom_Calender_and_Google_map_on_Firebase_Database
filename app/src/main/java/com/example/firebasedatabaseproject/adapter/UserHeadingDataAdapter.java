@@ -39,12 +39,6 @@ public class UserHeadingDataAdapter extends RecyclerView.Adapter<UserHeadingData
         holder.binding.txvDay.setText(lstNotesData.get(position).getWorkedHours());
         holder.binding.txvProjectName.setText(lstNotesData.get(position).getProjectName());
 
-       /* holder.binding.edtGetDay.setText(lstNotesData.get(position).getWorkedHours());
-        holder.binding.edtGetProjectName.setText(lstNotesData.get(position).getProjectName());
-        holder.binding.edtGetInTime.setText(lstNotesData.get(position).getDay());
-        holder.binding.edtGetOutTime.setText(lstNotesData.get(position).getInTime());
-        holder.binding.edtGetHours.setText(lstNotesData.get(position).getOutTime());*/
-
         holder.binding.ivEditOption.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

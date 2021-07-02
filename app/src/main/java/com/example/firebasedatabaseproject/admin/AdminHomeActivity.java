@@ -87,16 +87,8 @@ public class AdminHomeActivity extends AppCompatActivity implements OnListItemCl
         binding.expandableListViewSample.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
 
             @Override
-            public boolean onChildClick(ExpandableListView parent, View v,
-                                        int groupPosition, int childPosition, long id) {
-                Toast.makeText(
-                        getApplicationContext(),
-                        listDataHeader.get(groupPosition)
-                                + " : "
-                                + listDataChild.get(
-                                listDataHeader.get(groupPosition)).get(
-                                childPosition), Toast.LENGTH_SHORT)
-                        .show();
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                Toast.makeText(getApplicationContext(), listDataHeader.get(groupPosition) + " : " + listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition), Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
@@ -134,22 +126,17 @@ public class AdminHomeActivity extends AppCompatActivity implements OnListItemCl
                     for (int i =0; i<lstAllUsers.size(); i++){
                         if (lstAllUsers.get(i).getEmail().equals("vishalrao546@gmail.com")){
                             lstAdminDatails.add(new User(Eemail,MmobileNumber,Ppassword,UuserName,UuserUID,Ddepartment));
-                            /*binding.txvAdminName.setText(lstAdminDatails.get(i).getMobileNumber());
-                            binding.txvAdminEmail.setText(lstAdminDatails.get(i).getEmail());*/
                             lstAllUsers.remove(i);
                         }
                     }
                     DemoList.add(new User(Eemail,MmobileNumber,Ppassword,UuserName,UuserUID,Ddepartment));
                 }
-                Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                String ABC = gson.toJson(DemoList);
-                Log.e("DemoList",""+ABC);
                 binding.rcvUsersList.setAdapter(allUserListAdapter);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getApplicationContext(),error.getMessage(),Toast.LENGTH_SHORT).show();
+                Utils.showToastMessage(getApplicationContext(),""+error.getMessage());
             }
         });
     }
@@ -202,8 +189,8 @@ public class AdminHomeActivity extends AppCompatActivity implements OnListItemCl
     public void onBackPressed() {
         if (pressedTime + 2000 > System.currentTimeMillis()) {
             super.onBackPressed();
-            auth.signOut();
-            startActivity(new Intent(AdminHomeActivity.this, LoginActivity.class));
+           // auth.signOut();
+          //  startActivity(new Intent(AdminHomeActivity.this, LoginActivity.class));
             finish();
             //finishAffinity();
         }else

@@ -95,7 +95,6 @@ public class AdminUsersListDateActivity extends AppCompatActivity {
     private void initialize(){
         Intent intent = getIntent();
         uUIID = intent.getStringExtra("UserUUID");
-        Log.e("sakljbkdjnlk",""+uUIID);
 
         binding.toolbarTop.txvToolbarTitle.setText("ADMIN DESHBOARD");
         binding.toolbarTop.ivToolbarButtonBack.setOnClickListener(new View.OnClickListener() {
@@ -142,13 +141,13 @@ public class AdminUsersListDateActivity extends AppCompatActivity {
                                             Intent intent = new Intent(AdminUsersListDateActivity.this, AdminDeshboardUserDataActivity.class).putExtra("UUIID",uUIID).putExtra("UniqKey",UserTime).putExtra("AdminHome","AdminHome");
                                             startActivity(intent);
                                         }else {
-                                            Toast.makeText(getApplicationContext(),"Not Sava data This User "+listUserDataChild.get(listUserDateHeader.get(groupPosition)).get(childPosition).getMonth(),Toast.LENGTH_SHORT).show();
+                                            Utils.showToastMessage(getApplicationContext(),"Not Sava data This User "+listUserDataChild.get(listUserDateHeader.get(groupPosition)).get(childPosition).getMonth());
                                         }
                                     }
 
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError error) {
-                                        Toast.makeText(getApplicationContext(),error.getMessage(),Toast.LENGTH_SHORT).show();
+                                        Utils.showToastMessage(getApplicationContext(),""+error.getMessage());
                                     }
                                 });
                             }
@@ -220,9 +219,6 @@ public class AdminUsersListDateActivity extends AppCompatActivity {
                             hashDecember.add(obj1);
                         }
                     }
-                    Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                    String ABC = gson.toJson(lstUserNotesData);
-                    Log.e("lstUserNotesData",""+ABC);
                 }
 
                 listUserDateHeader = new ArrayList<String>();
@@ -295,7 +291,7 @@ public class AdminUsersListDateActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getApplicationContext(),error.getMessage(),Toast.LENGTH_SHORT).show();
+                Utils.showToastMessage(getApplicationContext(),""+error.getMessage());
             }
         });
     }

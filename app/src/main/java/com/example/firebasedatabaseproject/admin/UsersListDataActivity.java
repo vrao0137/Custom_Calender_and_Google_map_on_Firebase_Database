@@ -106,15 +106,12 @@ public class UsersListDataActivity extends AppCompatActivity implements OnListIt
                         lstUserNotesData.add(new NotesDataModel(pProjectName, dDate, iInTime, oOutTime, hHours, dayOfTheWeek, mMonth, tTask, sKey));
 
                     binding.rcvUsersList.setAdapter(listUsersDataAdapter);
-                    Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                    String ABC = gson.toJson(lstUserNotesData);
-                    Log.e("lstUserNotesDataaaaa",""+ABC);
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getApplicationContext(),error.getMessage(),Toast.LENGTH_SHORT).show();
+                Utils.showToastMessage(getApplicationContext(),""+error.getMessage());
             }
         });
     }

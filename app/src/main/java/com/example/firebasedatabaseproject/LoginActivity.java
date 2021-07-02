@@ -2,26 +2,18 @@ package com.example.firebasedatabaseproject;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-
-import com.example.firebasedatabaseproject.adapter.NotesDataAdapter;
 import com.example.firebasedatabaseproject.admin.AdminDashboardActivity;
-import com.example.firebasedatabaseproject.admin.AdminHomeActivity;
 import com.example.firebasedatabaseproject.databinding.ActivityLoginBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
     private ActivityLoginBinding binding;
@@ -73,16 +65,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void loginData(){
         String email = binding.email.getText().toString();
         final String password = binding.password.getText().toString();
-        /*if (TextUtils.isEmpty(email)) {
-            Toast.makeText(context, "Enter email address!", Toast.LENGTH_SHORT).show();
-            return; }
-        if (TextUtils.isEmpty(password)) {
-            Toast.makeText(context, "Enter password!", Toast.LENGTH_SHORT).show();
-            return; }*/
         if (binding.email.getText().toString().trim().isEmpty()){
-            Utils.showToastMessage(context,"Please Enter Email Address");
+            Utils.showToastMessage(LoginActivity.this,"Please Enter Email Address");
         }else if (binding.password.getText().toString().trim().isEmpty()){
-            Utils.showToastMessage(context,"Please Enter Password");
+            Utils.showToastMessage(LoginActivity.this,"Please Enter Password");
         }else {
             startProgressHud();
             //authenticate user
@@ -103,11 +89,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     String EmialIdAdmin = "Admin";
                                     // Intent intent = new Intent(LoginActivity.this, AdminHomeActivity.class).putExtra("AdminId",EmialIdAdmin);
                                     Intent intent = new Intent(LoginActivity.this, AdminDashboardActivity.class).putExtra("AdminId",EmialIdAdmin);
-                                    Toast.makeText(context, "Welcome to admin dashboard page", Toast.LENGTH_SHORT).show();
+                                    Utils.showToastMessage(LoginActivity.this,"Welcome to Admin dashboard page");
                                     startActivity(intent);
                                     finish();
                                 }else{
                                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                    Utils.showToastMessage(LoginActivity.this,"Welcome to User page");
                                     startActivity(intent);
                                     finish(); }
                             }

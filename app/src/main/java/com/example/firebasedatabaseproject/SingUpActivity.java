@@ -79,34 +79,23 @@ public class SingUpActivity extends AppCompatActivity implements View.OnClickLis
             prograssBar.dismiss();
     }
 
-    /*@Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        Log.e("currentABC",""+currentUser);
-        if(currentUser != null){
-            Log.e("currentUser",""+currentUser);
-        }
-    }*/
-
     private void signUpMethod(){
         String email = binding.email.getText().toString().trim();
         String password = binding.password.getText().toString().trim();
         String fullName = binding.edtFullName.getText().toString().trim();
         String MobileNumber = binding.edtMobileNumber.getText().toString().trim();
         if (binding.edtFullName.getText().toString().trim().isEmpty()){
-            Utils.showToastMessage(context,"Please Enter Full Name");
+            Utils.showToastMessage(SingUpActivity.this,"Please Enter Full Name");
         }else if (binding.edtMobileNumber.getText().toString().trim().isEmpty()){
-            Utils.showToastMessage(context,"Please Enter Mobile Number");
+            Utils.showToastMessage(SingUpActivity.this,"Please Enter Mobile Number");
         }else if (DmntData.equals("Please select department")){
-            Utils.showToastMessage(context,"Please Select Department");
+            Utils.showToastMessage(SingUpActivity.this,"Please Select Department");
         }else if (binding.email.getText().toString().trim().isEmpty()){
-            Utils.showToastMessage(context,"Please Enter Email Address");
+            Utils.showToastMessage(SingUpActivity.this,"Please Enter Email Address");
         }else if (binding.password.getText().toString().trim().isEmpty()){
-            Utils.showToastMessage(context,"Please Enter Password");
+            Utils.showToastMessage(SingUpActivity.this,"Please Enter Password");
         }else if (binding.password.length() < 6){
-            Utils.showToastMessage(context,"Password too short, enter minimum 6 characters!");
+            Utils.showToastMessage(SingUpActivity.this,"Password too short, enter minimum 6 characters!");
         }else {
             startProgressHud();
             //create user
@@ -114,12 +103,11 @@ public class SingUpActivity extends AppCompatActivity implements View.OnClickLis
                     .addOnCompleteListener(SingUpActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-                            //  Toast.makeText(context, "createUserWithEmail:onComplete:" + task.isSuccessful(), Toast.LENGTH_SHORT).show();
+                            Utils.showToastMessage(SingUpActivity.this,"Authentication Successful"+ task.getException());
                             dismissProgressHud();
                             generateUser(email, password, fullName, MobileNumber);
                             if (!task.isSuccessful()) {
-                                Toast.makeText(context, "Authentication failed." + task.getException(),
-                                        Toast.LENGTH_SHORT).show();
+                                Utils.showToastMessage(SingUpActivity.this,"Authentication failed."+ task.getException());
                             } else {
                                 startActivity(new Intent(context, MainActivity.class));
                                 finish();
@@ -127,16 +115,6 @@ public class SingUpActivity extends AppCompatActivity implements View.OnClickLis
                         }
                     });
         }
-
-       /* if (TextUtils.isEmpty(email)){
-            Toast.makeText(getApplicationContext(), "Enter email address!", Toast.LENGTH_SHORT).show();
-            return; }
-        if (TextUtils.isEmpty(password)) {
-            Toast.makeText(getApplicationContext(), "Enter password!", Toast.LENGTH_SHORT).show();
-            return; }
-        if (password.length() < 6) {
-            Toast.makeText(getApplicationContext(), "Password too short, enter minimum 6 characters!", Toast.LENGTH_SHORT).show();
-            return; }*/
     }
 
     public void generateUser(String username, String password,String fullName, String MoNumber)
@@ -194,7 +172,6 @@ public class SingUpActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         DmntData = department[position];
-        Log.e("positiondfff",""+DmntData);
     }
 
     @Override
