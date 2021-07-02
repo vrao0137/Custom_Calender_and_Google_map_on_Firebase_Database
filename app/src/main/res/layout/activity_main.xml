@@ -40,6 +40,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:id="@+id/ivBack"
+                android:visibility="gone"
+                android:background="@drawable/ic_back"
+                android:backgroundTint="@color/black"/>
+
             <EditText
                 android:id="@+id/edtSearchingText"
                 android:layout_width="0dp"
@@ -114,23 +123,30 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:id="@+id/ivSearchIcon"
-                android:src="@drawable/ic_baseline_search_24"/>
+                android:background="@drawable/ic_baseline_search_24"/>
 
             <ImageView
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:id="@+id/ivMoreOption"
-                android:src="@drawable/ic_baseline_more_vert_24"/>
+                android:background="@drawable/ic_baseline_more_vert_24"/>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rcvListData"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cvSearchParent"/>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="60dp"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintTop_toBottomOf="@id/cvSearchParent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rcvListData"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"/>
+        </ScrollView>
 
     <TextView
         android:id="@+id/txvNoDataFound"
@@ -160,7 +176,7 @@
             android:id="@+id/btnAdd"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:src="@drawable/ic_baseline_add_24"
+            android:background="@drawable/ic_baseline_add_24"
             android:gravity="center" />
     </androidx.cardview.widget.CardView>
 

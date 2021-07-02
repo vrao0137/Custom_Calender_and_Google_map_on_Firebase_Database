@@ -129,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         binding.drawerButton.setOnClickListener(this);
         binding.Usershome.setOnClickListener(this);
         binding.ivPowerButton.setOnClickListener(this);
+        binding.ivBack.setOnClickListener(this);
        // binding.includDrawerAdmin.rlSignOut.setOnClickListener(this);
 
         binding.edtSearchingText.addTextChangedListener(new TextWatcher() {
@@ -395,6 +396,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 showDialog();
                 break;
 
+            case R.id.ivBack:
+                binding.txvNonUse.setVisibility(View.VISIBLE);
+                binding.ivSearchIcon.setVisibility(View.VISIBLE);
+                binding.ivMoreOption.setVisibility(View.VISIBLE);
+                binding.ivPowerButton.setVisibility(View.VISIBLE);
+                binding.ivBack.setVisibility(View.GONE);
+                binding.edtSearchingText.setVisibility(View.GONE);
+                InputMethodManager immmm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                immmm.hideSoftInputFromWindow(binding.edtSearchingText.getWindowToken(), 0);
+                break;
+
             case R.id.Usershome:
                 binding.txvNonUse.setVisibility(View.VISIBLE);
                 binding.ivSearchIcon.setVisibility(View.VISIBLE);
@@ -410,6 +422,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 binding.ivSearchIcon.setVisibility(View.GONE);
                 binding.ivMoreOption.setVisibility(View.GONE);
                 binding.ivPowerButton.setVisibility(View.GONE);
+                binding.ivBack.setVisibility(View.VISIBLE);
                 binding.edtSearchingText.setVisibility(View.VISIBLE);
                 //Visible Edittext then open Inpute keyboard......
                 binding.edtSearchingText.requestFocus();
