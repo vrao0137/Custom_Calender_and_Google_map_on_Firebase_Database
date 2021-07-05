@@ -307,15 +307,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void filter(String text) {
         ArrayList<NotesDataModel> temp = new ArrayList();
         for (NotesDataModel d : lstNotesData) {
-            if ((d.getTask().toLowerCase() + " " +
-                    d.getTask().toLowerCase() + " " +
-                    d.getTask()).contains(text.toLowerCase())) {
+            if ((d.getProjectName().toLowerCase() + " " +
+                    d.getProjectName().toLowerCase() + " " +
+                    d.getProjectName()).contains(text.toLowerCase())) {
                 temp.add(d);
             }
         }
         //update recyclerview data
-        if (notesDataAdapter != null) {
-            notesDataAdapter.updateList(temp);
+        if (userHeadingDataAdapter != null) {
+            userHeadingDataAdapter.updateList(temp);
             filteredArraylist = temp;
             if (filteredArraylist.size() > 0) {
                 binding.txvNoDataFound.setVisibility(View.GONE);
@@ -344,7 +344,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(View v) {
                 binding.rcvListData.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
-                notesDataAdapter.notifyDataSetChanged();
+                userHeadingDataAdapter.notifyDataSetChanged();
                 popupWindow.dismiss();
             }
         });
@@ -353,7 +353,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(View v) {
                 binding.rcvListData.setLayoutManager(new GridLayoutManager(context, 2, RecyclerView.VERTICAL, false));
-                notesDataAdapter.notifyDataSetChanged();
+                userHeadingDataAdapter.notifyDataSetChanged();
                 popupWindow.dismiss();
             }
         });
@@ -367,7 +367,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         return item1.getTask().compareToIgnoreCase(item2.getTask());
                     }
                 });
-                notesDataAdapter.notifyDataSetChanged();
+                userHeadingDataAdapter.notifyDataSetChanged();
                 popupWindow.dismiss();
             }
         });
@@ -382,7 +382,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 });
                 Collections.reverse(lstNotesData);
-                notesDataAdapter.notifyDataSetChanged();
+                userHeadingDataAdapter.notifyDataSetChanged();
                 popupWindow.dismiss();
             }
         });
@@ -394,7 +394,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.btnAdd:
                 showDialog();
-                //
                 break;
 
             case R.id.ivBack:
@@ -554,6 +553,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                                             appleSnapshot.getRef().removeValue();
                                                             Utils.showToastMessage(MainActivity.this,"Deleted");
                                                         }
+                                                        userHeadingDataAdapter.notifyDataSetChanged();
                                                     }
                                                     @Override
                                                     public void onCancelled(DatabaseError databaseError) {
@@ -657,6 +657,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                                         databaseReference.child(updateKey).child("uniqKey").setValue(getUniKey);
                                                     }
                                                     Utils.showToastMessage(MainActivity.this,"Update Successfull");
+                                                    userHeadingDataAdapter.notifyDataSetChanged();
                                                 }
                                                 dialog.dismiss();
                                             }

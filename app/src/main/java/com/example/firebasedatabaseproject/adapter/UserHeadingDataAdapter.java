@@ -59,6 +59,11 @@ public class UserHeadingDataAdapter extends RecyclerView.Adapter<UserHeadingData
         return lstNotesData.size();
     }
 
+    public void updateList(ArrayList<NotesDataModel> list){
+        this.lstNotesData = list;
+        notifyDataSetChanged();
+    }
+
     public class MyViewHolder extends RecyclerView.ViewHolder {
         UseHeadingDataAdapterBinding binding;
         public MyViewHolder(UseHeadingDataAdapterBinding binding) {
