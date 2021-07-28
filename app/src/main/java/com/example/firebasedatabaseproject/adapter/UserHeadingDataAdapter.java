@@ -21,6 +21,8 @@ public class UserHeadingDataAdapter extends RecyclerView.Adapter<UserHeadingData
     ArrayList<NotesDataModel> lstNotesData;
     OnListItemClicked onListItemClicked;
 
+    ArrayList<NotesDataModel> mDeveloperModel;
+
     public UserHeadingDataAdapter(Context context, ArrayList<NotesDataModel> lstNotesData, OnListItemClicked onListItemClicked) {
         this.context = context;
         this.lstNotesData = lstNotesData;
@@ -35,18 +37,18 @@ public class UserHeadingDataAdapter extends RecyclerView.Adapter<UserHeadingData
 
     @Override
     public void onBindViewHolder(@NonNull UserHeadingDataAdapter.MyViewHolder holder, int position) {
-        holder.binding.txvDate.setText(lstNotesData.get(position).getDate());
-        holder.binding.txvDay.setText(lstNotesData.get(position).getWorkedHours());
-        holder.binding.txvProjectName.setText(lstNotesData.get(position).getProjectName());
+        holder.binding.txvDate.setText(mDeveloperModel.get(position).getDate());
+        holder.binding.txvDay.setText(mDeveloperModel.get(position).getWorkedHours());
+        holder.binding.txvProjectName.setText(mDeveloperModel.get(position).getProjectName());
+       // Log.e("ListUniqueKey",""+mDeveloperModel.get(position).getUniQKey());
 
         holder.binding.ivEditOption.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onListItemClicked.onItemClicked(position, v, "");
-            }
+                onListItemClicked.onItemClicked(position, v, ""); }
         });
 
-        holder.binding.crdUpdatData.setOnClickListener(new View.OnClickListener() {
+        holder.binding.crdShowUserData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onListItemClicked.onItemClicked(position, v, "");
@@ -56,7 +58,16 @@ public class UserHeadingDataAdapter extends RecyclerView.Adapter<UserHeadingData
 
     @Override
     public int getItemCount() {
-        return lstNotesData.size();
+        if (mDeveloperModel != null){
+            return mDeveloperModel.size();
+        }else return 0;
+       // return lstNotesData.size();
+    }
+
+
+    public void setDeveloperList(ArrayList<NotesDataModel> mDeveloperModel) {
+        this.mDeveloperModel = mDeveloperModel;
+        notifyDataSetChanged();
     }
 
     public void updateList(ArrayList<NotesDataModel> list){

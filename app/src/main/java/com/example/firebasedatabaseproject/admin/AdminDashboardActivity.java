@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,12 +23,14 @@ import com.example.firebasedatabaseproject.UserShowDetailsDataActivity;
 import com.example.firebasedatabaseproject.Utils;
 import com.example.firebasedatabaseproject.admin.adapter.AllUserListAdapter;
 import com.example.firebasedatabaseproject.admin.adapter.ExpandableListAdapter;
+import com.example.firebasedatabaseproject.admin.adminviewmodel.AdminUserViewModel;
 import com.example.firebasedatabaseproject.admin.model.User;
 import com.example.firebasedatabaseproject.databinding.ActivityAdminDashboardBinding;
 import com.example.firebasedatabaseproject.databinding.ActivityAdminHomeBinding;
 import com.example.firebasedatabaseproject.databinding.DialogPickerBinding;
 import com.example.firebasedatabaseproject.databinding.ListGroupBinding;
 import com.example.firebasedatabaseproject.model.NotesDataModel;
+import com.example.firebasedatabaseproject.viewmodelss.AddNotesDataViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -80,11 +84,14 @@ public class AdminDashboardActivity extends AppCompatActivity implements View.On
     HashSet<User> hashMarketingList = new HashSet<User>();
     HashSet<User> hashManagementList = new HashSet<User>();
 
+    AdminUserViewModel adminUserViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityAdminDashboardBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        adminUserViewModel = ViewModelProviders.of(this).get(AdminUserViewModel.class);
     }
 
     @Override
@@ -98,10 +105,22 @@ public class AdminDashboardActivity extends AppCompatActivity implements View.On
         databaseReference = firebaseDatabase.getReference().child("users");
         databaseReference.keepSynced(true);
 
+       // getData();
         getAdminValues();
-
         initialise();
     }
+
+   /* private void getData(){
+        adminUserViewModel.getAllUserData().observe(this, new Observer<HashMap<String, List<User>>>() {
+            @Override
+            public void onChanged(HashMap<String, List<User>> stringListHashMap) {
+                prepareListData();
+                *//*listAdapter.setAllUsersData(HashMap<String, List<User>> stringListHashMap);
+                listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
+                binding.expandableListViewSample.setAdapter(listAdapter);*//*
+            }
+        });
+    }*/
 
     private void initialise(){
         binding.drawerButton.setOnClickListener(this);
@@ -160,6 +179,8 @@ public class AdminDashboardActivity extends AppCompatActivity implements View.On
     }
 
     private void getAdminValues(){
+       // adminUserViewModel.addAdminUserData();
+
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -177,13 +198,13 @@ public class AdminDashboardActivity extends AppCompatActivity implements View.On
                 String Adminid = intent.getStringExtra("AdminId");
 
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    String Eemail = dataSnapshot.child("email").getValue(String.class);
-                    String MmobileNumber = dataSnapshot.child("mobileNumber").getValue(String.class);
-                    String Ppassword = dataSnapshot.child("password").getValue(String.class);
-                    String UuserName = dataSnapshot.child("userName").getValue(String.class);
-                    String UuserUID = dataSnapshot.child("userUID").getValue(String.class);
-                    String Ddepartment = dataSnapshot.child("department").getValue(String.class);
-                    lstAllUsers.add(new User(Eemail, MmobileNumber, Ppassword, UuserName, UuserUID, Ddepartment));
+                    String eEmail = dataSnapshot.child("email").getValue(String.class);
+                    String mMobileNumber = dataSnapshot.child("mobileNumber").getValue(String.class);
+                    String pPassword = dataSnapshot.child("password").getValue(String.class);
+                    String uUserName = dataSnapshot.child("userName").getValue(String.class);
+                    String uUserUID = dataSnapshot.child("userUID").getValue(String.class);
+                    String dDepartment = dataSnapshot.child("department").getValue(String.class);
+                    lstAllUsers.add(new User(eEmail, mMobileNumber, pPassword, uUserName, uUserUID, dDepartment));
 
                     for (User obj1: lstAllUsers){
                         if (obj1.getDepartment().equals("Android")){
@@ -258,6 +279,8 @@ public class AdminDashboardActivity extends AppCompatActivity implements View.On
                 Utils.showToastMessage(getApplicationContext(),""+error.getMessage());
             }
         });
+
+        prepareListData();
     }
 
 

@@ -1,33 +1,41 @@
 package com.example.firebasedatabaseproject;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-
-import com.example.firebasedatabaseproject.admin.AdminDashboardActivity;
-import com.example.firebasedatabaseproject.databinding.ActivitySplashBinding;
 import com.example.firebasedatabaseproject.databinding.ActivityWelcomeBinding;
+import com.example.firebasedatabaseproject.viewmodelss.WelcomeViewModel;
+import com.google.firebase.auth.FirebaseUser;
+
+import java.util.Observer;
 
 public class WelcomeActivity extends AppCompatActivity implements View.OnClickListener{
     ActivityWelcomeBinding binding;
     Context context;
     private long pressedTime;
+    WelcomeViewModel welcomeViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityWelcomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        welcomeViewModel = ViewModelProviders.of(this).get(WelcomeViewModel.class);
+        initialise();
+        /*ActivityWelcomeBinding binding= DataBindingUtil.setContentView(this,R.layout.activity_welcome);
+        binding.setWelcomeViewModel(new WelcomeViewModel());
+        binding.executePendingBindings();*/
     }
 
-    @Override
+   /* @Override
     protected void onResume() {
         super.onResume();
-        initialise();
-    }
+    }*/
 
     private void initialise() {
         context = this;
@@ -36,11 +44,13 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void loginButton(){
-        startActivity(new Intent(context, LoginActivity.class));
+        welcomeViewModel.onSingInClicked(WelcomeActivity.this);
+       // startActivity(new Intent(context, LoginActivity.class));
        // finish();
     }
 
     private void SingInButton(){
+        welcomeViewModel.onSingUpClicked(WelcomeActivity.this);
         startActivity(new Intent(context, SingUpActivity.class));
        // finish();
     }

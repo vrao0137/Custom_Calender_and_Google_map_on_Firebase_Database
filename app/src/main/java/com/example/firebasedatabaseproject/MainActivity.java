@@ -4,11 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -17,33 +19,27 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.firebasedatabaseproject.adapter.NotesDataAdapter;
 import com.example.firebasedatabaseproject.adapter.UserHeadingDataAdapter;
-import com.example.firebasedatabaseproject.admin.AdminDashboardActivity;
 import com.example.firebasedatabaseproject.databinding.DialogPickerBinding;
 import com.example.firebasedatabaseproject.databinding.PopupDialogBinding;
 import com.example.firebasedatabaseproject.databinding.UpdatePickerBinding;
 import com.example.firebasedatabaseproject.model.NotesDataModel;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.example.firebasedatabaseproject.viewmodelss.AddNotesDataViewModel;
+import com.example.firebasedatabaseproject.viewmodelss.NotesDataViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -56,30 +52,26 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.example.firebasedatabaseproject.databinding.ActivityMainBinding;
 
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
-import java.util.TimeZone;
 
 import static java.text.DateFormat.getDateTimeInstance;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, OnListItemClicked{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, OnListItemClicked, LifecycleOwner {
     private ActivityMainBinding binding;
     private Context context;
     private ArrayList<NotesDataModel> lstNotesData = new ArrayList<>();
     private ArrayList<NotesDataModel> filteredArraylist = new ArrayList<>();
     private FirebaseDatabase firebaseDatabase = Utils.getDatabase();
     private DatabaseReference databaseReference;
-    private Query query;
     private TextView UpdateProject, UpdateDate, UpdateInTime, UpdateOutTime, UpdateHour, UpdateTask;
     private TextView SaveButton,UpdateButton;
-    private NotesDataAdapter notesDataAdapter;
     private UserHeadingDataAdapter userHeadingDataAdapter;
     private static String sID = null;
     private String android_id = "";
@@ -89,13 +81,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     FirebaseUser currentUser;
     String currenUserKey = "";
     private PrograssBar prograssBar;
+    NotesDataViewModel notesDataViewModel;
+    AddNotesDataViewModel addNotesDataViewModel;
+    private ArrayList<NotesDataModel> newArrayListIs = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        addNotesDataViewModel = ViewModelProviders.of(this).get(AddNotesDataViewModel.class);
+
+        notesDataViewModel = ViewModelProviders.of(this).get(NotesDataViewModel.class);
+        getData();
+        Log.e("onCreate","onCreate");
         /*android_id = Settings.Secure.getString(getApplicationContext().getContentResolver(),
                 Settings.Secure.ANDROID_ID);*/
+    }
+
+    public void getData(){
+        notesDataViewModel.getAllDeveloper().observe(this, new Observer<List<NotesDataModel>>() {
+            @Override
+            public void onChanged(List<NotesDataModel> notesDataModels) {
+                lstNotesData.addAll((ArrayList<NotesDataModel>) notesDataModels);
+                newArrayListIs.addAll((ArrayList<NotesDataModel>) notesDataModels);
+
+                userHeadingDataAdapter.setDeveloperList((ArrayList<NotesDataModel>) notesDataModels);
+                binding.rcvListData.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, true));
+                binding.rcvListData.setAdapter(userHeadingDataAdapter);
+                userHeadingDataAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
@@ -105,10 +122,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         currenUserKey = currentUser.getUid();
         initialise();
-        // Initilize adapter
-       /* binding.rcvListData.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, true));
-        notesDataAdapter = new NotesDataAdapter(context,lstNotesData,this);
-        binding.rcvListData.setAdapter(notesDataAdapter);*/
+        getData();
+        Log.e("onResume","onResume");
 
         binding.rcvListData.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, true));
         userHeadingDataAdapter = new UserHeadingDataAdapter(context,lstNotesData,this);
@@ -147,8 +162,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Initilize database references
         databaseReference = firebaseDatabase.getReference().child("users").child(currenUserKey).child("UserTable");
         databaseReference.keepSynced(true);
-        //Create method
-        getValue();
+        //   getValue();
     }
 
     public void startProgressHud() {
@@ -163,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             prograssBar.dismiss();
     }
 
-    private void getValue() {
+    /*private void getValue() {
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -196,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Utils.showToastMessage(MainActivity.this,""+error.getMessage());
             }
         });
-    }
+    }*/
 
     private void showDialog(){
         DialogPickerBinding pickerBinding;
@@ -274,10 +288,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     //Initilize Unique Kay
                     String sKey = databaseReference.push().getKey();
-
                     //Check condition
                     if (sKey != null){
-                        databaseReference.child(sKey).child("projectName").setValue(pProjectName);
+                        addNotesDataViewModel.addNotesData(pProjectName, dDate, iInTime, oOutTime, hHours, dayOfTheWeek, mMonth, tTask, sKey);
+
+                        /*databaseReference.child(sKey).child("projectName").setValue(pProjectName);
                         databaseReference.child(sKey).child("date").setValue(dDate);
                         databaseReference.child(sKey).child("inTime").setValue(iInTime);
                         databaseReference.child(sKey).child("outTime").setValue(oOutTime);
@@ -285,17 +300,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         databaseReference.child(sKey).child("day").setValue(dayOfTheWeek);
                         databaseReference.child(sKey).child("month").setValue(mMonth);
                         databaseReference.child(sKey).child("task").setValue(tTask);
-                        databaseReference.child(sKey).child("uniqKey").setValue(sKey);
-                        Log.e("sKey",""+sKey);
+                        databaseReference.child(sKey).child("uniqKey").setValue(sKey);*/
+
                         //Clear adit text value
-                        pickerBinding.edtProjectName.setText("");
+                     /*   pickerBinding.edtProjectName.setText("");
                         pickerBinding.edtDate.setText("");
                         pickerBinding.edtInTime.setText("");
                         pickerBinding.edtOutTime.setText("");
                         pickerBinding.edtHours.setText("");
-                        pickerBinding.edtDailyTast.setText("");
+                        pickerBinding.edtDailyTast.setText("");*/
                     }
                     Utils.showToastMessage(MainActivity.this,"Task Save ");
+                    userHeadingDataAdapter.notifyDataSetChanged();
                     dialog.dismiss();
                 }
             }
@@ -506,7 +522,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onItemClicked(int position, View view, String value) {
         switch (view.getId()) {
-            case R.id.crdUpdatData:
+            case R.id.crdShowUserData:
                 binding.txvNonUse.setVisibility(View.VISIBLE);
                 binding.ivSearchIcon.setVisibility(View.VISIBLE);
                 binding.ivMoreOption.setVisibility(View.VISIBLE);
@@ -515,8 +531,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 InputMethodManager immm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 immm.hideSoftInputFromWindow(binding.edtSearchingText.getWindowToken(), 0);
 
+                getData();
+
                 String UniKey = lstNotesData.get(position).getUniQKey();
-                Intent intent = new Intent(MainActivity.this, UserShowDetailsDataActivity.class).putExtra("UniqKey",UniKey).putExtra("UUIID",currenUserKey).putExtra("UserTitle","UserTitle");
+                Intent intent = new Intent(MainActivity.this, UserShowDetailsDataActivity.class).putExtra("U_Key",UniKey).putExtra("U_Id",currenUserKey);
                 startActivity(intent);
                 break;
 
@@ -690,7 +708,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             binding.ivMoreOption.setVisibility(View.VISIBLE);
             binding.ivPowerButton.setVisibility(View.VISIBLE);
             binding.edtSearchingText.setVisibility(View.GONE);
-            //Visibility gone Edittext then close Inpute keyboard......
+            // Visibility gone Edittext then close Inpute keyboard......
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(binding.edtSearchingText.getWindowToken(), 0);
             Utils.showToastMessage(MainActivity.this,"Press back again to exit");

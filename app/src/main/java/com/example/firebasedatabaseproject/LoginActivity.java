@@ -2,6 +2,8 @@ package com.example.firebasedatabaseproject;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,41 +12,61 @@ import android.view.View;
 import android.widget.Toast;
 import com.example.firebasedatabaseproject.admin.AdminDashboardActivity;
 import com.example.firebasedatabaseproject.databinding.ActivityLoginBinding;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
+import com.example.firebasedatabaseproject.model.LoginModel;
+import com.example.firebasedatabaseproject.viewmodelss.LoginViewModel;
+import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
     private ActivityLoginBinding binding;
-    private FirebaseAuth auth;
+   // private FirebaseAuth auth;
     private Context context;
     private PrograssBar prograssBar;
+    private LoginViewModel loggedInViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        loggedInViewModel = ViewModelProviders.of(this).get(LoginViewModel.class);
+        loggedInViewModel.getUserLiveData().observe(this, new Observer<FirebaseUser>() {
+            @Override
+            public void onChanged(FirebaseUser firebaseUser) {
+                if (firebaseUser != null) {
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    finish();
+                    /*Navigation.findNavController(getView()).navigate(R.id.action_loginRegisterFragment_to_loggedInFragment);*/
+                }
+            }
+        });
+
+
+       /* ActivityLoginBinding binding1 = DataBindingUtil.setContentView(this,R.layout.activity_login);
+        binding1.setViewModel(new LoginViewModel());
+        binding1.executePendingBindings();*/
+
+        /*LoginViewModel loginViewModel = ViewModelProviders.of(this).get(LoginViewModel.class);*/
+        /*loginViewModel.onSingInClicked(LoginActivity.this);*/
     }
 
     @Override
     public void onResume(){
         super.onResume();
         //Get Firebase auth instance
-        auth = FirebaseAuth.getInstance();
+        /*auth = FirebaseAuth.getInstance();
 
         if (auth.getCurrentUser() != null) {
             startActivity(new Intent(LoginActivity.this, MainActivity.class));
             finish();
-        }
+        }*/
         initialize();
     }
 
     private void initialize(){
         context = this;
         //Get Firebase auth instance
-        auth = FirebaseAuth.getInstance();
+       // auth = FirebaseAuth.getInstance();
         binding.btnLogin.setOnClickListener(this);
         binding.btnReset.setOnClickListener(this);
         binding.btnSignup.setOnClickListener(this);
@@ -62,7 +84,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             prograssBar.dismiss();
     }
 
-    private void loginData(){
+   /* private void loginData(){
         String email = binding.email.getText().toString();
         final String password = binding.password.getText().toString();
         if (binding.email.getText().toString().trim().isEmpty()){
@@ -101,7 +123,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         }
                     });
         }
-    }
+    }*/
 
     @Override
     public void onClick(View v) {
@@ -137,7 +159,27 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 break;
 
             case R.id.btnLogin:
-                loginData();
+                String email = binding.email.getText().toString();
+                final String password = binding.password.getText().toString();
+                if (binding.email.getText().toString().trim().isEmpty()){
+                    Utils.showToastMessage(LoginActivity.this,"Please Enter Email Address");
+                }else if (binding.password.getText().toString().trim().isEmpty()){
+                    Utils.showToastMessage(LoginActivity.this,"Please Enter Password");
+                }else {
+                    startProgressHud();
+                    new java.util.Timer().schedule(
+                            new java.util.TimerTask() {
+                                @Override
+                                public void run() {
+                                    startProgressHud();
+                                    loggedInViewModel.login(email, password);
+                                    dismissProgressHud();
+                                }
+                            },
+                            1500
+                    );
+                }
+               // loginData();
                 break;
         }
     }

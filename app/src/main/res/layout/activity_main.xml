@@ -15,13 +15,13 @@
         android:background="@color/colorWhite"
         android:layout_height="fill_parent">
 
-    <View
+    <!--<View
         android:id="@+id/viewRight"
         android:layout_width="80dp"
         android:layout_height="match_parent"
         android:layout_marginTop="5dp"
         android:background="@drawable/bottom_navigation_bacground"
-        android:visibility="gone"/>
+        android:visibility="gone"/>-->
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"

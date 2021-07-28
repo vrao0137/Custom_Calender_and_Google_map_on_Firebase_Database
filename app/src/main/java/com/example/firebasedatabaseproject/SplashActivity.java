@@ -54,7 +54,7 @@ public class SplashActivity extends AppCompatActivity {
                         startActivity(new Intent(context, AdminDashboardActivity.class));
                         finish();
                     }else {
-                        Log.e("getCurrentUser",""+auth.getCurrentUser().getUid());
+                        Log.e("CurrentUserIs",""+auth.getCurrentUser().getUid());
                         startActivity(new Intent(context, MainActivity.class));
                         finish();
                     }

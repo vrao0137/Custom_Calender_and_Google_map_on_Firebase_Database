@@ -2,6 +2,7 @@ package com.example.firebasedatabaseproject;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Context;
 import android.content.Intent;
@@ -21,6 +22,8 @@ import com.example.firebasedatabaseproject.admin.UsersListDataActivity;
 import com.example.firebasedatabaseproject.admin.model.User;
 import com.example.firebasedatabaseproject.databinding.ActivityMainBinding;
 import com.example.firebasedatabaseproject.databinding.ActivitySingUpBinding;
+import com.example.firebasedatabaseproject.viewmodelss.LoginViewModel;
+import com.example.firebasedatabaseproject.viewmodelss.SingUpViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -39,12 +42,14 @@ public class SingUpActivity extends AppCompatActivity implements View.OnClickLis
     FirebaseUser currentUser;
     String[] department = { "Please select department", "Android", "Angular", "Java", "HR", "Admin", "Marketing", "Management"};
     String DmntData = "";
+    private SingUpViewModel singUpViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivitySingUpBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        singUpViewModel = ViewModelProviders.of(this).get(SingUpViewModel.class);
     }
 
     @Override
@@ -58,7 +63,6 @@ public class SingUpActivity extends AppCompatActivity implements View.OnClickLis
         context = this;
         binding.btnSignUp.setOnClickListener(this);
         binding.btnSignIn.setOnClickListener(this);
-        binding.btnResetPassword.setOnClickListener(this);
 
         binding.spnrDepartment.setOnItemSelectedListener(this);
         ArrayAdapter aa = new ArrayAdapter(this,android.R.layout.simple_spinner_item,department);
@@ -97,8 +101,19 @@ public class SingUpActivity extends AppCompatActivity implements View.OnClickLis
         }else if (binding.password.length() < 6){
             Utils.showToastMessage(SingUpActivity.this,"Password too short, enter minimum 6 characters!");
         }else {
-            startProgressHud();
+                startProgressHud();
             //create user
+                new java.util.Timer().schedule(
+                        new java.util.TimerTask() {
+                            @Override
+                            public void run() {
+                                singUpViewModel.register(email, password, fullName, MobileNumber, DmntData);
+                                dismissProgressHud();
+                            }
+                        },
+                        1500
+                );
+            /*startProgressHud();
             auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(SingUpActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
@@ -113,7 +128,7 @@ public class SingUpActivity extends AppCompatActivity implements View.OnClickLis
                                 finish();
                             }
                         }
-                    });
+                    });*/
         }
     }
 
@@ -132,21 +147,6 @@ public class SingUpActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btnResetPassword:
-                startProgressHud();
-                new java.util.Timer().schedule(
-                        new java.util.TimerTask() {
-                            @Override
-                            public void run() {
-                                dismissProgressHud();
-                                startActivity(new Intent(context, ResetPasswordActivity.class));
-                                finish();
-                            }
-                        },
-                        1500
-                );
-                break;
-
             case R.id.btnSignIn:
                 startProgressHud();
                 new java.util.Timer().schedule(

@@ -12,7 +12,9 @@ import android.widget.TextView;
 import com.example.firebasedatabaseproject.R;
 import com.example.firebasedatabaseproject.admin.AdminDashboardActivity;
 import com.example.firebasedatabaseproject.admin.model.User;
+import com.example.firebasedatabaseproject.model.NotesDataModel;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,6 +23,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private List<String> _listDataHeader; // header titles
     // child data in format of header title, child title
     private HashMap<String, List<User >> _listDataChild;
+  //  HashMap<String, List<User>> stringListHashMap;
 
     public ExpandableListAdapter(Context context, List<String> listDataHeader, HashMap<String, List<User>> listChildData) {
         this._context = context;
@@ -68,6 +71,11 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public int getGroupCount() {
         return this._listDataHeader.size();
     }
+
+    /*public void setAllUsersData(HashMap<String, List<User>> stringListHashMap) {
+        this.stringListHashMap = stringListHashMap;
+        notifyDataSetChanged();
+    }*/
 
     @Override
     public long getGroupId(int groupPosition) {
