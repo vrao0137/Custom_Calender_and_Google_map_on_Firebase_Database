@@ -29,7 +29,7 @@ public class LoginViewModel extends AndroidViewModel{
     private AuthAppRepository authAppRepository;
     private MutableLiveData<FirebaseUser> userLiveData;
 
-    public LoginViewModel(@NonNull Application application) {
+    public LoginViewModel( Application application) {
         super(application);
         this.application = application;
         authAppRepository = new AuthAppRepository(application);

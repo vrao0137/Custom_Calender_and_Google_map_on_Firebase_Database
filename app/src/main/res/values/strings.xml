@@ -2,15 +2,7 @@
     <string name="app_name">Daily UpDates</string>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!--<item name="colorPrimary">@color/colorPrimary</item>
-    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-    <item name="colorAccent">@color/colorBlack</item>
-    <item name="android:textColor">@color/colorPrimary</item>-->
-
-        <!--To change default font of app-->
-        <!--        <item name="android:typeface">serif</item>-->
-    </style>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar" />
 
     <style name="ProgressHudDialogTheme" parent="android:Theme.DeviceDefault.Light.Dialog">
         <item name="android:windowBackground">@android:color/transparent</item>
@@ -50,4 +42,8 @@
     <string name="btn_sign_out">Sign Out</string>
     <string name="lbl_forgot_password">Forgot password?</string>
     <string name="forgot_password_msg">We just need your registered Email Id to sent you password reset instructions.</string>
+
+    <string name="update_succesfully">Update Successfully...</string>
+    <string name="delete">Deleted...</string>
+    <string name="created_user_account">Your Account Created was Succeccfully Please Contact To HR.</string>
 </resources>

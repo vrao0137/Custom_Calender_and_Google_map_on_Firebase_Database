@@ -4,8 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,21 +14,13 @@ import android.widget.ExpandableListView;
 import android.widget.Toast;
 
 import com.example.firebasedatabaseproject.LoginActivity;
-import com.example.firebasedatabaseproject.MainActivity;
 import com.example.firebasedatabaseproject.PrograssBar;
 import com.example.firebasedatabaseproject.R;
-import com.example.firebasedatabaseproject.UserShowDetailsDataActivity;
 import com.example.firebasedatabaseproject.Utils;
-import com.example.firebasedatabaseproject.admin.adapter.AllUserListAdapter;
 import com.example.firebasedatabaseproject.admin.adapter.ExpandableListAdapter;
-import com.example.firebasedatabaseproject.admin.adminviewmodel.AdminUserViewModel;
 import com.example.firebasedatabaseproject.admin.model.User;
 import com.example.firebasedatabaseproject.databinding.ActivityAdminDashboardBinding;
-import com.example.firebasedatabaseproject.databinding.ActivityAdminHomeBinding;
-import com.example.firebasedatabaseproject.databinding.DialogPickerBinding;
-import com.example.firebasedatabaseproject.databinding.ListGroupBinding;
 import com.example.firebasedatabaseproject.model.NotesDataModel;
-import com.example.firebasedatabaseproject.viewmodelss.AddNotesDataViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -44,11 +34,7 @@ import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class AdminDashboardActivity extends AppCompatActivity implements View.OnClickListener{
     private ActivityAdminDashboardBinding binding;
@@ -84,14 +70,14 @@ public class AdminDashboardActivity extends AppCompatActivity implements View.On
     HashSet<User> hashMarketingList = new HashSet<User>();
     HashSet<User> hashManagementList = new HashSet<User>();
 
-    AdminUserViewModel adminUserViewModel;
+   // AdminUserViewModel adminUserViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityAdminDashboardBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        adminUserViewModel = ViewModelProviders.of(this).get(AdminUserViewModel.class);
+      //  adminUserViewModel = ViewModelProviders.of(this).get(AdminUserViewModel.class);
     }
 
     @Override
@@ -115,9 +101,11 @@ public class AdminDashboardActivity extends AppCompatActivity implements View.On
             @Override
             public void onChanged(HashMap<String, List<User>> stringListHashMap) {
                 prepareListData();
-                *//*listAdapter.setAllUsersData(HashMap<String, List<User>> stringListHashMap);
+                */
+    /*listAdapter.setAllUsersData(HashMap<String, List<User>> stringListHashMap);
                 listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
-                binding.expandableListViewSample.setAdapter(listAdapter);*//*
+                binding.expandableListViewSample.setAdapter(listAdapter);*/
+    /*
             }
         });
     }*/
@@ -180,7 +168,6 @@ public class AdminDashboardActivity extends AppCompatActivity implements View.On
 
     private void getAdminValues(){
        // adminUserViewModel.addAdminUserData();
-
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -204,7 +191,7 @@ public class AdminDashboardActivity extends AppCompatActivity implements View.On
                     String uUserName = dataSnapshot.child("userName").getValue(String.class);
                     String uUserUID = dataSnapshot.child("userUID").getValue(String.class);
                     String dDepartment = dataSnapshot.child("department").getValue(String.class);
-                    lstAllUsers.add(new User(eEmail, mMobileNumber, pPassword, uUserName, uUserUID, dDepartment));
+                    lstAllUsers.add(new User(eEmail, mMobileNumber, pPassword, uUserName, uUserUID, dDepartment,"false"));
 
                     for (User obj1: lstAllUsers){
                         if (obj1.getDepartment().equals("Android")){

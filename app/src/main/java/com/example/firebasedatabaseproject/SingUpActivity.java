@@ -22,6 +22,7 @@ import com.example.firebasedatabaseproject.admin.UsersListDataActivity;
 import com.example.firebasedatabaseproject.admin.model.User;
 import com.example.firebasedatabaseproject.databinding.ActivityMainBinding;
 import com.example.firebasedatabaseproject.databinding.ActivitySingUpBinding;
+import com.example.firebasedatabaseproject.service.Constants;
 import com.example.firebasedatabaseproject.viewmodelss.LoginViewModel;
 import com.example.firebasedatabaseproject.viewmodelss.SingUpViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -140,7 +141,7 @@ public class SingUpActivity extends AppCompatActivity implements View.OnClickLis
         String currentUserUID = currentUser.getUid();
         databaseReference = firebaseDatabase.getReference().child("users").child(currentUserUID);
        // DatabaseReference users = firebaseDatabase.getReference("users"); //users is a node in your Firebase Database.
-        User user = new User(username, password, fullName, MoNumber,currentUserUID,DmntData); //ObjectClass for Users
+        User user = new User(username, password, fullName, MoNumber,currentUserUID,DmntData,"false"); //ObjectClass for Users
         databaseReference.setValue(user);
     }
 

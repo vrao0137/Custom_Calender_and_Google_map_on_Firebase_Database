@@ -8,18 +8,20 @@ public class User {
     String MobileNumber;
     String UserUID;
     String Department;
+    String IsActive;
 
     public User() {
         //Empty Constructor For Firebase
     }
 
-    public User(String email, String password, String userName, String mobileNumber, String userUID, String department) {
+    public User(String email, String password, String userName, String mobileNumber, String userUID, String department, String isActive) {
         Email = email;
         Password = password;
         UserName = userName;
         MobileNumber = mobileNumber;
         UserUID = userUID;
         Department = department;
+        IsActive = isActive;
     }
 
     //Getters and Setters
@@ -47,4 +49,11 @@ public class User {
 
     public void setDepartment(String department) { Department = department; }
 
+    public String getIsActive() {
+        return IsActive;
+    }
+
+    public void setIsActive(String isActive) {
+        IsActive = isActive;
+    }
 }

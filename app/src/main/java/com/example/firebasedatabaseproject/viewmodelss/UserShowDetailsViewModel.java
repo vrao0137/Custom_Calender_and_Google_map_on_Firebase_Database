@@ -1,6 +1,7 @@
 package com.example.firebasedatabaseproject.viewmodelss;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -18,15 +19,17 @@ public class UserShowDetailsViewModel extends AndroidViewModel {
     public UserShowDetailsViewModel(Application application) {
         super(application);
         this.application = application;
-   //     authAppRepository = new AuthAppRepository(application);
+        authAppRepository = new AuthAppRepository(application);
         lstUserDetailsData = getLstUserDetailsData();
     }
 
     public void userDetails(String UI_ID, String Uniq_Key) {
         authAppRepository.userDetails(UI_ID, Uniq_Key);
+        Log.e("UI_ID","userDetails Uniq_Key");
     }
 
     public LiveData<List<NotesDataModel>> getLstUserDetailsData() {
+        Log.e("Liata","gtUserDetailsData");
         return authAppRepository.getUserDetailsMutableLiveData();
     }
 }

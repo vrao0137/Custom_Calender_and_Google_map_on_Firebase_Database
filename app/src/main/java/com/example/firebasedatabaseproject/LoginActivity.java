@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.example.firebasedatabaseproject.admin.AdminDashboardActivity;
 import com.example.firebasedatabaseproject.databinding.ActivityLoginBinding;
 import com.example.firebasedatabaseproject.model.LoginModel;
+import com.example.firebasedatabaseproject.service.Constants;
 import com.example.firebasedatabaseproject.viewmodelss.LoginViewModel;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -30,16 +31,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(binding.getRoot());
 
         loggedInViewModel = ViewModelProviders.of(this).get(LoginViewModel.class);
-        loggedInViewModel.getUserLiveData().observe(this, new Observer<FirebaseUser>() {
+
+        /*loggedInViewModel.getUserLiveData().observe(this, new Observer<FirebaseUser>() {
             @Override
             public void onChanged(FirebaseUser firebaseUser) {
                 if (firebaseUser != null) {
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     finish();
-                    /*Navigation.findNavController(getView()).navigate(R.id.action_loginRegisterFragment_to_loggedInFragment);*/
                 }
             }
-        });
+        });*/
 
 
        /* ActivityLoginBinding binding1 = DataBindingUtil.setContentView(this,R.layout.activity_login);
@@ -71,6 +72,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         binding.btnReset.setOnClickListener(this);
         binding.btnSignup.setOnClickListener(this);
     }
+
+    /*public void userRole(String UserRole){
+        if (Constants.ADMIN.equals(UserRole)){
+            Utils.showToastMessage(LoginActivity.this,"Welcome to Admin dashboard page");
+            startActivity(new Intent(LoginActivity.this, AdminDashboardActivity.class));
+        }else {
+            Utils.showToastMessage(LoginActivity.this,"Welcome to Home Page");
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+        }
+        finish();
+    }*/
 
     public void startProgressHud() {
         if (prograssBar == null)
@@ -171,9 +183,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             new java.util.TimerTask() {
                                 @Override
                                 public void run() {
-                                    startProgressHud();
-                                    loggedInViewModel.login(email, password);
-                                    dismissProgressHud();
+                                        loggedInViewModel.login(email, password);
+                                        dismissProgressHud();
                                 }
                             },
                             1500

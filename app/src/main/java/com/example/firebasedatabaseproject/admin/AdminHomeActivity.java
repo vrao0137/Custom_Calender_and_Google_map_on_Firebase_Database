@@ -22,6 +22,7 @@ import com.example.firebasedatabaseproject.admin.adapter.AllUserListAdapter;
 import com.example.firebasedatabaseproject.admin.adapter.ExpandableListAdapter;
 import com.example.firebasedatabaseproject.admin.model.User;
 import com.example.firebasedatabaseproject.databinding.ActivityAdminHomeBinding;
+import com.example.firebasedatabaseproject.service.Constants;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -122,14 +123,14 @@ public class AdminHomeActivity extends AppCompatActivity implements OnListItemCl
                     String UuserName = dataSnapshot.child("userName").getValue(String.class);
                     String UuserUID = dataSnapshot.child("userUID").getValue(String.class);
                     String Ddepartment = dataSnapshot.child("department").getValue(String.class);
-                    lstAllUsers.add(new User(Eemail,MmobileNumber,Ppassword,UuserName,UuserUID,Ddepartment));
+                    lstAllUsers.add(new User(Eemail,MmobileNumber,Ppassword,UuserName,UuserUID,Ddepartment,"false"));
                     for (int i =0; i<lstAllUsers.size(); i++){
                         if (lstAllUsers.get(i).getEmail().equals("vishalrao546@gmail.com")){
-                            lstAdminDatails.add(new User(Eemail,MmobileNumber,Ppassword,UuserName,UuserUID,Ddepartment));
+                            lstAdminDatails.add(new User(Eemail,MmobileNumber,Ppassword,UuserName,UuserUID,Ddepartment,"false"));
                             lstAllUsers.remove(i);
                         }
                     }
-                    DemoList.add(new User(Eemail,MmobileNumber,Ppassword,UuserName,UuserUID,Ddepartment));
+                    DemoList.add(new User(Eemail,MmobileNumber,Ppassword,UuserName,UuserUID,Ddepartment,"false"));
                 }
                 binding.rcvUsersList.setAdapter(allUserListAdapter);
             }

@@ -1,14 +1,44 @@
 package com.example.firebasedatabaseproject.model;
 
+import com.example.firebasedatabaseproject.service.Constants;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class NotesDataModel {
+    @SerializedName(Constants.PROJECTNAME)
+    @Expose
     private String projectName;
+
+    @SerializedName(Constants.DATE)
+    @Expose
     private String date;
+
+    @SerializedName(Constants.DAY)
+    @Expose
     private String day;
+
+    @SerializedName(Constants.INTIME)
+    @Expose
     private String inTime;
+
+    @SerializedName(Constants.OUTTIME)
+    @Expose
     private String outTime;
+
+    @SerializedName(Constants.HOURS)
+    @Expose
     private String workedHours;
+
+    @SerializedName(Constants.TASK)
+    @Expose
     private String task;
+
+    @SerializedName(Constants.MONTH)
+    @Expose
     private String month;
+
+    @SerializedName(Constants.UNIQKEY)
+    @Expose
     private String uniQKey;
 
     public String getProjectName() { return projectName; }

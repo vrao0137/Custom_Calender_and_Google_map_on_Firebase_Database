@@ -17,7 +17,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     ActivityWelcomeBinding binding;
     Context context;
     private long pressedTime;
-    WelcomeViewModel welcomeViewModel;
+  //  WelcomeViewModel welcomeViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +25,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         binding = ActivityWelcomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        welcomeViewModel = ViewModelProviders.of(this).get(WelcomeViewModel.class);
+       // welcomeViewModel = ViewModelProviders.of(this).get(WelcomeViewModel.class);
         initialise();
         /*ActivityWelcomeBinding binding= DataBindingUtil.setContentView(this,R.layout.activity_welcome);
         binding.setWelcomeViewModel(new WelcomeViewModel());
@@ -44,13 +44,13 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void loginButton(){
-        welcomeViewModel.onSingInClicked(WelcomeActivity.this);
-       // startActivity(new Intent(context, LoginActivity.class));
+       // welcomeViewModel.onSingInClicked(WelcomeActivity.this);
+        startActivity(new Intent(context, LoginActivity.class));
        // finish();
     }
 
     private void SingInButton(){
-        welcomeViewModel.onSingUpClicked(WelcomeActivity.this);
+       // welcomeViewModel.onSingUpClicked(WelcomeActivity.this);
         startActivity(new Intent(context, SingUpActivity.class));
        // finish();
     }

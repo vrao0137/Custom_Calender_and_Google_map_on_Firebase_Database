@@ -38,8 +38,12 @@ import com.example.firebasedatabaseproject.databinding.DialogPickerBinding;
 import com.example.firebasedatabaseproject.databinding.PopupDialogBinding;
 import com.example.firebasedatabaseproject.databinding.UpdatePickerBinding;
 import com.example.firebasedatabaseproject.model.NotesDataModel;
+import com.example.firebasedatabaseproject.service.AuthAppRepository;
 import com.example.firebasedatabaseproject.viewmodelss.AddNotesDataViewModel;
+import com.example.firebasedatabaseproject.viewmodelss.DeleteNotesViewModel;
+import com.example.firebasedatabaseproject.viewmodelss.LogOutViewModel;
 import com.example.firebasedatabaseproject.viewmodelss.NotesDataViewModel;
+import com.example.firebasedatabaseproject.viewmodelss.UpdateNotesViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -83,6 +87,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private PrograssBar prograssBar;
     NotesDataViewModel notesDataViewModel;
     AddNotesDataViewModel addNotesDataViewModel;
+    DeleteNotesViewModel deleteNotesViewModel;
+    UpdateNotesViewModel updateNotesViewModel;
+    LogOutViewModel logOutViewModel;
     private ArrayList<NotesDataModel> newArrayListIs = new ArrayList<>();
 
     @Override
@@ -94,8 +101,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         addNotesDataViewModel = ViewModelProviders.of(this).get(AddNotesDataViewModel.class);
 
         notesDataViewModel = ViewModelProviders.of(this).get(NotesDataViewModel.class);
+
+        deleteNotesViewModel = ViewModelProviders.of(this).get(DeleteNotesViewModel.class);
+
+        updateNotesViewModel = ViewModelProviders.of(this).get(UpdateNotesViewModel.class);
+
+        logOutViewModel = ViewModelProviders.of(this).get(LogOutViewModel.class);
         getData();
-        Log.e("onCreate","onCreate");
         /*android_id = Settings.Secure.getString(getApplicationContext().getContentResolver(),
                 Settings.Secure.ANDROID_ID);*/
     }
@@ -123,7 +135,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         currenUserKey = currentUser.getUid();
         initialise();
         getData();
-        Log.e("onResume","onResume");
 
         binding.rcvListData.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, true));
         userHeadingDataAdapter = new UserHeadingDataAdapter(context,lstNotesData,this);
@@ -303,6 +314,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         databaseReference.child(sKey).child("uniqKey").setValue(sKey);*/
 
                         //Clear adit text value
+
                      /*   pickerBinding.edtProjectName.setText("");
                         pickerBinding.edtDate.setText("");
                         pickerBinding.edtInTime.setText("");
@@ -503,7 +515,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         new java.util.TimerTask() {
                                             @Override
                                             public void run() {
-                                                auth.signOut();
+                                                logOutViewModel.logOut();
+                                               // auth.signOut();
                                                 dismissProgressHud();
                                                 startActivity(new Intent(MainActivity.this, LoginActivity.class));
                                                 finish();
@@ -558,13 +571,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             case R.id.deleteNote:
                                 popActDeact.dismiss();
                                 String uniqKey = lstNotesData.get(position).getUniQKey();
-                                String key = databaseReference.getRef().getKey();
                                 new AlertDialog.Builder(context)
                                         .setMessage("Are you sure that you want to delete this Note?")
                                         .setCancelable(false)
                                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {
-                                                databaseReference.orderByChild("uniqKey").equalTo(uniqKey).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                deleteNotesViewModel.deleteNote(uniqKey);
+                                                userHeadingDataAdapter.notifyDataSetChanged();
+                                                /*databaseReference.orderByChild("uniqKey").equalTo(uniqKey).addListenerForSingleValueEvent(new ValueEventListener() {
                                                     @Override
                                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                                         for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
@@ -578,7 +592,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                                         Utils.showToastMessage(MainActivity.this,"onCancelled"+databaseError.toException());
                                                         Log.e("onCancelled", "", databaseError.toException());
                                                     }
-                                                });
+                                                });*/
                                             }
                                         })
                                         .setNegativeButton("No", null)
@@ -650,7 +664,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 UpdateButton.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        databaseReference.orderByChild("uniqKey").equalTo(getUniKey).addValueEventListener(new ValueEventListener() {
+                                        String pProjectName = UpdateProject.getText().toString().trim();
+                                        String dDate = UpdateDate.getText().toString().trim();
+                                        String iInTime = UpdateInTime.getText().toString().trim();
+                                        String oOutTime = UpdateOutTime.getText().toString().trim();
+                                        String hHours = UpdateHour.getText().toString().trim();
+                                        String tTask = UpdateTask.getText().toString().trim();
+
+                                        updateNotesViewModel.updateNote(getUniKey,pProjectName,dDate,iInTime,oOutTime,hHours,dayOfTheWeek,mMonth,tTask);
+                                        userHeadingDataAdapter.notifyDataSetChanged();
+                                        dialog.dismiss();
+
+                                        /*databaseReference.orderByChild("uniqKey").equalTo(getUniKey).addValueEventListener(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                                 if (dataSnapshot.exists()){
@@ -683,7 +708,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             public void onCancelled(@NonNull DatabaseError databaseError) {
                                                 Utils.showToastMessage(MainActivity.this,"onCancelled"+databaseError.getMessage());
                                             }
-                                        });
+                                        });*/
                                     }
                                 });
                                 dialog.show();

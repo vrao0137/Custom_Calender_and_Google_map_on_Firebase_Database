@@ -197,7 +197,7 @@ public class UserShowDetailsDataActivity extends AppCompatActivity {
                 }
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
                 String ABC = gson.toJson(lstUserDetailsData);
-                Log.e("lstUserDetailsData","123 "+ABC);
+                Log.e("ListUserDataIs",":"+ABC);
             }
 
             @Override

@@ -4,24 +4,23 @@ import android.app.Application;
 import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.firebasedatabaseproject.LoginActivity;
 import com.example.firebasedatabaseproject.MainActivity;
-import com.example.firebasedatabaseproject.PrograssBar;
-import com.example.firebasedatabaseproject.UserShowDetailsDataActivity;
+import com.example.firebasedatabaseproject.R;
 import com.example.firebasedatabaseproject.Utils;
 import com.example.firebasedatabaseproject.admin.AdminDashboardActivity;
-import com.example.firebasedatabaseproject.admin.AdminHomeActivity;
-import com.example.firebasedatabaseproject.admin.UsersListDataActivity;
+import com.example.firebasedatabaseproject.admin.UsersListActivity;
 import com.example.firebasedatabaseproject.admin.model.User;
 import com.example.firebasedatabaseproject.model.NotesDataModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -32,12 +31,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 public class AuthAppRepository {
@@ -53,46 +47,24 @@ public class AuthAppRepository {
     private ArrayList<NotesDataModel> mmUserDataModel = new ArrayList<>();
     private MutableLiveData<List<NotesDataModel>> mutableLiveDataUserDataModel = new MutableLiveData<>();
 
-    private FirebaseDatabase firebaseDatabase = Utils.getDatabase();
+    private ArrayList<User> mmAllUserList = new ArrayList<>();
+    private MutableLiveData<List<User>> mutableLiveDataAllUsersList = new MutableLiveData<>();
+
+    FirebaseDatabase firebaseDatabase; //= Utils.getDatabase();
     FirebaseUser currentUser;
-    private DatabaseReference databaseReference;
-    String currenUserKey = "";
+    DatabaseReference databaseReference;
     String Uniq_I_D = "";
     String Uniq_K_e_e = "";
-
-    ArrayList<User> lstAllUsers = new ArrayList<>();
-    List<String> listDataHeader;
-    HashMap<String, List<User>> listDataChild;
-    private MutableLiveData<HashMap<String, List<User>>> mutableLiveDataAllUsers;
-
-    //Child List
-    List<User> newAndroidList = new ArrayList<User>();
-    List<User> newAngularList = new ArrayList<User>();
-    List<User> newJavaList = new ArrayList<User>();
-    List<User> newHRList = new ArrayList<User>();
-    List<User> newAdminList = new ArrayList<User>();
-    List<User> newMarketingList = new ArrayList<User>();
-    List<User> newManagementList = new ArrayList<User>();
-
-    //Child HashSet List
-    HashSet<User> hashAndroidList = new HashSet<User>();
-    HashSet<User> hashAngularList = new HashSet<User>();
-    HashSet<User> hashJavaList = new HashSet<User>();
-    HashSet<User> hashHRList = new HashSet<User>();
-    HashSet<User> hashAdminList = new HashSet<User>();
-    HashSet<User> hashMarketingList = new HashSet<User>();
-    HashSet<User> hashManagementList = new HashSet<User>();
 
     public AuthAppRepository(Application application){
         this.application = application;
         this.auth = FirebaseAuth.getInstance();
         this.firebaseAuth = FirebaseAuth.getInstance();
+        this.firebaseDatabase = Utils.getDatabase();
+        this.firebaseDatabase = firebaseDatabase.getInstance();
+        this.currentUser = firebaseAuth.getCurrentUser();
         this.userLiveData = new MutableLiveData<>();
         this.loggedOutLiveData = new MutableLiveData<>();
-
-        this.currentUser = currentUser;
-        this.databaseReference = databaseReference;
-        this.firebaseDatabase = firebaseDatabase;
 
         if (firebaseAuth.getCurrentUser() != null) {
             userLiveData.postValue(firebaseAuth.getCurrentUser());
@@ -100,138 +72,42 @@ public class AuthAppRepository {
         }
     }
 
-/*    public MutableLiveData<HashMap<String, List<User>>> getMutableLiveDataAllUsers(){
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference().child("users");
-        databaseReference.keepSynced(true);
-
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                lstAllUsers.clear();
-
-                hashAndroidList.clear();
-                hashAngularList.clear();
-                hashJavaList.clear();
-                hashHRList.clear();
-                hashAdminList.clear();
-                hashMarketingList.clear();
-                hashManagementList.clear();
-
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    String eEmail = dataSnapshot.child("email").getValue(String.class);
-                    String mMobileNumber = dataSnapshot.child("mobileNumber").getValue(String.class);
-                    String pPassword = dataSnapshot.child("password").getValue(String.class);
-                    String uUserName = dataSnapshot.child("userName").getValue(String.class);
-                    String uUserUID = dataSnapshot.child("userUID").getValue(String.class);
-                    String dDepartment = dataSnapshot.child("department").getValue(String.class);
-                    lstAllUsers.add(new User(eEmail, mMobileNumber, pPassword, uUserName, uUserUID, dDepartment));
-
-                    for (User obj1: lstAllUsers){
-                        if (obj1.getDepartment().equals("Android")){
-                            hashAndroidList.add(obj1);
-                        }else if (obj1.getDepartment().equals("Angular")){
-                            hashAngularList.add(obj1);
-                        }else if (obj1.getDepartment().equals("Java")){
-                            hashJavaList.add(obj1);
-                        }else if (obj1.getDepartment().equals("HR")){
-                            hashHRList.add(obj1);
-                        }else if (obj1.getDepartment().equals("Admin")){
-                            hashAdminList.add(obj1);
-                        }else if (obj1.getDepartment().equals("Marketing")){
-                            hashMarketingList.add(obj1);
-                        }else if (obj1.getDepartment().equals("Management")){
-                            hashManagementList.add(obj1);
-                        }
-                    }
-                }
-
-                Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                String ABC = gson.toJson(lstAllUsers);
-                Log.e("androidList",""+ABC);
-
-                // preparing list data
-                listDataHeader = new ArrayList<String>();
-                listDataChild = new HashMap<String, List<User>>();
-
-                mutableLiveDataAllUsers = new MutableLiveData<HashMap<String, List<User>>>();
-
-                listDataHeader.add("Android");
-                listDataHeader.add("Angular");
-                listDataHeader.add("Java");
-                listDataHeader.add("HR");
-                listDataHeader.add("Admin");
-                listDataHeader.add("Marketing");
-                listDataHeader.add("Management");
-
-                newAndroidList.clear();
-                newAndroidList.addAll(hashAndroidList);
-
-                newAngularList.clear();
-                newAngularList.addAll(hashAngularList);
-
-                newJavaList.clear();
-                newJavaList.addAll(hashJavaList);
-
-                newHRList.clear();
-                newHRList.addAll(hashHRList);
-
-                newAdminList.clear();
-                newAdminList.addAll(hashAdminList);
-
-                newMarketingList.clear();
-                newMarketingList.addAll(hashMarketingList);
-
-                newManagementList.clear();
-                newManagementList.addAll(hashManagementList);
-
-                listDataChild.put(listDataHeader.get(0), newAndroidList);
-                listDataChild.put(listDataHeader.get(1), newAngularList);
-                listDataChild.put(listDataHeader.get(2), newJavaList);
-                listDataChild.put(listDataHeader.get(3), newHRList);
-                listDataChild.put(listDataHeader.get(4), newAdminList);
-                listDataChild.put(listDataHeader.get(5), newMarketingList);
-                listDataChild.put(listDataHeader.get(6), newManagementList);
-                mutableLiveDataAllUsers.setValue(listDataChild);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Utils.showToastMessage(application,""+error.getMessage());
-            }
-        });
-       return mutableLiveDataAllUsers;
-    }*/
-
     public void userDetails(String U_I_D, String Un_q_Key){
         Uniq_I_D = U_I_D;
         Uniq_K_e_e = Un_q_Key;
     }
 
     public MutableLiveData<List<NotesDataModel>> getUserDetailsMutableLiveData(){
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference().child("users").child(Uniq_I_D).child("UserTable");
+      //  firebaseDatabase = FirebaseDatabase.getInstance();
+      //  currentUser = FirebaseAuth.getInstance().getCurrentUser();
+      //  firebaseAuth = FirebaseAuth.getInstance();
+
+        String currentUserUID = currentUser.getUid();
+
+        databaseReference = firebaseDatabase.getReference().child(Constants.USERS).child(currentUserUID).child(Constants.USERTABLE);
         databaseReference.keepSynced(true);
-        databaseReference.orderByChild("uniqKey").equalTo(Uniq_K_e_e).addValueEventListener(new ValueEventListener() {
+
+    /*    firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference().child("users").child(Uniq_I_D).child("UserTable");
+        databaseReference.keepSynced(true);*/
+
+        databaseReference.orderByChild(Constants.UNIQKEY).equalTo(Uniq_K_e_e).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 mmUserDataModel.clear();
-                String ABC = "";
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()){
-                    String pProjectName = dataSnapshot.child("projectName").getValue(String.class);
-                    String dDate = dataSnapshot.child("date").getValue(String.class);
-                    String iInTime = dataSnapshot.child("inTime").getValue(String.class);
-                    String oOutTime = dataSnapshot.child("outTime").getValue(String.class);
-                    String hHours = dataSnapshot.child("hours").getValue(String.class);
-                    String dayOfTheWeek = dataSnapshot.child("day").getValue(String.class);
-                    String mMonth = dataSnapshot.child("month").getValue(String.class);
-                    String tTask = dataSnapshot.child("task").getValue(String.class);
-                    String sKey = dataSnapshot.child("uniqKey").getValue(String.class);
+                    String pProjectName = dataSnapshot.child(Constants.PROJECTNAME).getValue(String.class);
+                    String dDate = dataSnapshot.child(Constants.DATE).getValue(String.class);
+                    String iInTime = dataSnapshot.child(Constants.INTIME).getValue(String.class);
+                    String oOutTime = dataSnapshot.child(Constants.OUTTIME).getValue(String.class);
+                    String hHours = dataSnapshot.child(Constants.HOURS).getValue(String.class);
+                    String dayOfTheWeek = dataSnapshot.child(Constants.DAY).getValue(String.class);
+                    String mMonth = dataSnapshot.child(Constants.MONTH).getValue(String.class);
+                    String tTask = dataSnapshot.child(Constants.TASK).getValue(String.class);
+                    String sKey = dataSnapshot.child(Constants.UNIQKEY).getValue(String.class);
                     mmUserDataModel.add(new NotesDataModel(pProjectName, dDate, iInTime, oOutTime, hHours, dayOfTheWeek, mMonth, tTask, sKey));
-                    ABC = pProjectName;
                 }
                 mutableLiveDataUserDataModel.setValue(mmUserDataModel);
-                Log.e("!@#$$#@",""+ABC);
             }
 
             @Override
@@ -242,11 +118,40 @@ public class AuthAppRepository {
         return mutableLiveDataUserDataModel;
     }
 
+    public MutableLiveData<List<User>> getAllUsersList(){
+        databaseReference = firebaseDatabase.getReference().child(Constants.USERS);
+        databaseReference.keepSynced(true);
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mmAllUserList.clear();
+                for (DataSnapshot Snapshot : dataSnapshot.getChildren()){
+                    String Email = Snapshot.child(Constants.EMAIL).getValue(String.class);
+                    String Password = Snapshot.child(Constants.PASSWORD).getValue(String.class);
+                    String UserName = Snapshot.child(Constants.USER_NAME).getValue(String.class);
+                    String MobileNo = Snapshot.child(Constants.MOBILE_NO).getValue(String.class);
+                    String UserUid = Snapshot.child(Constants.USER_UIID).getValue(String.class);
+                    String Role = Snapshot.child(Constants.ROLE).getValue(String.class);
+                    String Active = Snapshot.child(Constants.IS_ACTIVE).getValue(String.class);
+
+                    mmAllUserList.add(new User(Email,Password,UserName,MobileNo,UserUid,Role,Active));
+                }
+                mutableLiveDataAllUsersList.setValue(mmAllUserList);
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Utils.showToastMessage(application,"onCancelled"+databaseError.getMessage());
+            }
+        });
+
+      return mutableLiveDataAllUsersList;
+    }
+
     public MutableLiveData<List<NotesDataModel>> getMutableLiveData(){
-        firebaseAuth = FirebaseAuth.getInstance();
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        currenUserKey = currentUser.getUid();
-        databaseReference = firebaseDatabase.getReference().child("users").child(currenUserKey).child("UserTable");
+      //  firebaseAuth = FirebaseAuth.getInstance();
+        String currentUserUID = currentUser.getUid();
+        databaseReference = firebaseDatabase.getReference().child(Constants.USERS).child(currentUserUID).child(Constants.USERTABLE);
         databaseReference.keepSynced(true);
 
         databaseReference.addValueEventListener(new ValueEventListener() {
@@ -254,15 +159,15 @@ public class AuthAppRepository {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 mmDeveloperModelmist.clear();
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()){
-                    String pProjectName = dataSnapshot.child("projectName").getValue(String.class);
-                    String dDate = dataSnapshot.child("date").getValue(String.class);
-                    String iInTime = dataSnapshot.child("inTime").getValue(String.class);
-                    String oOutTime = dataSnapshot.child("outTime").getValue(String.class);
-                    String hHours = dataSnapshot.child("hours").getValue(String.class);
-                    String dayOfTheWeek = dataSnapshot.child("day").getValue(String.class);
-                    String mMonth = dataSnapshot.child("month").getValue(String.class);
-                    String tTask = dataSnapshot.child("task").getValue(String.class);
-                    String sKey = dataSnapshot.child("uniqKey").getValue(String.class);
+                    String pProjectName = dataSnapshot.child(Constants.PROJECTNAME).getValue(String.class);
+                    String dDate = dataSnapshot.child(Constants.DATE).getValue(String.class);
+                    String iInTime = dataSnapshot.child(Constants.INTIME).getValue(String.class);
+                    String oOutTime = dataSnapshot.child(Constants.OUTTIME).getValue(String.class);
+                    String hHours = dataSnapshot.child(Constants.HOURS).getValue(String.class);
+                    String dayOfTheWeek = dataSnapshot.child(Constants.DAY).getValue(String.class);
+                    String mMonth = dataSnapshot.child(Constants.MONTH).getValue(String.class);
+                    String tTask = dataSnapshot.child(Constants.TASK).getValue(String.class);
+                    String sKey = dataSnapshot.child(Constants.UNIQKEY).getValue(String.class);
 
                     mmDeveloperModelmist.add(new NotesDataModel(pProjectName,dDate,iInTime,oOutTime,hHours,dayOfTheWeek,mMonth,tTask,sKey));
                 }
@@ -284,24 +189,44 @@ public class AuthAppRepository {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                if (email.equals("vishalrao546@gmail.com")){
-                                    userLiveData.postValue(firebaseAuth.getCurrentUser());
-                                    Utils.showToastMessage(application.getApplicationContext(),"Welcome to Admin dashboard page");
-                                    String EmialIdAdmin = "Admin";
-                                    Intent intent = new Intent(application, AdminDashboardActivity.class);
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                                    application.startActivity(intent);
-                                    application.onTerminate();
-                                }else {
-                                    userLiveData.postValue(firebaseAuth.getCurrentUser());
-                                    Utils.showToastMessage(application.getApplicationContext(),"Welcome to Home Page");
-                                    Intent myIntent = new Intent(application.getApplicationContext(), MainActivity.class);
-                                    myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                                    application.getApplicationContext().startActivity(myIntent);
-                                    application.onTerminate();
-                                }
+                                userLiveData.postValue(firebaseAuth.getCurrentUser());
+
+                                String currentUserUID = firebaseAuth.getCurrentUser().getUid();
+                                databaseReference = firebaseDatabase.getReference().child(Constants.USERS).child(currentUserUID);
+                                databaseReference.keepSynced(true);
+                                databaseReference.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        String Active = dataSnapshot.child(Constants.IS_ACTIVE).getValue(String.class);
+                                        String Role = dataSnapshot.child(Constants.ROLE).getValue(String.class);
+                                        if (Active.equalsIgnoreCase("true")){
+                                            switch (Role) {
+                                                case Constants.ADMIN:
+                                                    Utils.showToastMessage(application.getApplicationContext(), "Welcome to Admin dashboard page");
+                                                    Intent intent = new Intent(application, UsersListActivity.class);
+                                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                                                    application.startActivity(intent);
+                                                    application.onTerminate();
+                                                    break;
+                                                default:
+                                                    Utils.showToastMessage(application.getApplicationContext(), "Welcome to Home Page");
+                                                    Intent myIntent = new Intent(application.getApplicationContext(), MainActivity.class);
+                                                    myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                                                    application.getApplicationContext().startActivity(myIntent);
+                                                    application.onTerminate();
+                                                    break;
+                                            }
+                                        }else {
+                                            Utils.showToastMessage(application.getApplicationContext(),"Please Contact Us HR ! Your Account is Disable");
+                                        }
+                                    }
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                        Utils.showToastMessage(application,"onCancelled"+databaseError.getMessage());
+                                    }
+                                });
                             } else {
-                                Utils.showToastMessage(application.getApplicationContext(),"Login Failure: " + task.getException().getMessage());
+                                Utils.showToastMessage(application,"Login Failure: " + task.getException().getMessage());
                                 Log.e("LoginFailure",""+ task.getException().getMessage());
                             }
                         }
@@ -310,23 +235,21 @@ public class AuthAppRepository {
     }
 
     public void addNotesData(String pProjectName, String dDate, String iInTime, String oOutTime, String hHours, String dayOfTheWeek, String mMonth, String tTask, String sKey){
-        firebaseAuth = FirebaseAuth.getInstance();
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        currenUserKey = currentUser.getUid();
-        databaseReference = firebaseDatabase.getReference().child("users").child(currenUserKey).child("UserTable");
+       // firebaseAuth = FirebaseAuth.getInstance();
+        String currentUserUID = currentUser.getUid();
+        databaseReference = firebaseDatabase.getReference().child(Constants.USERS).child(currentUserUID).child(Constants.USERTABLE);
         databaseReference.keepSynced(true);
 
-        databaseReference.child(sKey).child("projectName").setValue(pProjectName);
-        databaseReference.child(sKey).child("date").setValue(dDate);
-        databaseReference.child(sKey).child("inTime").setValue(iInTime);
-        databaseReference.child(sKey).child("outTime").setValue(oOutTime);
-        databaseReference.child(sKey).child("hours").setValue(hHours);
-        databaseReference.child(sKey).child("day").setValue(dayOfTheWeek);
-        databaseReference.child(sKey).child("month").setValue(mMonth);
-        databaseReference.child(sKey).child("task").setValue(tTask);
-        databaseReference.child(sKey).child("uniqKey").setValue(sKey);
+        databaseReference.child(sKey).child(Constants.PROJECTNAME).setValue(pProjectName);
+        databaseReference.child(sKey).child(Constants.DATE).setValue(dDate);
+        databaseReference.child(sKey).child(Constants.INTIME).setValue(iInTime);
+        databaseReference.child(sKey).child(Constants.OUTTIME).setValue(oOutTime);
+        databaseReference.child(sKey).child(Constants.HOURS).setValue(hHours);
+        databaseReference.child(sKey).child(Constants.DAY).setValue(dayOfTheWeek);
+        databaseReference.child(sKey).child(Constants.MONTH).setValue(mMonth);
+        databaseReference.child(sKey).child(Constants.TASK).setValue(tTask);
+        databaseReference.child(sKey).child(Constants.UNIQKEY).setValue(sKey);
 
-        Log.e("pProjectName",""+pProjectName);
         Log.e("sKeysKey",""+sKey);
     }
 
@@ -337,13 +260,14 @@ public class AuthAppRepository {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             Utils.showToastMessage(application.getApplicationContext(),"Authentication Successful..."+ task.getException());
-                            generateUser(email, password, fullName, MobileNumber, DmntData);
                             if (task.isSuccessful()) {
                                 userLiveData.postValue(firebaseAuth.getCurrentUser());
-                                Intent myIntent = new Intent(application.getApplicationContext(), MainActivity.class);
+                                generateUser(email, password, fullName, MobileNumber, DmntData);
+                                Utils.showToastMessage(application,application.getResources().getString(R.string.created_user_account));
+                                /*Intent myIntent = new Intent(application.getApplicationContext(), MainActivity.class);
                                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                                 application.getApplicationContext().startActivity(myIntent);
-                                application.onTerminate();
+                                application.onTerminate();*/
                             } else {
                                 Utils.showToastMessage(application.getApplicationContext(),"Registration Failure: " + task.getException().getMessage());
                             }
@@ -355,12 +279,111 @@ public class AuthAppRepository {
     public void generateUser(String username, String password, String fullName, String MoNumber, String DmntData)
     {
         firebaseDatabase = FirebaseDatabase.getInstance();
-        firebaseAuth = FirebaseAuth.getInstance();
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        auth = FirebaseAuth.getInstance();
+        currentUser = auth.getCurrentUser();
         String currentUserUID = currentUser.getUid();
-        databaseReference = firebaseDatabase.getReference().child("users").child(currentUserUID);
-        User user = new User(username, password, fullName, MoNumber,currentUserUID,DmntData); //ObjectClass for Users
+
+        databaseReference = firebaseDatabase.getReference().child(Constants.USERS).child(currentUserUID);
+        User user = new User(username, password, fullName, MoNumber,currentUserUID,DmntData,"false"); //ObjectClass for Users
         databaseReference.setValue(user);
+    }
+
+    public void upDateUserStatus(String userUid, String userStatus){
+        databaseReference = firebaseDatabase.getReference().child(Constants.USERS).child(userUid);
+        databaseReference.keepSynced(true);
+
+        databaseReference.child(userUid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                databaseReference.child(Constants.IS_ACTIVE).setValue(userStatus);
+                Utils.showToastMessage(application,"Status Change Successfull");
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Utils.showToastMessage(application,"onCancelled"+databaseError.getMessage());
+            }
+        });
+    }
+
+    public void updateNote(String getUniKey, String pProjectName, String dDate, String iInTime, String oOutTime, String hHours,String dayOfTheWeek, String mMonth, String tTask){
+       // firebaseDatabase = FirebaseDatabase.getInstance();
+        String currentUserUID = currentUser.getUid();
+
+        databaseReference = firebaseDatabase.getReference().child(Constants.USERS).child(currentUserUID).child(Constants.USERTABLE);
+        databaseReference.keepSynced(true);
+
+        databaseReference.orderByChild(Constants.UNIQKEY).equalTo(getUniKey).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()){
+                        //get the key of the child node that has to be updated
+                        String updateKey = dataSnapshot1.getKey();
+
+                        databaseReference.child(updateKey).child(Constants.PROJECTNAME).setValue(pProjectName);
+                        databaseReference.child(updateKey).child(Constants.DATE).setValue(dDate);
+                        databaseReference.child(updateKey).child(Constants.INTIME).setValue(iInTime);
+                        databaseReference.child(updateKey).child(Constants.OUTTIME).setValue(oOutTime);
+                        databaseReference.child(updateKey).child(Constants.HOURS).setValue(hHours);
+                        databaseReference.child(updateKey).child(Constants.DAY).setValue(dayOfTheWeek);
+                        databaseReference.child(updateKey).child(Constants.MONTH).setValue(mMonth);
+                        databaseReference.child(updateKey).child(Constants.TASK).setValue(tTask);
+                        databaseReference.child(updateKey).child(Constants.UNIQKEY).setValue(getUniKey);
+                    }
+                    Utils.showToastMessage(application,application.getResources().getString(R.string.update_succesfully));
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Utils.showToastMessage(application,"onCancelled"+databaseError.getMessage());
+            }
+        });
+    }
+
+    public void deleteUser(String userUID, String userEmail, String userPassword){
+        AuthCredential credential = EmailAuthProvider.getCredential(userEmail, userPassword);
+        Log.e("userEmail",""+userEmail);
+        Log.e("userPassword",""+userPassword);
+
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        firebaseUser.reauthenticate(credential)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        firebaseUser.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            Utils.showToastMessage(application,application.getResources().getString(R.string.delete));
+                                        }else {
+                                            Utils.showToastMessage(application,"User account deletion unsucessful.");
+                                        }
+                                    }
+                                });
+                    }
+                });
+    }
+
+    public void deleteNote(String uniqKey){
+      //  firebaseDatabase = FirebaseDatabase.getInstance();
+        String currentUserUID = currentUser.getUid();
+        databaseReference = firebaseDatabase.getReference().child(Constants.USERS).child(currentUserUID).child(Constants.USERTABLE);
+        databaseReference.keepSynced(true);
+
+        databaseReference.orderByChild(Constants.UNIQKEY).equalTo(uniqKey).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
+                    appleSnapshot.getRef().removeValue();
+                    Utils.showToastMessage(application,application.getResources().getString(R.string.delete));
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Utils.showToastMessage(application,"onCancelled"+databaseError.toException());
+            }
+        });
     }
 
     public void logOut() {
