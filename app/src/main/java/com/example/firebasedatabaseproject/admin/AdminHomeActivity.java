@@ -1,98 +1,75 @@
 package com.example.firebasedatabaseproject.admin;
 
-import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.core.view.GravityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProviders;
+
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.ExpandableListView;
-import android.widget.Toast;
 
 import com.example.firebasedatabaseproject.LoginActivity;
-import com.example.firebasedatabaseproject.MainActivity;
-import com.example.firebasedatabaseproject.OnListItemClicked;
 import com.example.firebasedatabaseproject.PrograssBar;
 import com.example.firebasedatabaseproject.R;
 import com.example.firebasedatabaseproject.Utils;
-import com.example.firebasedatabaseproject.admin.adapter.AllUserListAdapter;
-import com.example.firebasedatabaseproject.admin.adapter.ExpandableListAdapter;
-import com.example.firebasedatabaseproject.admin.model.User;
-import com.example.firebasedatabaseproject.databinding.ActivityAdminHomeBinding;
-import com.example.firebasedatabaseproject.service.Constants;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.example.firebasedatabaseproject.admin.fragments.DepartmentFragment;
+import com.example.firebasedatabaseproject.admin.fragments.UsersListFragment;
+import com.example.firebasedatabaseproject.databinding.ActivityUsersListBinding;
+import com.example.firebasedatabaseproject.viewmodelss.LogOutViewModel;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-public class AdminHomeActivity extends AppCompatActivity implements OnListItemClicked {
-    private ActivityAdminHomeBinding binding;
-    private FirebaseAuth auth;
-    private PrograssBar prograssBar;
+public class AdminHomeActivity extends AppCompatActivity implements View.OnClickListener {
+    private ActivityUsersListBinding binding;
+    private Context context;
     private long pressedTime;
-    private FirebaseDatabase firebaseDatabase = Utils.getDatabase();
-    private DatabaseReference databaseReference;
-    private AllUserListAdapter allUserListAdapter;
-    ArrayList<User> lstAllUsers = new ArrayList<>();
-    ArrayList<User> lstAdminDatails = new ArrayList<>();
-    ArrayList<User> DemoList = new ArrayList<>();
+    private PrograssBar prograssBar;
+    LogOutViewModel logOutViewModel;
 
-    ExpandableListAdapter listAdapter;
-    List<String> listDataHeader;
-    HashMap<String, List<String>> listDataChild;
+    Fragment selectedFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityAdminHomeBinding.inflate(getLayoutInflater());
+        binding = ActivityUsersListBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        //Get Firebase auth instance
-        auth = FirebaseAuth.getInstance();
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference().child("users");//.child("7eG0An2BsJgyF4aHUWHfq020Qyg1");
-        databaseReference.keepSynced(true);
-
-        binding.rcvUsersList.setLayoutManager(new LinearLayoutManager(AdminHomeActivity.this, RecyclerView.VERTICAL, false));
-        allUserListAdapter = new AllUserListAdapter(AdminHomeActivity.this,lstAllUsers,this);
-        binding.rcvUsersList.setAdapter(allUserListAdapter);
-
-        prepareListData();
-
-        binding.expandableListViewSample.setAdapter(listAdapter);
         initialise();
-    }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
+        logOutViewModel = ViewModelProviders.of(this).get(LogOutViewModel.class);
     }
 
     private void initialise(){
-        getAdminValues();
-        binding.expandableListViewSample.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+        context = this;
+        setDefaultFragemment();
+        binding.drawerButton.setOnClickListener(this);
+        binding.includDrawerAdmin.rlUserList.setOnClickListener(this);
+        binding.includDrawerAdmin.rlSignOut.setOnClickListener(this);
+        binding.includDrawerAdmin.rlHome.setOnClickListener(this);
+    }
 
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                Toast.makeText(getApplicationContext(), listDataHeader.get(groupPosition) + " : " + listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition), Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        });
+    private void setFragments(Fragment fragment, Bundle bundle, boolean addToBackStack) {
+        selectedFragment = fragment;
+        final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        if (bundle != null)
+            fragment.setArguments(bundle);
+        transaction.replace(R.id.frameContainer, fragment, fragment.getClass().getName());
+        if (addToBackStack)
+            transaction.addToBackStack(fragment.getClass().getName());
+        transaction.commit();
+    }
+
+    /*@Override
+    public void onResume(){
+        super.onResume();
+     }*/
+
+    private void setDefaultFragemment() {
+        binding.txvToolbarTitle.setText("DEPARTMENT LIST");
+        setFragments(DepartmentFragment.getNewInstance(1), null, false);
     }
 
     public void startProgressHud() {
@@ -107,95 +84,89 @@ public class AdminHomeActivity extends AppCompatActivity implements OnListItemCl
             prograssBar.dismiss();
     }
 
-    private void getAdminValues(){
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                lstAllUsers.clear();
-                lstAdminDatails.clear();
-                Intent intent = getIntent();
-                String Adminid = intent.getStringExtra("AdminId");
-
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()){
-                    String Eemail = dataSnapshot.child("email").getValue(String.class);
-                    String MmobileNumber = dataSnapshot.child("mobileNumber").getValue(String.class);
-                    String Ppassword = dataSnapshot.child("password").getValue(String.class);
-                    String UuserName = dataSnapshot.child("userName").getValue(String.class);
-                    String UuserUID = dataSnapshot.child("userUID").getValue(String.class);
-                    String Ddepartment = dataSnapshot.child("department").getValue(String.class);
-                    lstAllUsers.add(new User(Eemail,MmobileNumber,Ppassword,UuserName,UuserUID,Ddepartment,"false"));
-                    for (int i =0; i<lstAllUsers.size(); i++){
-                        if (lstAllUsers.get(i).getEmail().equals("vishalrao546@gmail.com")){
-                            lstAdminDatails.add(new User(Eemail,MmobileNumber,Ppassword,UuserName,UuserUID,Ddepartment,"false"));
-                            lstAllUsers.remove(i);
-                        }
-                    }
-                    DemoList.add(new User(Eemail,MmobileNumber,Ppassword,UuserName,UuserUID,Ddepartment,"false"));
-                }
-                binding.rcvUsersList.setAdapter(allUserListAdapter);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Utils.showToastMessage(getApplicationContext(),""+error.getMessage());
-            }
-        });
-    }
-
     @Override
-    public void onItemClicked(int position, View view, String value) {
-        switch (view.getId()) {
-            case R.id.crdUserList:
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.drawerButton:
+                binding.sideDrawer.openDrawer(GravityCompat.START);
+                break;
+
+            case R.id.rlUserList:
+                binding.sideDrawer.closeDrawer(GravityCompat.START);
                 startProgressHud();
-                String UuId = lstAllUsers.get(position).getUserUID();
                 new java.util.Timer().schedule(
                         new java.util.TimerTask() {
                             @Override
                             public void run() {
                                 dismissProgressHud();
-                                Intent intent = new Intent(AdminHomeActivity.this, UsersListDataActivity.class).putExtra("UserUID",UuId);
-                                startActivity(intent);
+                                binding.txvToolbarTitle.setText("USERS LIST");
+                                FragmentManager manager = getSupportFragmentManager();
+                                FragmentTransaction transaction = manager.beginTransaction();
+                                transaction.replace(R.id.frameContainer, new UsersListFragment()).commit();
                             }
                         },
                         1500
                 );
+
+                //setFragments(UsersListFragment.getNewInstance(2), null, false);
+                break;
+
+            case R.id.rlHome:
+                binding.sideDrawer.closeDrawer(GravityCompat.START);
+                startProgressHud();
+                new java.util.Timer().schedule(
+                        new java.util.TimerTask() {
+                            @Override
+                            public void run() {
+                                dismissProgressHud();
+                                binding.txvToolbarTitle.setText("DEPARTMENT LIST");
+                                setFragments(DepartmentFragment.getNewInstance(1), null, false);
+                            }
+                        },
+                        1500
+                );
+
+                /*FragmentManager manager = getSupportFragmentManager();
+                FragmentTransaction transaction = manager.beginTransaction();
+                transaction.replace(R.id.frameContainer, new DepartmentFragment()).commit();*/
+                break;
+
+            case R.id.rlSignOut:
+                binding.sideDrawer.closeDrawer(GravityCompat.START);
+                new AlertDialog.Builder(AdminHomeActivity.this)
+                        .setMessage("Are you sure that you want to Log out?")
+                        .setCancelable(false)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                startProgressHud();
+                                new java.util.Timer().schedule(
+                                        new java.util.TimerTask() {
+                                            @Override
+                                            public void run() {
+                                                logOutViewModel.logOut();
+                                                dismissProgressHud();
+                                                startActivity(new Intent(AdminHomeActivity.this, LoginActivity.class));
+                                                finish();
+                                            }
+                                        },
+                                        1500
+                                );
+                            }
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
                 break;
         }
-    }
-
-    /*
-     * Preparing the list data
-     */
-    private void prepareListData() {
-        listDataHeader = new ArrayList<String>();
-        listDataChild = new HashMap<String, List<String>>();
-
-        // Adding child data
-        listDataHeader.add("Department");
-
-        // Adding child data
-        List<String> department = new ArrayList<String>();
-        department.add("Android");
-        department.add("Angular");
-        department.add("Java");
-        department.add("HR");
-        department.add("Admin");
-        department.add("Marketing");
-        department.add("Management");
-
-        listDataChild.put(listDataHeader.get(0), department); // Header, Child data
     }
 
     @Override
     public void onBackPressed() {
         if (pressedTime + 2000 > System.currentTimeMillis()) {
             super.onBackPressed();
-           // auth.signOut();
-          //  startActivity(new Intent(AdminHomeActivity.this, LoginActivity.class));
-            finish();
-            //finishAffinity();
-        }else
+            finishAffinity();
+        } else {
+           Utils.showToastMessage(context,"Please 2 times press on back button");
+        }
         pressedTime = System.currentTimeMillis();
     }
-
 }

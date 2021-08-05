@@ -8,19 +8,15 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.firebasedatabaseproject.LoginActivity;
 import com.example.firebasedatabaseproject.MainActivity;
 import com.example.firebasedatabaseproject.R;
 import com.example.firebasedatabaseproject.Utils;
-import com.example.firebasedatabaseproject.admin.AdminDashboardActivity;
-import com.example.firebasedatabaseproject.admin.UsersListActivity;
+import com.example.firebasedatabaseproject.admin.AdminHomeActivity;
 import com.example.firebasedatabaseproject.admin.model.User;
 import com.example.firebasedatabaseproject.model.NotesDataModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -28,8 +24,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -134,8 +128,9 @@ public class AuthAppRepository {
                     String UserUid = Snapshot.child(Constants.USER_UIID).getValue(String.class);
                     String Role = Snapshot.child(Constants.ROLE).getValue(String.class);
                     String Active = Snapshot.child(Constants.IS_ACTIVE).getValue(String.class);
+                    String Delete = Snapshot.child(Constants.IS_DELETED).getValue(String.class);
 
-                    mmAllUserList.add(new User(Email,Password,UserName,MobileNo,UserUid,Role,Active));
+                    mmAllUserList.add(new User(Email,Password,UserName,MobileNo,UserUid,Role,Active,Delete));
                 }
                 mutableLiveDataAllUsersList.setValue(mmAllUserList);
             }
@@ -189,8 +184,8 @@ public class AuthAppRepository {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
+                                Log.e("Task","isSuccessful");
                                 userLiveData.postValue(firebaseAuth.getCurrentUser());
-
                                 String currentUserUID = firebaseAuth.getCurrentUser().getUid();
                                 databaseReference = firebaseDatabase.getReference().child(Constants.USERS).child(currentUserUID);
                                 databaseReference.keepSynced(true);
@@ -198,26 +193,33 @@ public class AuthAppRepository {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                         String Active = dataSnapshot.child(Constants.IS_ACTIVE).getValue(String.class);
+                                        String Delete = dataSnapshot.child(Constants.IS_DELETED).getValue(String.class);
                                         String Role = dataSnapshot.child(Constants.ROLE).getValue(String.class);
-                                        if (Active.equalsIgnoreCase("true")){
-                                            switch (Role) {
-                                                case Constants.ADMIN:
-                                                    Utils.showToastMessage(application.getApplicationContext(), "Welcome to Admin dashboard page");
-                                                    Intent intent = new Intent(application, UsersListActivity.class);
-                                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                                                    application.startActivity(intent);
-                                                    application.onTerminate();
-                                                    break;
-                                                default:
-                                                    Utils.showToastMessage(application.getApplicationContext(), "Welcome to Home Page");
-                                                    Intent myIntent = new Intent(application.getApplicationContext(), MainActivity.class);
-                                                    myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                                                    application.getApplicationContext().startActivity(myIntent);
-                                                    application.onTerminate();
-                                                    break;
+                                        Log.e("GETROLE","isSuccessful");
+                                        if (Delete.equalsIgnoreCase("no")){
+                                            Log.e("GETDELETE","isSuccessful");
+                                            if (Active.equalsIgnoreCase("true")){
+                                                switch (Role) {
+                                                    case Constants.ADMIN:
+                                                        Utils.showToastMessage(application.getApplicationContext(), "Welcome to Admin dashboard page");
+                                                        Intent intent = new Intent(application, AdminHomeActivity.class);
+                                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                                                        application.startActivity(intent);
+                                                        application.onTerminate();
+                                                        break;
+                                                    default:
+                                                        Utils.showToastMessage(application.getApplicationContext(), "Welcome to Home Page");
+                                                        Intent myIntent = new Intent(application.getApplicationContext(), MainActivity.class);
+                                                        myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                                                        application.getApplicationContext().startActivity(myIntent);
+                                                        application.onTerminate();
+                                                        break;
+                                                }
+                                            }else {
+                                                Utils.showToastMessage(application.getApplicationContext(),"Please Contact Us HR ! Your Account is Disable");
                                             }
                                         }else {
-                                            Utils.showToastMessage(application.getApplicationContext(),"Please Contact Us HR ! Your Account is Disable");
+                                            Utils.showToastMessage(application.getApplicationContext(),"Please Contact Us HR ! Your Account is Deleted");
                                         }
                                     }
                                     @Override
@@ -264,6 +266,7 @@ public class AuthAppRepository {
                                 userLiveData.postValue(firebaseAuth.getCurrentUser());
                                 generateUser(email, password, fullName, MobileNumber, DmntData);
                                 Utils.showToastMessage(application,application.getResources().getString(R.string.created_user_account));
+                                logOut();
                                 /*Intent myIntent = new Intent(application.getApplicationContext(), MainActivity.class);
                                 myIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                                 application.getApplicationContext().startActivity(myIntent);
@@ -284,7 +287,7 @@ public class AuthAppRepository {
         String currentUserUID = currentUser.getUid();
 
         databaseReference = firebaseDatabase.getReference().child(Constants.USERS).child(currentUserUID);
-        User user = new User(username, password, fullName, MoNumber,currentUserUID,DmntData,"false"); //ObjectClass for Users
+        User user = new User(username, password, fullName, MoNumber,currentUserUID,DmntData,"false","false"); //ObjectClass for Users
         databaseReference.setValue(user);
     }
 
@@ -297,6 +300,74 @@ public class AuthAppRepository {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 databaseReference.child(Constants.IS_ACTIVE).setValue(userStatus);
                 Utils.showToastMessage(application,"Status Change Successfull");
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Utils.showToastMessage(application,"onCancelled"+databaseError.getMessage());
+            }
+        });
+    }
+
+    public void deleteUser(String userUid, String userStatus, String userDelete){
+        //  final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        //  AuthCredential credential = EmailAuthProvider.getCredential(userEmail, userPassword);
+
+        databaseReference = firebaseDatabase.getReference().child(Constants.USERS);
+        databaseReference.keepSynced(true);
+
+        databaseReference.orderByChild(Constants.USER_UIID).equalTo(userUid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()){
+                        //get the key of the child node that has to be updated
+                        String updateKey = dataSnapshot1.getKey();
+
+                        databaseReference.child(updateKey).child(Constants.IS_DELETED).setValue(userDelete);
+                        databaseReference.child(updateKey).child(Constants.IS_ACTIVE).setValue(userStatus);
+                    }
+                    Utils.showToastMessage(application,"User account deleted Successfull");
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Utils.showToastMessage(application,"onCancelled"+databaseError.getMessage());
+            }
+        });
+
+        /*user.reauthenticate(credential)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        user.delete()
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            Log.d("TAG", "User account deleted.");
+                                            Utils.showToastMessage(application,"Deleted User Successfully");
+                                        }else {
+                                            Log.e("","");
+                                            Utils.showToastMessage(application,"This user are not deleted");
+                                        }
+                                    }
+                                });
+
+                    }
+                });*/
+
+    }
+
+    public void upDateActivePendingUsers(String userUid, String userStatus, String userDelete){
+        databaseReference = firebaseDatabase.getReference().child(Constants.USERS).child(userUid);
+        databaseReference.keepSynced(true);
+
+        databaseReference.child(userUid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                databaseReference.child(Constants.IS_ACTIVE).setValue(userStatus);
+                databaseReference.child(Constants.IS_DELETED).setValue(userDelete);
+                Utils.showToastMessage(application,"User Account activated Please Contact to HR?");
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -338,31 +409,6 @@ public class AuthAppRepository {
                 Utils.showToastMessage(application,"onCancelled"+databaseError.getMessage());
             }
         });
-    }
-
-    public void deleteUser(String userUID, String userEmail, String userPassword){
-        AuthCredential credential = EmailAuthProvider.getCredential(userEmail, userPassword);
-        Log.e("userEmail",""+userEmail);
-        Log.e("userPassword",""+userPassword);
-
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-
-        firebaseUser.reauthenticate(credential)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        firebaseUser.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
-                                            Utils.showToastMessage(application,application.getResources().getString(R.string.delete));
-                                        }else {
-                                            Utils.showToastMessage(application,"User account deletion unsucessful.");
-                                        }
-                                    }
-                                });
-                    }
-                });
     }
 
     public void deleteNote(String uniqKey){

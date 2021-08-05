@@ -49,43 +49,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-       <!-- <RelativeLayout
-            android:id="@+id/rlChangeEmail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="8dp"
-            android:padding="6dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="20dp"
-                android:text="CHANGE EMAIL"
-                android:textColor="@color/colorBlack"
-                android:textSize="14dp" />
-
-            <View
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="8dp"
-                android:background="@drawable/ic_baseline_navigate_next_24"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="8dp" />
-        </RelativeLayout>
-
         <View
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
             android:background="@color/colorBlack" />
 
         <RelativeLayout
-            android:id="@+id/rlChangePassword"
+            android:id="@+id/rlHome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:layout_marginTop="8dp"
             android:padding="6dp">
 
@@ -94,7 +66,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="20dp"
-                android:text="CHANGE PASSWORD"
+                android:text="HOME"
                 android:textColor="@color/colorBlack"
                 android:textSize="14dp"
                 android:layout_alignParentLeft="true"
@@ -116,66 +88,6 @@
             android:background="@color/colorBlack" />
 
         <RelativeLayout
-            android:id="@+id/rlDrawerBtnAdmin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:padding="6dp"
-            android:visibility="gone">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="20dp"
-                android:text="SUPER ADMIN"
-                android:textColor="@color/colorBlack"
-                android:textSize="14dp" />
-
-            <View
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="8dp"
-                android:background="@drawable/ic_baseline_navigate_next_24" />
-        </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="@color/colorBlack" />-->
-
-        <!--<RelativeLayout
-            android:id="@+id/rlRemoveUser"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:padding="6dp"
-            android:visibility="visible">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="20dp"
-                android:text="REMOVE USER"
-                android:textColor="@color/colorBlack"
-                android:textSize="14dp" />
-
-            <View
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="8dp"
-                android:background="@drawable/ic_baseline_navigate_next_24" />
-        </RelativeLayout>-->
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="@color/colorBlack" />
-
-        <RelativeLayout
             android:id="@+id/rlUserList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -187,7 +99,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="20dp"
-                android:text="SHOW USERS LIST"
+                android:text="USERS"
                 android:textColor="@color/colorBlack"
                 android:textSize="14dp"
                 android:layout_alignParentLeft="true"

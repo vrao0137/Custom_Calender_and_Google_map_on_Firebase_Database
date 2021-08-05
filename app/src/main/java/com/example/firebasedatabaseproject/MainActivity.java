@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -27,6 +28,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.PopupWindow;
@@ -290,8 +292,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Utils.showToastMessage(MainActivity.this,"Please Enter Task");
                 }else {
                     // String currentTime = new SimpleDateFormat("h:mm a", Locale.getDefault()).format(new Date());
-                    Calendar c = Calendar.getInstance();
-                    String mMonth = String.format(Locale.US,"%tB",c);
+                    /*Calendar c = Calendar.getInstance();
+                    String mMonth = String.format(Locale.US,"%tB",c);*/
+
+                    final Calendar myCalendar = Calendar.getInstance();
+                    DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                            myCalendar.set(Calendar.YEAR, year);
+                            myCalendar.set(Calendar.MONTH, monthOfYear);
+                        }
+                    };
+                    String myFormat = "MMMM yyyy";
+                    SimpleDateFormat my = new SimpleDateFormat(myFormat, Locale.US);
+                    String mMonth = my.format(myCalendar.getTime());
 
                     SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
                     Date d = new Date();

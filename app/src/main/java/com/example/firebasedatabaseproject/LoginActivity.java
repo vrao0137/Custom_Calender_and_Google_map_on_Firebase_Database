@@ -1,21 +1,16 @@
 package com.example.firebasedatabaseproject;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
-import com.example.firebasedatabaseproject.admin.AdminDashboardActivity;
+
 import com.example.firebasedatabaseproject.databinding.ActivityLoginBinding;
-import com.example.firebasedatabaseproject.model.LoginModel;
-import com.example.firebasedatabaseproject.service.Constants;
 import com.example.firebasedatabaseproject.viewmodelss.LoginViewModel;
-import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
     private ActivityLoginBinding binding;
@@ -171,8 +166,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 break;
 
             case R.id.btnLogin:
-                String email = binding.email.getText().toString();
-                final String password = binding.password.getText().toString();
+                String email = binding.email.getText().toString().trim();
+                final String password = binding.password.getText().toString().trim();
                 if (binding.email.getText().toString().trim().isEmpty()){
                     Utils.showToastMessage(LoginActivity.this,"Please Enter Email Address");
                 }else if (binding.password.getText().toString().trim().isEmpty()){
@@ -184,10 +179,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 @Override
                                 public void run() {
                                         loggedInViewModel.login(email, password);
+                                    Log.e("","Button_work");
                                         dismissProgressHud();
                                 }
                             },
-                            1500
+                            3000
                     );
                 }
                // loginData();

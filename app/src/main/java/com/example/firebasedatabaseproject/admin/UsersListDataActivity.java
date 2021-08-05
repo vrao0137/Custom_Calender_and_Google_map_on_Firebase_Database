@@ -20,7 +20,6 @@ import com.example.firebasedatabaseproject.Utils;
 import com.example.firebasedatabaseproject.admin.adapter.ExpandableListAdapter;
 import com.example.firebasedatabaseproject.admin.adapter.ListUsersDataAdapter;
 import com.example.firebasedatabaseproject.admin.model.User;
-import com.example.firebasedatabaseproject.databinding.ActivityAdminHomeBinding;
 import com.example.firebasedatabaseproject.databinding.ActivityUsersListDataBinding;
 import com.example.firebasedatabaseproject.model.ExpandableListMonthAdapter;
 import com.example.firebasedatabaseproject.model.NotesDataModel;
@@ -31,17 +30,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 
 public class UsersListDataActivity extends AppCompatActivity implements OnListItemClicked {
     ActivityUsersListDataBinding binding;

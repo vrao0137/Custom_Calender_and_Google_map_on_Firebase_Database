@@ -2,19 +2,20 @@ package com.example.firebasedatabaseproject.admin.model;
 
 public class User {
 
-    String Email;
-    String Password;
-    String UserName;
-    String MobileNumber;
-    String UserUID;
-    String Department;
-    String IsActive;
+    private String Email;
+    private String Password;
+    private String UserName;
+    private String MobileNumber;
+    private String UserUID;
+    private String Department;
+    private String IsActive;
+    private String IsDeleted;
 
     public User() {
         //Empty Constructor For Firebase
     }
 
-    public User(String email, String password, String userName, String mobileNumber, String userUID, String department, String isActive) {
+    public User(String email, String password, String userName, String mobileNumber, String userUID, String department, String isActive, String isDeleted) {
         Email = email;
         Password = password;
         UserName = userName;
@@ -22,6 +23,7 @@ public class User {
         UserUID = userUID;
         Department = department;
         IsActive = isActive;
+        IsDeleted = isDeleted;
     }
 
     //Getters and Setters
@@ -56,4 +58,8 @@ public class User {
     public void setIsActive(String isActive) {
         IsActive = isActive;
     }
+
+    public String getIsDeleted() { return IsDeleted; }
+
+    public void setIsDeleted(String isDeleted) { IsDeleted = isDeleted; }
 }

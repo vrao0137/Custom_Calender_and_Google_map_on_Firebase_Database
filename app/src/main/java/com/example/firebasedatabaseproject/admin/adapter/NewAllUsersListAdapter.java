@@ -2,7 +2,6 @@ package com.example.firebasedatabaseproject.admin.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,10 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.firebasedatabaseproject.OnListItemClicked;
-import com.example.firebasedatabaseproject.admin.UsersListActivity;
 import com.example.firebasedatabaseproject.admin.model.User;
 import com.example.firebasedatabaseproject.databinding.AllUsersListDesignAdapterBinding;
-import com.example.firebasedatabaseproject.model.NotesDataModel;
 
 import java.util.ArrayList;
 

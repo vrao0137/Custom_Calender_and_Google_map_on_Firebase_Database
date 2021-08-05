@@ -12,6 +12,7 @@
     <style name="spinnerTheme">
         <item name="android:textColor">@color/maroonRed</item>
         <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
     <!-- <string name="app_name">Firebase Auth</string>-->
     <string name="action_sign_in_short">REGISTER</string>
@@ -46,4 +47,5 @@
     <string name="update_succesfully">Update Successfully...</string>
     <string name="delete">Deleted...</string>
     <string name="created_user_account">Your Account Created was Succeccfully Please Contact To HR.</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

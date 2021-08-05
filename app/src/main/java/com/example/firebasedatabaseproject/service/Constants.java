@@ -18,6 +18,7 @@ public class Constants {
 
     public static final String ROLE = "department";
     public static final String IS_ACTIVE = "isActive";
+    public static final String IS_DELETED = "isDeleted";
     public static final String EMAIL = "email";
     public static final String MOBILE_NO = "mobileNumber";
     public static final String PASSWORD = "password";
@@ -26,4 +27,5 @@ public class Constants {
 
     public static final String TRUE = "true";
     public static final String FALSE = "false";
+    public static final String YES = "yes";
 }

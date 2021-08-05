@@ -13,17 +13,24 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".admin.UsersListActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".admin.AdminDeshboardUserDataActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".UserShowDetailsDataActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".admin.AdminUsersListDateActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".WelcomeActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".SplashActivity"
+        <activity android:name=".admin.MonthlyUserListActivity"></activity>
+        <activity
+            android:name=".admin.AdminHomeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".admin.AdminDeshboardUserDataActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".UserShowDetailsDataActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".admin.AdminUsersListDateActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".WelcomeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".SplashActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,18 +38,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".admin.AdminDashboardActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".admin.UsersListDataActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".admin.AdminHomeActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ResetPasswordActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".LoginActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".SingUpActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".admin.UsersListDataActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ResetPasswordActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".LoginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".SingUpActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden" />

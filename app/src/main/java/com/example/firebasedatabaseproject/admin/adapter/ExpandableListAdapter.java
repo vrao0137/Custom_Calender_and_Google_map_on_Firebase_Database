@@ -10,11 +10,8 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
 import com.example.firebasedatabaseproject.R;
-import com.example.firebasedatabaseproject.admin.AdminDashboardActivity;
 import com.example.firebasedatabaseproject.admin.model.User;
-import com.example.firebasedatabaseproject.model.NotesDataModel;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -54,6 +51,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         TextView txtListChild = (TextView) convertView.findViewById(R.id.lblListItem);
 
         txtListChild.setText(childText.getMobileNumber());
+        Log.e("ExpandAdapter ",""+childText.getUserUID());
         return convertView;
     }
 
@@ -86,7 +84,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         String headerTitle = (String) getGroup(groupPosition);
         final String childCount = String.valueOf(getChildrenCount(groupPosition));
-        Log.e("childCount123",""+childCount);
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this._context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = infalInflater.inflate(R.layout.list_group, null);

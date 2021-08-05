@@ -20,7 +20,11 @@ public class UpdateStatusViewModel extends AndroidViewModel{
         authAppRepository.upDateUserStatus(userUid,userStatus);
     }
 
-    public void deleteUser(String userUID, String userEmail, String userPassword) {
-        authAppRepository.deleteUser(userUID, userEmail, userPassword);
+    public void upDateActivePendingUsers(String userUid, String userStatus, String userDelete) {
+        authAppRepository.upDateActivePendingUsers(userUid,userStatus,userDelete);
+    }
+
+    public void deleteUser(String userUID, String userStatus, String userDelete) {
+        authAppRepository.deleteUser(userUID,userStatus,userDelete);
     }
 }

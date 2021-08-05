@@ -38,6 +38,7 @@ public class LoginViewModel extends AndroidViewModel{
 
     public void login(String email, String password) {
         authAppRepository.login(email, password);
+        Log.e("","VIEWMODEL_CALLED_LOGIN");
 
         /*auth = FirebaseAuth.getInstance();
        // currentUser = FirebaseAuth.getInstance().getCurrentUser();
