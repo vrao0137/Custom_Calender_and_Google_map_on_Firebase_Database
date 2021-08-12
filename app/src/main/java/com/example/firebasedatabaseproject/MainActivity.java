@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         userUpdateViewModel = new ViewModelProvider(this).get(UserUpdateViewModel.class);
 
-        logOutViewModel = ViewModelProviders.of(this).get(LogOutViewModel.class);
+        logOutViewModel = new ViewModelProvider(this).get(LogOutViewModel.class);
     }
 
     /*@Override
@@ -164,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         showUserNotesViewModel.getAllNotesUser().observe(this, new Observer<ArrayList<GetUserNotesResponseModel>>() {
             @Override
             public void onChanged(ArrayList<GetUserNotesResponseModel> getUserNotesResponseModels) {
+                lstNotesData.clear();
                 if (getUserNotesResponseModels !=null && !getUserNotesResponseModels.isEmpty()){
                     Log.i(TAG, "If_notesDataModels:- "+getUserNotesResponseModels);
                     lstNotesData.addAll((ArrayList<GetUserNotesResponseModel>) getUserNotesResponseModels);
@@ -172,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     userHeadingDataAdapter.setDeveloperList((ArrayList<GetUserNotesResponseModel>) getUserNotesResponseModels);
                     binding.rcvListData.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, true));
                     binding.rcvListData.setAdapter(userHeadingDataAdapter);
-
+                    userHeadingDataAdapter.notifyDataSetChanged();
                 }else {
                     Utils.showToastMessage(getApplicationContext(),getUserNotesResponseModels.toString());
                     Log.i(TAG, "Else_notesDataModels:- "+getUserNotesResponseModels);
@@ -284,6 +285,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     databaseReference = firebaseDatabase.getReference().child("users").child(currenUserKey).child("UserTable");
                     databaseReference.keepSynced(true);
                     String sKey = databaseReference.push().getKey();
+                    Log.i(TAG,"getKey:- "+sKey);
+
                     //Check condition
                     if (sKey != null){
                         addNotesViewModel.addNotesData(pProjectName, dDate, iInTime, oOutTime, hHours, dayOfTheWeek, mMonth, tTask, sKey);
@@ -474,7 +477,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 binding.edtSearchingText.setVisibility(View.GONE);
                 InputMethodManager immm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 immm.hideSoftInputFromWindow(binding.edtSearchingText.getWindowToken(), 0);
-
 
                 String UniKey = lstNotesData.get(position).getNotesDataResponse().getUniQKey();
                 Intent intent = new Intent(MainActivity.this, UserShowDetailsDataActivity.class).putExtra("U_Key",UniKey).putExtra("U_Id",currenUserKey);

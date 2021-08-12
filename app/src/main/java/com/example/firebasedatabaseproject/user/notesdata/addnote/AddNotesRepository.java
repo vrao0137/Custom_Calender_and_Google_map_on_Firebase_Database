@@ -25,7 +25,6 @@ public class AddNotesRepository {
         String currentUserUID = currentUser.getUid();
         DatabaseReference databaseReference = firebaseDatabase.getReference().child(Constants.USERS).child(currentUserUID).child(Constants.USERTABLE);
         databaseReference.keepSynced(true);
-
         databaseReference.child(sKey).child(Constants.PROJECTNAME).setValue(pProjectName);
         databaseReference.child(sKey).child(Constants.DATE).setValue(dDate);
         databaseReference.child(sKey).child(Constants.INTIME).setValue(iInTime);
