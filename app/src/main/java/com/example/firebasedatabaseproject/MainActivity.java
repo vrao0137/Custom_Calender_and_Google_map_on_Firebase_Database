@@ -1,11 +1,11 @@
 package com.example.firebasedatabaseproject;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -34,28 +34,22 @@ import android.widget.PopupMenu;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
-import com.example.firebasedatabaseproject.adapter.NotesDataAdapter;
-import com.example.firebasedatabaseproject.adapter.UserHeadingDataAdapter;
+import com.example.firebasedatabaseproject.user.adapter.UserHeadingDataAdapter;
 import com.example.firebasedatabaseproject.databinding.DialogPickerBinding;
 import com.example.firebasedatabaseproject.databinding.PopupDialogBinding;
 import com.example.firebasedatabaseproject.databinding.UpdatePickerBinding;
-import com.example.firebasedatabaseproject.model.NotesDataModel;
-import com.example.firebasedatabaseproject.service.AuthAppRepository;
-import com.example.firebasedatabaseproject.viewmodelss.AddNotesDataViewModel;
-import com.example.firebasedatabaseproject.viewmodelss.DeleteNotesViewModel;
-import com.example.firebasedatabaseproject.viewmodelss.LogOutViewModel;
-import com.example.firebasedatabaseproject.viewmodelss.NotesDataViewModel;
-import com.example.firebasedatabaseproject.viewmodelss.UpdateNotesViewModel;
+import com.example.firebasedatabaseproject.user.login.LoginActivity;
+import com.example.firebasedatabaseproject.user.notesdata.AddNotesViewModel;
+import com.example.firebasedatabaseproject.user.notesdata.deletenote.UserNoteDeleteResponseModel;
+import com.example.firebasedatabaseproject.user.notesdata.deletenote.UserNoteDeleteViewModel;
+import com.example.firebasedatabaseproject.user.notesdata.shownotes.GetUserNotesResponseModel;
+import com.example.firebasedatabaseproject.user.notesdata.shownotes.ShowUserNotesViewModel;
+import com.example.firebasedatabaseproject.user.notesdata.updatnotes.UserUpdateViewModel;
+import com.example.firebasedatabaseproject.user.viewmodelss.LogOutViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.example.firebasedatabaseproject.databinding.ActivityMainBinding;
 
 import java.text.SimpleDateFormat;
@@ -64,92 +58,75 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
-import static java.text.DateFormat.getDateTimeInstance;
-
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, OnListItemClicked, LifecycleOwner {
+    private final String TAG = MainActivity.class.getSimpleName();
     private ActivityMainBinding binding;
     private Context context;
-    private ArrayList<NotesDataModel> lstNotesData = new ArrayList<>();
-    private ArrayList<NotesDataModel> filteredArraylist = new ArrayList<>();
+
+    //---------------Firebase Database Refrences---------------------
     private FirebaseDatabase firebaseDatabase = Utils.getDatabase();
     private DatabaseReference databaseReference;
-    private TextView UpdateProject, UpdateDate, UpdateInTime, UpdateOutTime, UpdateHour, UpdateTask;
-    private TextView SaveButton,UpdateButton;
-    private UserHeadingDataAdapter userHeadingDataAdapter;
-    private static String sID = null;
-    private String android_id = "";
-    private PopupMenu popActDeact;
-    private long pressedTime;
     FirebaseAuth auth;
     FirebaseUser currentUser;
     String currenUserKey = "";
+
+    //--------------ArrayListInitialise--------------------------
+    private ArrayList<GetUserNotesResponseModel> lstNotesData = new ArrayList<>();
+    private ArrayList<GetUserNotesResponseModel> filteredArraylist = new ArrayList<>();
+    private ArrayList<GetUserNotesResponseModel> newArrayListIs = new ArrayList<>();
+
+    //-----------Comman Texviews Initialise-------------------------
+    private TextView UpdateProject, UpdateDate, UpdateInTime, UpdateOutTime, UpdateHour, UpdateTask;
+    private TextView SaveButton,UpdateButton;
+    private UserHeadingDataAdapter userHeadingDataAdapter;
+    private PopupMenu popActDeact;
+    private long pressedTime;
+
+    //------------ViewModelsObjects------------------------------
+    private AddNotesViewModel addNotesViewModel;
+    private ShowUserNotesViewModel showUserNotesViewModel;
+    private UserNoteDeleteViewModel userNoteDeleteViewModel;
+    private UserUpdateViewModel userUpdateViewModel;
+    private LogOutViewModel logOutViewModel;
+
+    //--------ProgressBar----------------
     private PrograssBar prograssBar;
-    NotesDataViewModel notesDataViewModel;
-    AddNotesDataViewModel addNotesDataViewModel;
-    DeleteNotesViewModel deleteNotesViewModel;
-    UpdateNotesViewModel updateNotesViewModel;
-    LogOutViewModel logOutViewModel;
-    private ArrayList<NotesDataModel> newArrayListIs = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        initialiseMethods();
+    }
 
-        addNotesDataViewModel = ViewModelProviders.of(this).get(AddNotesDataViewModel.class);
+    private void initialiseMethods(){
+        initialise();
+        viewModelProviders();
+        getUserData();
+        clickListener();
+    }
 
-        notesDataViewModel = ViewModelProviders.of(this).get(NotesDataViewModel.class);
+    private void viewModelProviders(){
+        addNotesViewModel = new ViewModelProvider(this).get(AddNotesViewModel.class);
 
-        deleteNotesViewModel = ViewModelProviders.of(this).get(DeleteNotesViewModel.class);
+        showUserNotesViewModel = new ViewModelProvider(this).get(ShowUserNotesViewModel.class);
 
-        updateNotesViewModel = ViewModelProviders.of(this).get(UpdateNotesViewModel.class);
+        userNoteDeleteViewModel = new ViewModelProvider(this).get(UserNoteDeleteViewModel.class);
+
+        userUpdateViewModel = new ViewModelProvider(this).get(UserUpdateViewModel.class);
 
         logOutViewModel = ViewModelProviders.of(this).get(LogOutViewModel.class);
-        getData();
-        /*android_id = Settings.Secure.getString(getApplicationContext().getContentResolver(),
-                Settings.Secure.ANDROID_ID);*/
     }
 
-    public void getData(){
-        notesDataViewModel.getAllDeveloper().observe(this, new Observer<List<NotesDataModel>>() {
-            @Override
-            public void onChanged(List<NotesDataModel> notesDataModels) {
-                lstNotesData.addAll((ArrayList<NotesDataModel>) notesDataModels);
-                newArrayListIs.addAll((ArrayList<NotesDataModel>) notesDataModels);
-
-                userHeadingDataAdapter.setDeveloperList((ArrayList<NotesDataModel>) notesDataModels);
-                binding.rcvListData.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, true));
-                binding.rcvListData.setAdapter(userHeadingDataAdapter);
-                userHeadingDataAdapter.notifyDataSetChanged();
-            }
-        });
-    }
-
-    @Override
-    public void onResume(){
-        super.onResume();
-        auth = FirebaseAuth.getInstance();
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        currenUserKey = currentUser.getUid();
-        initialise();
-        getData();
-
-        binding.rcvListData.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, true));
-        userHeadingDataAdapter = new UserHeadingDataAdapter(context,lstNotesData,this);
-        binding.rcvListData.setAdapter(userHeadingDataAdapter);
-    }
-
-    @Override
+    /*@Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-    }
+    }*/
 
-    private void initialise() {
-        context = this;
+    private void clickListener(){
         binding.btnAdd.setOnClickListener(this);
         binding.cvBtnSearchData.setOnClickListener(this);
         binding.ivSearchIcon.setOnClickListener(this);
@@ -158,7 +135,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         binding.Usershome.setOnClickListener(this);
         binding.ivPowerButton.setOnClickListener(this);
         binding.ivBack.setOnClickListener(this);
-       // binding.includDrawerAdmin.rlSignOut.setOnClickListener(this);
+    }
+
+    private void initialise() {
+        context = this;
+        auth = FirebaseAuth.getInstance();
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        currenUserKey = currentUser.getUid();
+
+        binding.rcvListData.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, true));
+        userHeadingDataAdapter = new UserHeadingDataAdapter(context,lstNotesData,this);
+        binding.rcvListData.setAdapter(userHeadingDataAdapter);
 
         binding.edtSearchingText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -171,11 +158,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void afterTextChanged(Editable s) { filter(s.toString()); }
         });
 
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        //Initilize database references
-        databaseReference = firebaseDatabase.getReference().child("users").child(currenUserKey).child("UserTable");
-        databaseReference.keepSynced(true);
-        //   getValue();
+    }
+
+    public void getUserData(){
+        showUserNotesViewModel.getAllNotesUser().observe(this, new Observer<ArrayList<GetUserNotesResponseModel>>() {
+            @Override
+            public void onChanged(ArrayList<GetUserNotesResponseModel> getUserNotesResponseModels) {
+                if (getUserNotesResponseModels !=null && !getUserNotesResponseModels.isEmpty()){
+                    Log.i(TAG, "If_notesDataModels:- "+getUserNotesResponseModels);
+                    lstNotesData.addAll((ArrayList<GetUserNotesResponseModel>) getUserNotesResponseModels);
+                    newArrayListIs.addAll((ArrayList<GetUserNotesResponseModel>) getUserNotesResponseModels);
+
+                    userHeadingDataAdapter.setDeveloperList((ArrayList<GetUserNotesResponseModel>) getUserNotesResponseModels);
+                    binding.rcvListData.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, true));
+                    binding.rcvListData.setAdapter(userHeadingDataAdapter);
+
+                }else {
+                    Utils.showToastMessage(getApplicationContext(),getUserNotesResponseModels.toString());
+                    Log.i(TAG, "Else_notesDataModels:- "+getUserNotesResponseModels);
+                }
+            }
+        });
     }
 
     public void startProgressHud() {
@@ -189,41 +192,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (prograssBar != null)
             prograssBar.dismiss();
     }
-
-    /*private void getValue() {
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                //Clear ArrayList
-                lstNotesData.clear();
-                //Use for loop
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()){
-                        //Get value
-                    String pProjectName = dataSnapshot.child("projectName").getValue(String.class);
-                    String dDate = dataSnapshot.child("date").getValue(String.class);
-                    String iInTime = dataSnapshot.child("inTime").getValue(String.class);
-                    String oOutTime = dataSnapshot.child("outTime").getValue(String.class);
-                    String hHours = dataSnapshot.child("hours").getValue(String.class);
-                    String dayOfTheWeek = dataSnapshot.child("day").getValue(String.class);
-                    String mMonth = dataSnapshot.child("month").getValue(String.class);
-                    String tTask = dataSnapshot.child("task").getValue(String.class);
-                    String sKey = dataSnapshot.child("uniqKey").getValue(String.class);
-                        //Add value in arraylist
-                    lstNotesData.add(new NotesDataModel(pProjectName,dDate,iInTime,oOutTime,hHours,dayOfTheWeek,mMonth,tTask,sKey));
-                }
-                Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                String ABC = gson.toJson(lstNotesData);
-                Log.e("GetListTask"," "+ABC);
-                binding.rcvListData.setAdapter(userHeadingDataAdapter);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                //Display Toast
-                Utils.showToastMessage(MainActivity.this,""+error.getMessage());
-            }
-        });
-    }*/
 
     private void showDialog(){
         DialogPickerBinding pickerBinding;
@@ -312,32 +280,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     String dayOfTheWeek = sdf.format(d);
 
                     //Initilize Unique Kay
+                    firebaseDatabase = FirebaseDatabase.getInstance();
+                    databaseReference = firebaseDatabase.getReference().child("users").child(currenUserKey).child("UserTable");
+                    databaseReference.keepSynced(true);
                     String sKey = databaseReference.push().getKey();
                     //Check condition
                     if (sKey != null){
-                        addNotesDataViewModel.addNotesData(pProjectName, dDate, iInTime, oOutTime, hHours, dayOfTheWeek, mMonth, tTask, sKey);
-
-                        /*databaseReference.child(sKey).child("projectName").setValue(pProjectName);
-                        databaseReference.child(sKey).child("date").setValue(dDate);
-                        databaseReference.child(sKey).child("inTime").setValue(iInTime);
-                        databaseReference.child(sKey).child("outTime").setValue(oOutTime);
-                        databaseReference.child(sKey).child("hours").setValue(hHours);
-                        databaseReference.child(sKey).child("day").setValue(dayOfTheWeek);
-                        databaseReference.child(sKey).child("month").setValue(mMonth);
-                        databaseReference.child(sKey).child("task").setValue(tTask);
-                        databaseReference.child(sKey).child("uniqKey").setValue(sKey);*/
-
-                        //Clear adit text value
-
-                     /*   pickerBinding.edtProjectName.setText("");
-                        pickerBinding.edtDate.setText("");
-                        pickerBinding.edtInTime.setText("");
-                        pickerBinding.edtOutTime.setText("");
-                        pickerBinding.edtHours.setText("");
-                        pickerBinding.edtDailyTast.setText("");*/
+                        addNotesViewModel.addNotesData(pProjectName, dDate, iInTime, oOutTime, hHours, dayOfTheWeek, mMonth, tTask, sKey);
                     }
                     Utils.showToastMessage(MainActivity.this,"Task Save ");
-                    userHeadingDataAdapter.notifyDataSetChanged();
+                   // userHeadingDataAdapter.notifyDataSetChanged();
                     dialog.dismiss();
                 }
             }
@@ -347,11 +299,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void filter(String text) {
-        ArrayList<NotesDataModel> temp = new ArrayList();
-        for (NotesDataModel d : lstNotesData) {
-            if ((d.getProjectName().toLowerCase() + " " +
-                    d.getProjectName().toLowerCase() + " " +
-                    d.getProjectName()).contains(text.toLowerCase())) {
+        ArrayList<GetUserNotesResponseModel> temp = new ArrayList();
+        for (GetUserNotesResponseModel d : lstNotesData) {
+            if ((d.getNotesDataResponse().getProjectName().toLowerCase() + " " +
+                    d.getNotesDataResponse().getProjectName().toLowerCase() + " " +
+                    d.getNotesDataResponse().getProjectName()).contains(text.toLowerCase())) {
                 temp.add(d);
             }
         }
@@ -361,6 +313,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             filteredArraylist = temp;
             if (filteredArraylist.size() > 0) {
                 binding.txvNoDataFound.setVisibility(View.GONE);
+                userHeadingDataAdapter.setDeveloperList((ArrayList<GetUserNotesResponseModel>) filteredArraylist);
             } else
                 binding.txvNoDataFound.setVisibility(View.VISIBLE);
         }
@@ -403,10 +356,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         txvSortByAlphabate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Collections.sort(lstNotesData, new Comparator<NotesDataModel>() {
+                Collections.sort(lstNotesData, new Comparator<GetUserNotesResponseModel>() {
                     @Override
-                    public int compare(NotesDataModel item1, NotesDataModel item2) {
-                        return item1.getTask().compareToIgnoreCase(item2.getTask());
+                    public int compare(GetUserNotesResponseModel item1, GetUserNotesResponseModel item2) {
+                        return item1.getNotesDataResponse().getTask().compareToIgnoreCase(item2.getNotesDataResponse().getTask());
                     }
                 });
                 userHeadingDataAdapter.notifyDataSetChanged();
@@ -417,10 +370,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         txvSortByDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Collections.sort(lstNotesData, new Comparator<NotesDataModel>() {
+                Collections.sort(lstNotesData, new Comparator<GetUserNotesResponseModel>() {
                     @Override
-                    public int compare(NotesDataModel item1, NotesDataModel item2) {
-                        return item1.getDate().compareToIgnoreCase(item2.getDate());
+                    public int compare(GetUserNotesResponseModel item1, GetUserNotesResponseModel item2) {
+                        return item1.getNotesDataResponse().getDate().compareToIgnoreCase(item2.getNotesDataResponse().getDate());
                     }
                 });
                 Collections.reverse(lstNotesData);
@@ -445,6 +398,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 binding.ivPowerButton.setVisibility(View.VISIBLE);
                 binding.ivBack.setVisibility(View.GONE);
                 binding.edtSearchingText.setVisibility(View.GONE);
+                userHeadingDataAdapter.setDeveloperList((ArrayList<GetUserNotesResponseModel>) lstNotesData);
                 InputMethodManager immmm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 immmm.hideSoftInputFromWindow(binding.edtSearchingText.getWindowToken(), 0);
                 break;
@@ -479,43 +433,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.drawerButton:
                 binding.sideDrawer.openDrawer(GravityCompat.START);
                 break;
-
-            /*case R.id.rlRemoveUser:
-                binding.sideDrawer.closeDrawer(GravityCompat.START);
-                new AlertDialog.Builder(context)
-                        .setMessage("Are you sure that you want to Remove Your profile?")
-                        .setCancelable(false)
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                startProgressHud();
-                                new java.util.Timer().schedule(
-                                        new java.util.TimerTask() {
-                                            @Override
-                                            public void run() {
-                                                if (currentUser != null) {
-                                                    currentUser.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                @Override
-                                                                public void onComplete(@NonNull Task<Void> task) {
-                                                                    if (task.isSuccessful()) {
-                                                                        Toast.makeText(MainActivity.this, "Your profile is deleted !", Toast.LENGTH_SHORT).show();
-                                                                        dismissProgressHud();
-                                                                        startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                                                                        finish();
-                                                                    } else {
-                                                                        Toast.makeText(MainActivity.this, "Failed to delete your account!", Toast.LENGTH_SHORT).show();
-                                                                    }
-                                                                }
-                                                            });
-                                                }
-                                            }
-                                        },
-                                        1500
-                                );
-                            }
-                        })
-                        .setNegativeButton("No", null)
-                        .show();
-                break;*/
 
             case R.id.ivPowerButton:
              //   binding.sideDrawer.closeDrawer(GravityCompat.START);
@@ -558,9 +475,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 InputMethodManager immm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 immm.hideSoftInputFromWindow(binding.edtSearchingText.getWindowToken(), 0);
 
-                getData();
 
-                String UniKey = lstNotesData.get(position).getUniQKey();
+                String UniKey = lstNotesData.get(position).getNotesDataResponse().getUniQKey();
                 Intent intent = new Intent(MainActivity.this, UserShowDetailsDataActivity.class).putExtra("U_Key",UniKey).putExtra("U_Id",currenUserKey);
                 startActivity(intent);
                 break;
@@ -584,29 +500,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         switch (item.getItemId()) {
                             case R.id.deleteNote:
                                 popActDeact.dismiss();
-                                String uniqKey = lstNotesData.get(position).getUniQKey();
+                                String uniqKey = lstNotesData.get(position).getNotesDataResponse().getUniQKey();
                                 new AlertDialog.Builder(context)
                                         .setMessage("Are you sure that you want to delete this Note?")
                                         .setCancelable(false)
                                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {
-                                                deleteNotesViewModel.deleteNote(uniqKey);
-                                                userHeadingDataAdapter.notifyDataSetChanged();
-                                                /*databaseReference.orderByChild("uniqKey").equalTo(uniqKey).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                userNoteDeleteViewModel.deleteNote(uniqKey).observe((LifecycleOwner) context,new Observer<UserNoteDeleteResponseModel>() {
                                                     @Override
-                                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                                        for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
-                                                            appleSnapshot.getRef().removeValue();
-                                                            Utils.showToastMessage(MainActivity.this,"Deleted");
+                                                    public void onChanged(UserNoteDeleteResponseModel userNoteDeleteResponseModel) {
+                                                        if (userNoteDeleteResponseModel !=null){
+                                                            Utils.showToastMessage(getApplicationContext(),userNoteDeleteResponseModel.getUniqKey());
+                                                            Log.e(TAG,"userNoteDeleteResponseModel "+userNoteDeleteResponseModel.getUniqKey());
+                                                          //  userHeadingDataAdapter.notifyDataSetChanged();
+                                                        }else {
+                                                            Utils.showToastMessage(getApplicationContext(),userNoteDeleteResponseModel.getError());
                                                         }
-                                                        userHeadingDataAdapter.notifyDataSetChanged();
                                                     }
-                                                    @Override
-                                                    public void onCancelled(DatabaseError databaseError) {
-                                                        Utils.showToastMessage(MainActivity.this,"onCancelled"+databaseError.toException());
-                                                        Log.e("onCancelled", "", databaseError.toException());
-                                                    }
-                                                });*/
+                                                });
+
                                             }
                                         })
                                         .setNegativeButton("No", null)
@@ -632,15 +544,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 UpdateTask = updatePickerBinding.edtUpdateDailyTask;
                                 UpdateButton = updatePickerBinding.txvDialogUpdateBtn;
 
-                                UpdateProject.setText(lstNotesData.get(position).getProjectName());
-                                UpdateDate.setText(lstNotesData.get(position).getDate());
-                                UpdateInTime.setText(lstNotesData.get(position).getDay());
-                                UpdateOutTime.setText(lstNotesData.get(position).getInTime());
-                                UpdateHour.setText(lstNotesData.get(position).getOutTime());
-                                UpdateTask.setText(lstNotesData.get(position).getMonth());
-                                String getUniKey = lstNotesData.get(position).getUniQKey();
-                                String dayOfTheWeek = lstNotesData.get(position).getWorkedHours();
-                                String mMonth = lstNotesData.get(position).getTask();
+                                UpdateProject.setText(lstNotesData.get(position).getNotesDataResponse().getProjectName());
+                                UpdateDate.setText(lstNotesData.get(position).getNotesDataResponse().getDate());
+                                UpdateInTime.setText(lstNotesData.get(position).getNotesDataResponse().getDay());
+                                UpdateOutTime.setText(lstNotesData.get(position).getNotesDataResponse().getInTime());
+                                UpdateHour.setText(lstNotesData.get(position).getNotesDataResponse().getOutTime());
+                                UpdateTask.setText(lstNotesData.get(position).getNotesDataResponse().getMonth());
+                                String getUniKey = lstNotesData.get(position).getNotesDataResponse().getUniQKey();
+                                String dayOfTheWeek = lstNotesData.get(position).getNotesDataResponse().getWorkedHours();
+                                String mMonth = lstNotesData.get(position).getNotesDataResponse().getTask();
 
                                 updatePickerBinding.edtUpdateDate.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -685,44 +597,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                         String hHours = UpdateHour.getText().toString().trim();
                                         String tTask = UpdateTask.getText().toString().trim();
 
-                                        updateNotesViewModel.updateNote(getUniKey,pProjectName,dDate,iInTime,oOutTime,hHours,dayOfTheWeek,mMonth,tTask);
+                                        userUpdateViewModel.updateNote(getUniKey,pProjectName,dDate,iInTime,oOutTime,hHours,dayOfTheWeek,mMonth,tTask).observe((LifecycleOwner) context, new Observer<UserNoteDeleteResponseModel>() {
+                                            @Override
+                                            public void onChanged(UserNoteDeleteResponseModel userNoteDeleteResponseModel) {
+                                                if (userNoteDeleteResponseModel !=null){
+                                                    Utils.showToastMessage(getApplicationContext(),userNoteDeleteResponseModel.getUniqKey());
+                                                }else {
+                                                    Utils.showToastMessage(getApplicationContext(),userNoteDeleteResponseModel.getError());
+                                                }
+                                            }
+                                        });
                                         userHeadingDataAdapter.notifyDataSetChanged();
                                         dialog.dismiss();
-
-                                        /*databaseReference.orderByChild("uniqKey").equalTo(getUniKey).addValueEventListener(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                if (dataSnapshot.exists()){
-                                                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()){
-                                                        //get the key of the child node that has to be updated
-                                                        String updateKey = dataSnapshot1.getKey();
-                                                        String pProjectName = UpdateProject.getText().toString().trim();
-                                                        String dDate = UpdateDate.getText().toString().trim();
-                                                        String iInTime = UpdateInTime.getText().toString().trim();
-                                                        String oOutTime = UpdateOutTime.getText().toString().trim();
-                                                        String hHours = UpdateHour.getText().toString().trim();
-                                                        String tTask = UpdateTask.getText().toString().trim();
-
-                                                        databaseReference.child(updateKey).child("projectName").setValue(pProjectName);
-                                                        databaseReference.child(updateKey).child("date").setValue(dDate);
-                                                        databaseReference.child(updateKey).child("inTime").setValue(iInTime);
-                                                        databaseReference.child(updateKey).child("outTime").setValue(oOutTime);
-                                                        databaseReference.child(updateKey).child("hours").setValue(hHours);
-                                                        databaseReference.child(updateKey).child("day").setValue(dayOfTheWeek);
-                                                        databaseReference.child(updateKey).child("month").setValue(mMonth);
-                                                        databaseReference.child(updateKey).child("task").setValue(tTask);
-                                                        databaseReference.child(updateKey).child("uniqKey").setValue(getUniKey);
-                                                    }
-                                                    Utils.showToastMessage(MainActivity.this,"Update Successfull");
-                                                    userHeadingDataAdapter.notifyDataSetChanged();
-                                                }
-                                                dialog.dismiss();
-                                            }
-                                            @Override
-                                            public void onCancelled(@NonNull DatabaseError databaseError) {
-                                                Utils.showToastMessage(MainActivity.this,"onCancelled"+databaseError.getMessage());
-                                            }
-                                        });*/
                                     }
                                 });
                                 dialog.show();

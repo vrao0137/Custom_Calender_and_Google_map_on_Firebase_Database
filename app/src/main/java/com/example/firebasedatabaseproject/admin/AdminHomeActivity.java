@@ -14,14 +14,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.example.firebasedatabaseproject.LoginActivity;
+import com.example.firebasedatabaseproject.user.login.LoginActivity;
 import com.example.firebasedatabaseproject.PrograssBar;
 import com.example.firebasedatabaseproject.R;
 import com.example.firebasedatabaseproject.Utils;
 import com.example.firebasedatabaseproject.admin.fragments.DepartmentFragment;
 import com.example.firebasedatabaseproject.admin.fragments.UsersListFragment;
 import com.example.firebasedatabaseproject.databinding.ActivityUsersListBinding;
-import com.example.firebasedatabaseproject.viewmodelss.LogOutViewModel;
+import com.example.firebasedatabaseproject.user.viewmodelss.LogOutViewModel;
 
 public class AdminHomeActivity extends AppCompatActivity implements View.OnClickListener {
     private ActivityUsersListBinding binding;
@@ -61,11 +61,6 @@ public class AdminHomeActivity extends AppCompatActivity implements View.OnClick
             transaction.addToBackStack(fragment.getClass().getName());
         transaction.commit();
     }
-
-    /*@Override
-    public void onResume(){
-        super.onResume();
-     }*/
 
     private void setDefaultFragemment() {
         binding.txvToolbarTitle.setText("DEPARTMENT LIST");

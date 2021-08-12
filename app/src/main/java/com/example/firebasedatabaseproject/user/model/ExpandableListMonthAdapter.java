@@ -1,27 +1,16 @@
-package com.example.firebasedatabaseproject.model;
+package com.example.firebasedatabaseproject.user.model;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.firebasedatabaseproject.R;
-import com.example.firebasedatabaseproject.admin.UsersListDataActivity;
 import com.example.firebasedatabaseproject.admin.adapter.ListUsersDataAdapter;
-import com.example.firebasedatabaseproject.admin.model.User;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 

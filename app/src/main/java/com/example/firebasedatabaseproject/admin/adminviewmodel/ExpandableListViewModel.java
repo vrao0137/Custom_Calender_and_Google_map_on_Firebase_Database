@@ -50,7 +50,7 @@ public class ExpandableListViewModel extends AndroidViewModel {
 
     public MutableLiveData<HashMap<String, List<User>>> getDepartmentList() {
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference().child("users");
+        databaseReference = firebaseDatabase.getReference().child(Constants.USERS);
         databaseReference.keepSynced(true);
         //Child List
         List<User> newAndroidList = new ArrayList<User>();

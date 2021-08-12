@@ -5,24 +5,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.ExpandableListView;
-import android.widget.PopupMenu;
-import android.widget.Toast;
 
 import com.example.firebasedatabaseproject.OnListItemClicked;
-import com.example.firebasedatabaseproject.PrograssBar;
 import com.example.firebasedatabaseproject.Utils;
-import com.example.firebasedatabaseproject.admin.adapter.ExpandableListAdapter;
 import com.example.firebasedatabaseproject.admin.adapter.ListUsersDataAdapter;
-import com.example.firebasedatabaseproject.admin.model.User;
 import com.example.firebasedatabaseproject.databinding.ActivityUsersListDataBinding;
-import com.example.firebasedatabaseproject.model.ExpandableListMonthAdapter;
-import com.example.firebasedatabaseproject.model.NotesDataModel;
+import com.example.firebasedatabaseproject.user.model.NotesDataModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;

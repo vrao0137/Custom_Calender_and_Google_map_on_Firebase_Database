@@ -1,6 +1,5 @@
 package com.example.firebasedatabaseproject.admin.adapter;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,23 +7,24 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.firebasedatabaseproject.OnListItemClicked;
 import com.example.firebasedatabaseproject.admin.MonthlyUserListActivity;
 import com.example.firebasedatabaseproject.databinding.AdminUserDesignBinding;
-import com.example.firebasedatabaseproject.model.NotesDataModel;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.example.firebasedatabaseproject.user.model.NotesDataModel;
 
 import java.util.ArrayList;
 
 public class MonthlyUserDataAdapter extends RecyclerView.Adapter<MonthlyUserDataAdapter.MyViewHolder>{
     MonthlyUserListActivity monthlyUserListActivity;
     ArrayList<NotesDataModel> lstUserNotesData;
+    OnListItemClicked onListItemClicked;
 
     ArrayList<NotesDataModel> mDeveloperModel;
 
-    public MonthlyUserDataAdapter(MonthlyUserListActivity monthlyUserListActivity, ArrayList<NotesDataModel> lstUserNotesData) {
+    public MonthlyUserDataAdapter(MonthlyUserListActivity monthlyUserListActivity, ArrayList<NotesDataModel> lstUserNotesData, OnListItemClicked onListItemClicked) {
         this.monthlyUserListActivity = monthlyUserListActivity;
         this.lstUserNotesData = lstUserNotesData;
+        this.onListItemClicked = onListItemClicked;
     }
 
     @Override
@@ -37,6 +37,13 @@ public class MonthlyUserDataAdapter extends RecyclerView.Adapter<MonthlyUserData
         holder.binding.txvProjectName.setText(mDeveloperModel.get(position).getProjectName());
         holder.binding.txvDay.setText(mDeveloperModel.get(position).getWorkedHours());
         holder.binding.txvDate.setText(mDeveloperModel.get(position).getDate());
+
+        holder.binding.crdUpdatData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onListItemClicked.onItemClicked(position, v, "");
+            }
+        });
     }
 
     public void setDeveloperList(ArrayList<NotesDataModel> mDeveloperModel) {

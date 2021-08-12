@@ -1,7 +1,6 @@
-package com.example.firebasedatabaseproject.adapter;
+package com.example.firebasedatabaseproject.user.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,19 +10,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.firebasedatabaseproject.OnListItemClicked;
 import com.example.firebasedatabaseproject.databinding.UseHeadingDataAdapterBinding;
-import com.example.firebasedatabaseproject.model.ExpandableListMonthAdapter;
-import com.example.firebasedatabaseproject.model.NotesDataModel;
+import com.example.firebasedatabaseproject.user.notesdata.shownotes.GetUserNotesResponseModel;
 
 import java.util.ArrayList;
 
 public class UserHeadingDataAdapter extends RecyclerView.Adapter<UserHeadingDataAdapter.MyViewHolder>{
     Context context;
-    ArrayList<NotesDataModel> lstNotesData;
+    ArrayList<GetUserNotesResponseModel> lstNotesData;
     OnListItemClicked onListItemClicked;
 
-    ArrayList<NotesDataModel> mDeveloperModel;
+    ArrayList<GetUserNotesResponseModel> mDeveloperModel;
 
-    public UserHeadingDataAdapter(Context context, ArrayList<NotesDataModel> lstNotesData, OnListItemClicked onListItemClicked) {
+    public UserHeadingDataAdapter(Context context, ArrayList<GetUserNotesResponseModel> lstNotesData, OnListItemClicked onListItemClicked) {
         this.context = context;
         this.lstNotesData = lstNotesData;
         this.onListItemClicked = onListItemClicked;
@@ -37,9 +35,9 @@ public class UserHeadingDataAdapter extends RecyclerView.Adapter<UserHeadingData
 
     @Override
     public void onBindViewHolder(@NonNull UserHeadingDataAdapter.MyViewHolder holder, int position) {
-        holder.binding.txvDate.setText(mDeveloperModel.get(position).getDate());
-        holder.binding.txvDay.setText(mDeveloperModel.get(position).getWorkedHours());
-        holder.binding.txvProjectName.setText(mDeveloperModel.get(position).getProjectName());
+        holder.binding.txvDate.setText(mDeveloperModel.get(position).getNotesDataResponse().getDate());
+        holder.binding.txvDay.setText(mDeveloperModel.get(position).getNotesDataResponse().getWorkedHours());
+        holder.binding.txvProjectName.setText(mDeveloperModel.get(position).getNotesDataResponse().getProjectName());
        // Log.e("ListUniqueKey",""+mDeveloperModel.get(position).getUniQKey());
 
         holder.binding.ivEditOption.setOnClickListener(new View.OnClickListener() {
@@ -65,12 +63,12 @@ public class UserHeadingDataAdapter extends RecyclerView.Adapter<UserHeadingData
     }
 
 
-    public void setDeveloperList(ArrayList<NotesDataModel> mDeveloperModel) {
+    public void setDeveloperList(ArrayList<GetUserNotesResponseModel> mDeveloperModel) {
         this.mDeveloperModel = mDeveloperModel;
         notifyDataSetChanged();
     }
 
-    public void updateList(ArrayList<NotesDataModel> list){
+    public void updateList(ArrayList<GetUserNotesResponseModel> list){
         this.lstNotesData = list;
         notifyDataSetChanged();
     }

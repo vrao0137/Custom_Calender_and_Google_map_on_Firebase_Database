@@ -1,4 +1,4 @@
-package com.example.firebasedatabaseproject.model;
+package com.example.firebasedatabaseproject.user.model;
 
 import com.example.firebasedatabaseproject.service.Constants;
 import com.google.gson.annotations.Expose;

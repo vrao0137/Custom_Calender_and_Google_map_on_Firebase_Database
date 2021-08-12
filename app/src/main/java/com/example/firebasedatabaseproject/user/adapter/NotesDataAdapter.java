@@ -1,30 +1,18 @@
-package com.example.firebasedatabaseproject.adapter;
+package com.example.firebasedatabaseproject.user.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.PopupWindow;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.firebasedatabaseproject.OnListItemClicked;
-import com.example.firebasedatabaseproject.R;
 import com.example.firebasedatabaseproject.databinding.ListAdapterDesignBinding;
-import com.example.firebasedatabaseproject.databinding.PopupDialogBinding;
-import com.example.firebasedatabaseproject.model.NotesDataModel;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.example.firebasedatabaseproject.user.model.NotesDataModel;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.TimeZone;
 
 public class NotesDataAdapter extends RecyclerView.Adapter<NotesDataAdapter.MyViewHolder>{
     Context context;

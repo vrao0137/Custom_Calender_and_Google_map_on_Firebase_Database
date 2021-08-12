@@ -1,8 +1,7 @@
-package com.example.firebasedatabaseproject.viewmodelss;
+package com.example.firebasedatabaseproject.user.viewmodelss;
 
 import android.app.Application;
 
-import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 
 import com.example.firebasedatabaseproject.service.AuthAppRepository;

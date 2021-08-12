@@ -2,6 +2,7 @@ package com.example.firebasedatabaseproject;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.view.WindowManager;
 import com.example.firebasedatabaseproject.admin.AdminHomeActivity;
 import com.example.firebasedatabaseproject.databinding.ActivitySplashBinding;
 import com.example.firebasedatabaseproject.service.Constants;
+import com.example.firebasedatabaseproject.user.viewmodelss.LogOutViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -20,11 +22,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class SplashActivity extends AppCompatActivity {
-    ActivitySplashBinding binding;
-    Context context;
+    private ActivitySplashBinding binding;
+    private Context context;
     private FirebaseAuth auth;
-    FirebaseDatabase firebaseDatabase = Utils.getDatabase();
-    DatabaseReference databaseReference;
+    private FirebaseDatabase firebaseDatabase = Utils.getDatabase();
+    private DatabaseReference databaseReference;
+    private LogOutViewModel logOutViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +35,7 @@ public class SplashActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         binding = ActivitySplashBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        logOutViewModel = ViewModelProviders.of(this).get(LogOutViewModel.class);
     }
 
     @Override
@@ -55,26 +59,45 @@ public class SplashActivity extends AppCompatActivity {
                     String currentUserUID = auth.getCurrentUser().getUid();
                     databaseReference = firebaseDatabase.getReference().child(Constants.USERS).child(currentUserUID);
                     databaseReference.keepSynced(true);
-                    databaseReference.addValueEventListener(new ValueEventListener() {
+                    databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            String Active = dataSnapshot.child(Constants.IS_ACTIVE).getValue(String.class);
-                            String Role = dataSnapshot.child(Constants.ROLE).getValue(String.class);
-                            if (Active.equalsIgnoreCase("true")){
-                                switch (Role) {
-                                    case Constants.ADMIN:
-                                        Utils.showToastMessage(context, "Welcome to Admin dashboard page");
-                                        startActivity(new Intent(context, AdminHomeActivity.class));
-                                        finish();
-                                        break;
-                                    default:
-                                        Utils.showToastMessage(context, "Welcome to Home Page");
-                                        startActivity(new Intent(context, MainActivity.class));
-                                        finish();
-                                        break;
+                            String active = dataSnapshot.child(Constants.IS_ACTIVE).getValue(String.class);
+                            String role = dataSnapshot.child(Constants.ROLE).getValue(String.class);
+                            String delete = dataSnapshot.child(Constants.IS_DELETED).getValue(String.class);
+                            if (delete.equalsIgnoreCase("no")){
+                                if (active.equalsIgnoreCase("true")){
+                                    switch (role) {
+                                        case Constants.ADMIN:
+                                            Utils.showToastMessage(context, "Welcome to Admin dashboard page");
+                                            startActivity(new Intent(context, AdminHomeActivity.class));
+//                                            finishAffinity();
+                                            finish();
+                                            break;
+                                        case Constants.HR:
+                                            Utils.showToastMessage(getApplicationContext(), "Welcome to HR dashboard page");
+                                            startActivity(new Intent(getApplicationContext(), AdminHomeActivity.class));
+//                                            finishAffinity();
+                                            finish();
+                                            break;
+                                        default:
+                                            Utils.showToastMessage(context, "Welcome to Home Page");
+                                            startActivity(new Intent(context, MainActivity.class));
+//                                            finishAffinity();
+                                            finish();
+                                            break;
+                                    }
+                                }else {
+                                    Utils.showToastMessage(context,"Please Contact Us HR ! Your Account is Disable");
+                                    logOutViewModel.logOut();
+                                    startActivity(new Intent(context, WelcomeActivity.class));
+                                    finish();
                                 }
                             }else {
-                                Utils.showToastMessage(context,"Please Contact Us HR ! Your Account is Disable");
+                                Utils.showToastMessage(getApplicationContext(),"Please Contact Us HR ! Your Account is Deleted");
+                                logOutViewModel.logOut();
+                                startActivity(new Intent(context, WelcomeActivity.class));
+                                finish();
                             }
                         }
                         @Override
@@ -89,25 +112,4 @@ public class SplashActivity extends AppCompatActivity {
             }
         }, 3000);
     }
-
-  /*  private void splashScreenHandler() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (auth.getCurrentUser() != null) {
-                    if (auth.getCurrentUser().getUid().equals("HpeFeRzzcsYw9qmFfMQUYowLeJ43")){
-                        startActivity(new Intent(context, AdminDashboardActivity.class));
-                        finish();
-                    }else {
-                        Log.e("CurrentUserIs",""+auth.getCurrentUser().getUid());
-                        startActivity(new Intent(context, MainActivity.class));
-                        finish();
-                    }
-                }else {
-                    startActivity(new Intent(context, WelcomeActivity.class));
-                    finish();
-                }
-            }
-        }, 3000);
-    }*/
 }

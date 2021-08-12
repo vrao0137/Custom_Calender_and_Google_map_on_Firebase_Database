@@ -13,12 +13,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".admin.MonthlyUserListActivity"></activity>
+        <activity android:name=".admin.MonthlyUserListActivity"/>
         <activity
             android:name=".admin.AdminHomeActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".admin.AdminDeshboardUserDataActivity"
+            android:name=".admin.UserTaskActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".UserShowDetailsDataActivity"
@@ -45,10 +45,10 @@
             android:name=".ResetPasswordActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".user.login.LoginActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".SingUpActivity"
+            android:name=".SignUpActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".MainActivity"

@@ -2,24 +2,17 @@ package com.example.firebasedatabaseproject.admin;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
-import android.widget.Toast;
 
 import com.example.firebasedatabaseproject.PrograssBar;
-import com.example.firebasedatabaseproject.UserShowDetailsDataActivity;
 import com.example.firebasedatabaseproject.Utils;
-import com.example.firebasedatabaseproject.admin.adapter.ListUsersDataAdapter;
 import com.example.firebasedatabaseproject.databinding.ActivityAdminUsersListDateBinding;
-import com.example.firebasedatabaseproject.databinding.ActivityUsersListDataBinding;
-import com.example.firebasedatabaseproject.model.ExpandableListMonthAdapter;
-import com.example.firebasedatabaseproject.model.NotesDataModel;
+import com.example.firebasedatabaseproject.user.model.ExpandableListMonthAdapter;
+import com.example.firebasedatabaseproject.user.model.NotesDataModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -27,8 +20,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -138,7 +129,7 @@ public class AdminUsersListDateActivity extends AppCompatActivity {
                                             lstUserNotesData.add(new NotesDataModel(pProjectName,dDate,iInTime,oOutTime,hHours,dayOfTheWeek,mMonth,tTask,sKey));
                                         }
                                         if (lstUserNotesData !=null && !lstUserNotesData.isEmpty()) {
-                                            Intent intent = new Intent(AdminUsersListDateActivity.this, AdminDeshboardUserDataActivity.class).putExtra("UUIID",uUIID).putExtra("UniqKey",UserTime).putExtra("AdminHome","AdminHome");
+                                            Intent intent = new Intent(AdminUsersListDateActivity.this, UserTaskActivity.class).putExtra("UUIID",uUIID).putExtra("UniqKey",UserTime).putExtra("AdminHome","AdminHome");
                                             startActivity(intent);
                                         }else {
                                             Utils.showToastMessage(getApplicationContext(),"Not Sava data This User "+listUserDataChild.get(listUserDateHeader.get(groupPosition)).get(childPosition).getMonth());

@@ -6,12 +6,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
-import android.widget.Toast;
 
-import com.example.firebasedatabaseproject.databinding.ActivityLoginBinding;
 import com.example.firebasedatabaseproject.databinding.ActivityResetPasswordBinding;
+import com.example.firebasedatabaseproject.user.login.LoginActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;

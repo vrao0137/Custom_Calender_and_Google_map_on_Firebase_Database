@@ -64,6 +64,5 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth'
     compile "com.google.firebase:firebase-auth:9.0.2"
    // implementation 'com.google.firebase:firebase-admin:7.3.0'
-
 }
 apply plugin: 'com.google.gms.google-services'
