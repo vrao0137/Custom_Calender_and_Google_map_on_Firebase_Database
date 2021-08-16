@@ -3,11 +3,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import com.example.firebasedatabaseproject.databinding.ActivityUserShowDetailsDataBinding;
+import com.example.firebasedatabaseproject.service.Constants;
 import com.example.firebasedatabaseproject.user.model.NotesDataModel;
 import com.example.firebasedatabaseproject.user.notesdata.shownotes.GetUserNotesResponseModel;
 import com.example.firebasedatabaseproject.user.viewmodelss.LogOutViewModel;
@@ -21,6 +24,7 @@ import java.util.List;
 public class UserShowDetailsDataActivity extends AppCompatActivity {
     private final String TAG = UserShowDetailsDataActivity.class.getSimpleName();
     private ActivityUserShowDetailsDataBinding binding;
+    private Context context;
     private ArrayList<GetUserNotesResponseModel> listUserDetailsData = new ArrayList<>();
     UserShowDetailsViewModel userShowDetailsViewModel;
     String UI_id = "";
@@ -38,9 +42,10 @@ public class UserShowDetailsDataActivity extends AppCompatActivity {
     }
 
     private void initialise(){
+        context = this;
         Intent intent = getIntent();
-        UI_id = intent.getStringExtra("U_Id");
-        Unq_Keee = intent.getStringExtra("U_Key");
+        UI_id = intent.getStringExtra(Constants.USER_UIID);
+        Unq_Keee = intent.getStringExtra(Constants.UNIQKEY);
 
         binding.toolbarTop.txvToolbarTitle.setText("USER TASK DETAILS");
         getUserTaskData();

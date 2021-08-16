@@ -3,6 +3,7 @@ package com.example.firebasedatabaseproject.admin;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,9 +20,13 @@ import android.widget.DatePicker;
 
 import com.example.firebasedatabaseproject.OnListItemClicked;
 import com.example.firebasedatabaseproject.R;
+import com.example.firebasedatabaseproject.Utils;
 import com.example.firebasedatabaseproject.admin.adapter.MonthlyUserDataAdapter;
 import com.example.firebasedatabaseproject.admin.adminviewmodel.MonthlyUserListViewModel;
+import com.example.firebasedatabaseproject.admin.adminviewmodel.UserTaskViewModel;
+import com.example.firebasedatabaseproject.admin.responsemodel.DataMonthResponseModel;
 import com.example.firebasedatabaseproject.databinding.ActivityMonthlyUserListBinding;
+import com.example.firebasedatabaseproject.service.Constants;
 import com.example.firebasedatabaseproject.user.model.NotesDataModel;
 
 import java.text.SimpleDateFormat;
@@ -66,27 +71,34 @@ public class MonthlyUserListActivity extends AppCompatActivity implements View.O
         binding = ActivityMonthlyUserListBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         binding.toolbarTop.txvToolbarTitle.setText("MONTH DATA");
-        monthlyUserListViewModel = ViewModelProviders.of(this).get(MonthlyUserListViewModel.class);
-        checkUserDataAvailability();
-       // getUserNotesData();
+        monthlyUserListViewModel = new ViewModelProvider(this).get(MonthlyUserListViewModel.class);
         initialize();
     }
 
-    @Override
-    public void onResume(){
-        super.onResume();
-        binding.toolbarTop.txvToolbarTitle.setText("MONTH DATA");
+    private void initialize(){
+        context = this;
+        Intent intent = getIntent();
+        uUIID = intent.getStringExtra(Constants.USER_UIID);
+        binding.toolbarTop.ivToolbarButtonBack.setOnClickListener(this);
         checkUserDataAvailability();
-       // getUserNotesData();
-        initialize();
+
+        binding.rcvMonthlyUserData.setLayoutManager(new GridLayoutManager(context, 2, RecyclerView.VERTICAL, false));
+        monthlyUserDataAdapter = new MonthlyUserDataAdapter(this,lstUserNotesData,this);
+        binding.rcvMonthlyUserData.setAdapter(monthlyUserDataAdapter);
+
+        binding.spnrMonth.setOnItemSelectedListener(this);
+        adapter = new ArrayAdapter(this,android.R.layout.simple_spinner_item,getNewMonthStringList);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        binding.spnrMonth.setAdapter(adapter);
+
     }
 
     private void checkUserDataAvailability(){
-        monthlyUserListViewModel.getMutableLiveDataCheck(uUIID).observe(this, new Observer<List<NotesDataModel>>() {
+        monthlyUserListViewModel.getMutableLiveDataCheck(uUIID).observe(this, new Observer<DataMonthResponseModel>() {
             @Override
-            public void onChanged(List<NotesDataModel> notesDataModels) {
+            public void onChanged(DataMonthResponseModel dataMonthResponseModel) {
                 lstUserNotesDataCheck.clear();
-                lstUserNotesDataCheck.addAll((ArrayList<NotesDataModel>) notesDataModels);
+                lstUserNotesDataCheck.addAll((ArrayList<NotesDataModel>) dataMonthResponseModel.getNotesDataModel());
                 if (lstUserNotesDataCheck !=null && !lstUserNotesDataCheck.isEmpty()) {
                     getUserNotesData();
                 }else {
@@ -100,102 +112,87 @@ public class MonthlyUserListActivity extends AppCompatActivity implements View.O
     private void getUserNotesData(){
         binding.txvNoDataFound.setVisibility(View.GONE);
         binding.crdSppinerView.setVisibility(View.VISIBLE);
-        monthlyUserListViewModel.getMutableLiveDataMonths(uUIID).observe(this, new Observer<List<NotesDataModel>>() {
+        monthlyUserListViewModel.getMutableLiveDataMonths(uUIID).observe(this, new Observer<DataMonthResponseModel>() {
             @Override
-            public void onChanged(List<NotesDataModel> notesDataModels) {
+            public void onChanged(DataMonthResponseModel dataMonthResponseModel) {
                 lstUserNotesData.clear();
 
                 hashObserverList.clear();
                 hashExtraData.clear();
 
-                lstUserNotesData.addAll((ArrayList<NotesDataModel>) notesDataModels);
+                lstUserNotesData.addAll((ArrayList<NotesDataModel>) dataMonthResponseModel.getNotesDataModel());
 
-                final Calendar myCalendar = Calendar.getInstance();
-                DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        myCalendar.set(Calendar.YEAR, year);
-                        myCalendar.set(Calendar.MONTH, monthOfYear);
+                if (lstUserNotesData !=null && !lstUserNotesData.isEmpty()) {
+                    final Calendar myCalendar = Calendar.getInstance();
+                    DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                            myCalendar.set(Calendar.YEAR, year);
+                            myCalendar.set(Calendar.MONTH, monthOfYear);
+                        }
+                    };
+                    String myFormat = "MMMM yyyy";
+                    SimpleDateFormat my = new SimpleDateFormat(myFormat, Locale.US);
+                    String mMonthYear = my.format(myCalendar.getTime());
+
+                    for (NotesDataModel obj1: lstUserNotesData){
+                        if (obj1.getTask().equals(mMonthYear)){
+                            hashObserverList.add(obj1);
+                            currentMotnhBoolean = true;
+                        }else {
+                            hashExtraData.add(obj1);
+                        }
                     }
-                };
-                String myFormat = "MMMM yyyy";
-                SimpleDateFormat my = new SimpleDateFormat(myFormat, Locale.US);
-                String mMonthYear = my.format(myCalendar.getTime());
 
-                for (NotesDataModel obj1: lstUserNotesData){
-                    if (obj1.getTask().equals(mMonthYear)){
-                        hashObserverList.add(obj1);
-                        currentMotnhBoolean = true;
+                    //------Current Month Data----------------
+                    newObserverList.clear();
+                    newObserverList.addAll(hashObserverList);
+
+                    //-------Remainning month data--------------
+                    newExtraData.clear();
+                    newExtraData.addAll(hashExtraData);
+
+                    //------Add Current month Name as Spinner-----------
+                    getNewMonthStringList.clear();
+                    getHashMonthStringList.clear();
+
+                    getNewHashMonthStringList.clear();
+                    getMonthStringList.clear();
+
+                    if (currentMotnhBoolean.equals(true)){
+                        getNewMonthStringList.add(mMonthYear);
                     }else {
-                        hashExtraData.add(obj1);
+                        for (int i=0; i<newExtraData.size(); i++){
+                            getNewHashMonthStringList.add(newExtraData.get(i).getTask());
+                        }
+                        getMonthStringList.addAll(getNewHashMonthStringList);
+                        binding.spnrMonth.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
                     }
-                }
 
-                //------Current Month Data----------------
-                newObserverList.clear();
-                newObserverList.addAll(hashObserverList);
 
-                //-------Remainning month data--------------
-                newExtraData.clear();
-                newExtraData.addAll(hashExtraData);
-
-                //------Add Current month Name as Spinner-----------
-                getNewMonthStringList.clear();
-                getHashMonthStringList.clear();
-
-                getNewHashMonthStringList.clear();
-                getMonthStringList.clear();
-
-                if (currentMotnhBoolean.equals(true)){
-                    getNewMonthStringList.add(mMonthYear);
-                }else {
                     for (int i=0; i<newExtraData.size(); i++){
-                        getNewHashMonthStringList.add(newExtraData.get(i).getTask());
+                        getHashMonthStringList.add(newExtraData.get(i).getTask());
                     }
-                    getMonthStringList.addAll(getNewHashMonthStringList);
+                    //-----Add Reminning Month According to month data-----------
+                    getNewMonthStringList.addAll(getHashMonthStringList);
+
                     binding.spnrMonth.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
-                }
 
-
-                for (int i=0; i<newExtraData.size(); i++){
-                    getHashMonthStringList.add(newExtraData.get(i).getTask());
-                }
-                //-----Add Reminning Month According to month data-----------
-                getNewMonthStringList.addAll(getHashMonthStringList);
-
-                binding.spnrMonth.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
-
-                if (currentMotnhBoolean.equals(true)){
-                    monthlyUserDataAdapter.setDeveloperList(newObserverList);
+                    if (currentMotnhBoolean.equals(true)){
+                        monthlyUserDataAdapter.setDeveloperList(newObserverList);
+                    }else {
+                        monthlyUserDataAdapter.setDeveloperList(newExtraData);
+                    }
+                    binding.rcvMonthlyUserData.setLayoutManager(new GridLayoutManager(context, 2, RecyclerView.VERTICAL, false));
+                    binding.rcvMonthlyUserData.setAdapter(monthlyUserDataAdapter);
+                    monthlyUserDataAdapter.notifyDataSetChanged();
                 }else {
-                    monthlyUserDataAdapter.setDeveloperList(newExtraData);
+                    Utils.showToastMessage(context,dataMonthResponseModel.getError());
                 }
-                binding.rcvMonthlyUserData.setLayoutManager(new GridLayoutManager(context, 2, RecyclerView.VERTICAL, false));
-                binding.rcvMonthlyUserData.setAdapter(monthlyUserDataAdapter);
-                monthlyUserDataAdapter.notifyDataSetChanged();
             }
         });
-    }
-
-    private void initialize(){
-        context = this;
-        Intent intent = getIntent();
-        uUIID = intent.getStringExtra("UserUUID");
-        binding.toolbarTop.ivToolbarButtonBack.setOnClickListener(this);
-        checkUserDataAvailability();
-        // getUserNotesData();
-
-        binding.rcvMonthlyUserData.setLayoutManager(new GridLayoutManager(context, 2, RecyclerView.VERTICAL, false));
-        monthlyUserDataAdapter = new MonthlyUserDataAdapter(this,lstUserNotesData,this);
-        binding.rcvMonthlyUserData.setAdapter(monthlyUserDataAdapter);
-
-        binding.spnrMonth.setOnItemSelectedListener(this);
-        adapter = new ArrayAdapter(this,android.R.layout.simple_spinner_item,getNewMonthStringList);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        binding.spnrMonth.setAdapter(adapter);
-
     }
 
     @Override
@@ -239,7 +236,7 @@ public class MonthlyUserListActivity extends AppCompatActivity implements View.O
         switch (view.getId()) {
             case R.id.crdUpdatData:
                 uUniqKey = newMonthList.get(position).getUniQKey();
-                Intent intent = new Intent(this, UserTaskActivity.class).putExtra("UUIID",uUIID).putExtra("UniqKey",uUniqKey).putExtra("AdminHome","AdminHome");
+                Intent intent = new Intent(this, UserTaskActivity.class).putExtra(Constants.USER_UIID,uUIID).putExtra(Constants.UNIQKEY,uUniqKey).putExtra("AdminHome","AdminHome");
                 startActivity(intent);
                 break;
         }

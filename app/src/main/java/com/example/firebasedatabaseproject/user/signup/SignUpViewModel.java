@@ -7,10 +7,11 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 import com.example.firebasedatabaseproject.admin.model.User;
+import com.example.firebasedatabaseproject.repository.AuthRepository;
 
 public class SignUpViewModel extends AndroidViewModel {
     private final String TAG = SignUpViewModel.class.getSimpleName();
-    private SignUpReposetory singUpReposetory;
+    private AuthRepository authRepository;
     private Context context;
 
     public MutableLiveData<User> userMutableLiveData = new MutableLiveData<>();
@@ -18,11 +19,11 @@ public class SignUpViewModel extends AndroidViewModel {
     public SignUpViewModel(@NonNull Application application) {
         super(application);
         this.context = application.getApplicationContext();
-        singUpReposetory = new SignUpReposetory(application);
+        authRepository = new AuthRepository(application);
     }
 
     public MutableLiveData<SignUpResponseModel> SingUp(String email, String password){
-       return singUpReposetory.getMutableSingUpLiveData(email, password);
+       return authRepository.getMutableSingUpLiveData(email, password);
     }
 
     /*public LiveData<SignUpResponseModel> getSingUpUser(){
@@ -33,6 +34,6 @@ public class SignUpViewModel extends AndroidViewModel {
     }*/
 
     public void createUserData(String username, String password, String fullName, String MobileNumber, String DmntData){
-        userMutableLiveData.postValue(singUpReposetory.getGenerateUser(username,password,fullName,MobileNumber,DmntData).getValue());
+        userMutableLiveData.postValue(authRepository.getGenerateUser(username,password,fullName,MobileNumber,DmntData).getValue());
     }
 }

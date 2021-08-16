@@ -34,6 +34,7 @@ import android.widget.PopupMenu;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.example.firebasedatabaseproject.service.Constants;
 import com.example.firebasedatabaseproject.user.adapter.UserHeadingDataAdapter;
 import com.example.firebasedatabaseproject.databinding.DialogPickerBinding;
 import com.example.firebasedatabaseproject.databinding.PopupDialogBinding;
@@ -282,7 +283,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     //Initilize Unique Kay
                     firebaseDatabase = FirebaseDatabase.getInstance();
-                    databaseReference = firebaseDatabase.getReference().child("users").child(currenUserKey).child("UserTable");
+                    databaseReference = firebaseDatabase.getReference().child(Constants.USERS).child(currenUserKey).child(Constants.USERTABLE);
                     databaseReference.keepSynced(true);
                     String sKey = databaseReference.push().getKey();
                     Log.i(TAG,"getKey:- "+sKey);
@@ -479,7 +480,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 immm.hideSoftInputFromWindow(binding.edtSearchingText.getWindowToken(), 0);
 
                 String UniKey = lstNotesData.get(position).getNotesDataResponse().getUniQKey();
-                Intent intent = new Intent(MainActivity.this, UserShowDetailsDataActivity.class).putExtra("U_Key",UniKey).putExtra("U_Id",currenUserKey);
+                Intent intent = new Intent(MainActivity.this, UserShowDetailsDataActivity.class).putExtra(Constants.UNIQKEY,UniKey).putExtra(Constants.USER_UIID,currenUserKey);
                 startActivity(intent);
                 break;
 

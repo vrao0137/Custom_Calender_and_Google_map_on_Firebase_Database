@@ -7,27 +7,21 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.firebasedatabaseproject.admin.model.User;
-import com.example.firebasedatabaseproject.service.AuthAppRepository;
-import com.google.firebase.auth.FirebaseUser;
-
-import java.util.List;
+import com.example.firebasedatabaseproject.admin.responsemodel.AdminHomeUserListResponseModel;
+import com.example.firebasedatabaseproject.repository.UsersListRepository;
 
 public class UsersListViewModel extends AndroidViewModel {
-    public Application application;
-    public AuthAppRepository authAppRepository;
-    public MutableLiveData<FirebaseUser> userListLiveData;
-    public LiveData<List<User>> allUsersList;
+    private final String TAG = UsersListViewModel.class.getSimpleName();
+    private UsersListRepository usersListRepository;
+    LiveData<AdminHomeUserListResponseModel> allUsersList;
 
     public UsersListViewModel(@NonNull Application application) {
         super(application);
-        this.application = application;
-        authAppRepository = new AuthAppRepository(application);
-        userListLiveData = authAppRepository.getUserLiveData();
+        usersListRepository = new UsersListRepository(application);
         allUsersList = getAllUsersList();
     }
 
-    public LiveData<List<User>> getAllUsersList() {
-        return authAppRepository.getAllUsersList();
+    public MutableLiveData<AdminHomeUserListResponseModel> getAllUsersList() {
+        return usersListRepository.getAllUsersList();
     }
 }

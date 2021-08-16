@@ -4,17 +4,17 @@ import android.app.Application;
 
 import androidx.lifecycle.AndroidViewModel;
 
-import com.example.firebasedatabaseproject.service.AuthAppRepository;
+import com.example.firebasedatabaseproject.repository.UsersListRepository;
 
 public class LogOutViewModel extends AndroidViewModel{
-    private AuthAppRepository authAppRepository;
+    private UsersListRepository usersListRepository;
 
     public LogOutViewModel( Application application) {
         super(application);
-        authAppRepository = new AuthAppRepository(application);
+        usersListRepository = new UsersListRepository(application);
     }
 
     public void logOut(){
-        authAppRepository.logOut();
+        usersListRepository.logOut();
     }
 }

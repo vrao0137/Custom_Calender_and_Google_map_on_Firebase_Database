@@ -1,40 +1,39 @@
 package com.example.firebasedatabaseproject.admin.fragments;
-
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
-
 import com.example.firebasedatabaseproject.OnListItemClicked;
 import com.example.firebasedatabaseproject.R;
+import com.example.firebasedatabaseproject.Utils;
 import com.example.firebasedatabaseproject.admin.adapter.NewAllUsersListAdapter;
 import com.example.firebasedatabaseproject.admin.adminviewmodel.UpdateStatusViewModel;
 import com.example.firebasedatabaseproject.admin.adminviewmodel.UsersListViewModel;
 import com.example.firebasedatabaseproject.admin.model.User;
+import com.example.firebasedatabaseproject.admin.responsemodel.AdminHomeUserListResponseModel;
+import com.example.firebasedatabaseproject.admin.responsemodel.StatusChangesResponseModel;
 import com.example.firebasedatabaseproject.databinding.FragmentUsersListBinding;
 import com.example.firebasedatabaseproject.service.Constants;
-
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
 public class UsersListFragment extends Fragment implements View.OnClickListener, OnListItemClicked {
     private FragmentUsersListBinding binding;
-    private UsersListViewModel usersListViewModel;
     static int buId;
+    private UsersListViewModel usersListViewModel;
+    private UpdateStatusViewModel updateStatusViewModel;
+    private NewAllUsersListAdapter newAllUsersListAdapter;
 
     HashSet<User> hashActiveUsers= new HashSet<User>();
     private ArrayList<User> lstAllActiveUsers = new ArrayList<>();
@@ -43,8 +42,6 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
     HashSet<User> hashDeletedUsers= new HashSet<User>();
     private ArrayList<User> lstAllDeletedUsers = new ArrayList<>();
 
-    NewAllUsersListAdapter newAllUsersListAdapter;
-    UpdateStatusViewModel updateStatusViewModel;
     private PopupMenu popActDeact;
     private Menu menuOpts;
 
@@ -65,18 +62,21 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
       //  return inflater.inflate(R.layout.fragment_users_list, container, false);
         binding = FragmentUsersListBinding.inflate(inflater,container,false);
 
-        usersListViewModel = ViewModelProviders.of(this).get(UsersListViewModel.class);
-        updateStatusViewModel = ViewModelProviders.of(this).get(UpdateStatusViewModel.class);
+        usersListViewModel = new ViewModelProvider(this).get(UsersListViewModel.class);
+
+        updateStatusViewModel = new ViewModelProvider(this).get(UpdateStatusViewModel.class);
 
         initialiseView();
         return binding.getRoot();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        initialiseView();
+    private void initialiseView(){
+        binding.crdActiveUsers.setOnClickListener(this);
+        binding.crdPendingUsers.setOnClickListener(this);
+        binding.crdDeletedUser.setOnClickListener(this);
+
         getAllUsersLst();
+
         binding.rcvActivateUsersList.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, true));
         if (IsActive.equals(true)){
             newAllUsersListAdapter = new NewAllUsersListAdapter(getContext(),lstAllActiveUsers,this);
@@ -88,48 +88,45 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
         binding.rcvActivateUsersList.setAdapter(newAllUsersListAdapter);
     }
 
-    private void initialiseView(){
-        binding.crdActiveUsers.setOnClickListener(this);
-        binding.crdPendingUsers.setOnClickListener(this);
-        binding.crdDeletedUser.setOnClickListener(this);
-    }
-
     private void getAllUsersLst(){
-        usersListViewModel.getAllUsersList().observe(this, new Observer<List<User>>() {
+        usersListViewModel.getAllUsersList().observe(getViewLifecycleOwner(), new Observer<AdminHomeUserListResponseModel>() {
             @Override
-            public void onChanged(List<User> users) {
+            public void onChanged(AdminHomeUserListResponseModel adminHomeUserListResponseModel) {
                 hashActiveUsers.clear();
                 hashPandingUsers.clear();
                 hashDeletedUsers.clear();
-
-                for (User obj1: users){
-                    if (obj1.getIsActive().equals(Constants.TRUE)){
-                        hashActiveUsers.add(obj1);
-                    }else if (obj1.getIsDeleted().equals(Constants.YES)){
-                        hashDeletedUsers.add(obj1);
-                    }else if (obj1.getIsActive().equals(Constants.FALSE)){
-                        hashPandingUsers.add(obj1);
+                if (adminHomeUserListResponseModel !=null && !adminHomeUserListResponseModel.getUserList().isEmpty()) {
+                    for (User obj1: adminHomeUserListResponseModel.getUserList()){
+                        if (obj1.getIsActive().equals(Constants.TRUE)){
+                            hashActiveUsers.add(obj1);
+                        }else if (obj1.getIsDeleted().equals(Constants.YES)){
+                            hashDeletedUsers.add(obj1);
+                        }else if (obj1.getIsActive().equals(Constants.FALSE)){
+                            hashPandingUsers.add(obj1);
+                        }
                     }
+
+                    lstAllActiveUsers.clear();
+                    lstAllActiveUsers.addAll(hashActiveUsers);
+                    lstAllPendingUsers.clear();
+                    lstAllPendingUsers.addAll(hashPandingUsers);
+                    lstAllDeletedUsers.clear();
+                    lstAllDeletedUsers.addAll(hashDeletedUsers);
+
+                    if (IsActive.equals(true)){
+                        newAllUsersListAdapter.setUsersList(lstAllActiveUsers);
+                    }else if (DeleteUser.equals(true)){
+                        newAllUsersListAdapter.setUsersList(lstAllDeletedUsers);
+                    }else if (IsActive.equals(false)){
+                        newAllUsersListAdapter.setUsersList(lstAllPendingUsers);
+                    }
+
+                    binding.rcvActivateUsersList.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, true));
+                    binding.rcvActivateUsersList.setAdapter(newAllUsersListAdapter);
+                    newAllUsersListAdapter.notifyDataSetChanged();
+                }else {
+                    Utils.showToastMessage(getActivity(),adminHomeUserListResponseModel.getError());
                 }
-
-                lstAllActiveUsers.clear();
-                lstAllActiveUsers.addAll(hashActiveUsers);
-                lstAllPendingUsers.clear();
-                lstAllPendingUsers.addAll(hashPandingUsers);
-                lstAllDeletedUsers.clear();
-                lstAllDeletedUsers.addAll(hashDeletedUsers);
-
-                if (IsActive.equals(true)){
-                    newAllUsersListAdapter.setUsersList(lstAllActiveUsers);
-                }else if (DeleteUser.equals(true)){
-                    newAllUsersListAdapter.setUsersList(lstAllDeletedUsers);
-                }else if (IsActive.equals(false)){
-                    newAllUsersListAdapter.setUsersList(lstAllPendingUsers);
-                }
-
-                binding.rcvActivateUsersList.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, true));
-                binding.rcvActivateUsersList.setAdapter(newAllUsersListAdapter);
-                newAllUsersListAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -213,20 +210,30 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
                                 popActDeact.dismiss();
                                 if (IsActive.equals(true)){
                                     userUId = lstAllActiveUsers.get(position).getUserUID();
-                                    userStatus = "false";
-                                    userDelete = "yes";
+                                    userStatus = Constants.FALSE;
+                                    userDelete = Constants.YES;
                                 }else if (IsActive.equals(false)){
                                     userUId = lstAllPendingUsers.get(position).getUserUID();
-                                    userStatus = "false";
-                                    userDelete = "yes";
+                                    userStatus = Constants.FALSE;
+                                    userDelete = Constants.YES;
                                 }
                                 new AlertDialog.Builder(getContext())
                                         .setMessage("Are you sure that you want to delete this User?")
                                         .setCancelable(false)
                                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {
-                                                updateStatusViewModel.deleteUser(userUId,userStatus,userDelete);
-                                                newAllUsersListAdapter.notifyDataSetChanged();
+                                                updateStatusViewModel.getDeleteUser(userUId,userStatus,userDelete).observe(getViewLifecycleOwner(), new Observer<StatusChangesResponseModel>() {
+                                                    @Override
+                                                    public void onChanged(StatusChangesResponseModel statusChangesResponseModel) {
+                                                        if (statusChangesResponseModel !=null && !statusChangesResponseModel.getDatabaseReference().toString().isEmpty()){
+                                                            /*newAllUsersListAdapter.notifyDataSetChanged();*/
+                                                            Utils.showToastMessage(getContext(),"User account deleted Successfull");
+                                                            getAllUsersLst();
+                                                        }else {
+                                                            Utils.showToastMessage(getContext(),statusChangesResponseModel.getError());
+                                                        }
+                                                    }
+                                                });
                                             }
                                         })
                                         .setNegativeButton("No", null)
@@ -235,15 +242,25 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
 
                             case R.id.activeUser:
                                 userUId = lstAllDeletedUsers.get(position).getUserUID();
-                                userStatus = "true";
-                                userDelete = "no";
+                                userStatus = Constants.TRUE;
+                                userDelete = Constants.NO;
                                 new AlertDialog.Builder(getContext())
                                         .setMessage("Are you sure that you want to Active this user Account?")
                                         .setCancelable(false)
                                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {
-                                                updateStatusViewModel.upDateActivePendingUsers(userUId,userStatus,userDelete);
-                                                newAllUsersListAdapter.notifyDataSetChanged();
+                                                updateStatusViewModel.getUpDateActivePendingUsers(userUId,userStatus,userDelete).observe(getViewLifecycleOwner(), new Observer<StatusChangesResponseModel>() {
+                                                    @Override
+                                                    public void onChanged(StatusChangesResponseModel statusChangesResponseModel) {
+                                                        if (statusChangesResponseModel !=null && !statusChangesResponseModel.getDatabaseReference().toString().isEmpty()){
+                                                            Utils.showToastMessage(getContext(),"User Account Activated");
+                                                            getAllUsersLst();
+                                                        }else {
+                                                            Utils.showToastMessage(getContext(),statusChangesResponseModel.getError());
+                                                        }
+                                                    }
+                                                });
+
                                             }
                                         })
                                         .setNegativeButton("No", null)
@@ -252,15 +269,25 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
 
                             case R.id.pandingUser:
                                 userUId = lstAllDeletedUsers.get(position).getUserUID();
-                                userStatus = "false";
-                                userDelete = "no";
+                                userStatus = Constants.FALSE;
+                                userDelete = Constants.NO;
                                 new AlertDialog.Builder(getContext())
                                         .setMessage("Are you sure that you want to Pending this user Account?")
                                         .setCancelable(false)
                                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {
-                                                updateStatusViewModel.upDateActivePendingUsers(userUId,userStatus,userDelete);
-                                                newAllUsersListAdapter.notifyDataSetChanged();
+                                                updateStatusViewModel.getUpDateActivePendingUsers(userUId,userStatus,userDelete).observe(getViewLifecycleOwner(), new Observer<StatusChangesResponseModel>() {
+                                                    @Override
+                                                    public void onChanged(StatusChangesResponseModel statusChangesResponseModel) {
+                                                        if (statusChangesResponseModel !=null && !statusChangesResponseModel.getDatabaseReference().toString().isEmpty()){
+                                                            Utils.showToastMessage(getContext(),"User Account activated Please Contact to HR?");
+                                                            getAllUsersLst();
+                                                        }else {
+                                                            Utils.showToastMessage(getContext(),statusChangesResponseModel.getError());
+                                                        }
+                                                    }
+                                                });
+
                                             }
                                         })
                                         .setNegativeButton("No", null)
@@ -272,28 +299,46 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
                                 popActDeact.dismiss();
                                 if (IsActive.equals(true)){
                                     userUId = lstAllActiveUsers.get(position).getUserUID();
-                                    userStatus = "false";
+                                    userStatus = Constants.FALSE;
                                     new AlertDialog.Builder(getContext())
                                             .setMessage("Are you sure that you want to Disable this Account?")
                                             .setCancelable(false)
                                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                                 public void onClick(DialogInterface dialog, int id) {
-                                                    updateStatusViewModel.upDateUserStatus(userUId,userStatus);
-                                                    newAllUsersListAdapter.notifyDataSetChanged();
+                                                    updateStatusViewModel.getUpDateUserStatus(userUId,userStatus).observe(getViewLifecycleOwner(), new Observer<StatusChangesResponseModel>() {
+                                                        @Override
+                                                        public void onChanged(StatusChangesResponseModel statusChangesResponseModel) {
+                                                            if (statusChangesResponseModel !=null && !statusChangesResponseModel.getDatabaseReference().toString().isEmpty()){
+                                                                Utils.showToastMessage(getContext(),"Status Change Successfull");
+                                                                getAllUsersLst();
+                                                            }else {
+                                                                Utils.showToastMessage(getContext(),statusChangesResponseModel.getError());
+                                                            }
+                                                        }
+                                                    });
                                                 }
                                             })
                                             .setNegativeButton("No", null)
                                             .show();
                                 }else {
                                     userUId = lstAllPendingUsers.get(position).getUserUID();
-                                    userStatus = "true";
+                                    userStatus = Constants.TRUE;
                                     new AlertDialog.Builder(getContext())
                                             .setMessage("Are you sure that you want to Enable this Account?")
                                             .setCancelable(false)
                                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                                 public void onClick(DialogInterface dialog, int id) {
-                                                    updateStatusViewModel.upDateUserStatus(userUId,userStatus);
-                                                    newAllUsersListAdapter.notifyDataSetChanged();
+                                                    updateStatusViewModel.getUpDateUserStatus(userUId,userStatus).observe(getViewLifecycleOwner(), new Observer<StatusChangesResponseModel>() {
+                                                        @Override
+                                                        public void onChanged(StatusChangesResponseModel statusChangesResponseModel) {
+                                                            if (statusChangesResponseModel !=null && !statusChangesResponseModel.getDatabaseReference().toString().isEmpty()){
+                                                                Utils.showToastMessage(getContext(),"Status Change Successfull");
+                                                                getAllUsersLst();
+                                                            }else {
+                                                                Utils.showToastMessage(getContext(),statusChangesResponseModel.getError());
+                                                            }
+                                                        }
+                                                    });
                                                 }
                                             })
                                             .setNegativeButton("No", null)

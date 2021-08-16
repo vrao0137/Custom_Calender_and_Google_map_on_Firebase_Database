@@ -70,7 +70,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     }
                     else {
                         dismissProgressHud();
-                        Utils.showToastMessage(getApplicationContext(), loginStatusResponseModel.getError());
+                        Utils.showToastMessage(context, loginStatusResponseModel.getError());
                     }
                 } else {
                     dismissProgressHud();
@@ -81,30 +81,30 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void getUserInfomation(String active, String delete, String role){
-      if (delete.equalsIgnoreCase("no")){
-            if (active.equalsIgnoreCase("true")){
+      if (delete.equalsIgnoreCase(Constants.NO)){
+            if (active.equalsIgnoreCase(Constants.TRUE)){
                 switch (role) {
                     case Constants.ADMIN:
-                        Utils.showToastMessage(getApplicationContext(), "Welcome to Admin dashboard page");
-                        startActivity(new Intent(getApplicationContext(), AdminHomeActivity.class));
+                        Utils.showToastMessage(context, "Welcome to Admin dashboard page");
+                        startActivity(new Intent(context, AdminHomeActivity.class));
                         finishAffinity();
                         break;
                     case Constants.HR:
-                        Utils.showToastMessage(getApplicationContext(), "Welcome to HR dashboard page");
-                        startActivity(new Intent(getApplicationContext(), AdminHomeActivity.class));
+                        Utils.showToastMessage(context, "Welcome to HR dashboard page");
+                        startActivity(new Intent(context, AdminHomeActivity.class));
                         finishAffinity();
                         break;
                     default:
-                        Utils.showToastMessage(getApplicationContext(), "Welcome to Home Page");
-                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                        Utils.showToastMessage(context, "Welcome to Home Page");
+                        startActivity(new Intent(context, MainActivity.class));
                         finishAffinity();
                         break;
                 }
             }else {
-                Utils.showToastMessage(getApplicationContext(),"Please Contact Us HR ! Your Account is Disable");
+                Utils.showToastMessage(context,"Please Contact Us HR ! Your Account is Disable");
             }
         }else {
-            Utils.showToastMessage(getApplicationContext(),"Please Contact Us HR ! Your Account is Deleted");
+            Utils.showToastMessage(context,"Please Contact Us HR ! Your Account is Deleted");
         }
     }
 
@@ -130,7 +130,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             @Override
                             public void run() {
                                 dismissProgressHud();
-                                startActivity(new Intent(LoginActivity.this, SignUpActivity.class));
+                                startActivity(new Intent(context, SignUpActivity.class));
                                 finish();
                             }
                         },
@@ -145,7 +145,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             @Override
                             public void run() {
                                 dismissProgressHud();
-                                startActivity(new Intent(LoginActivity.this, ResetPasswordActivity.class));
+                                startActivity(new Intent(context, ResetPasswordActivity.class));
                                 finish();
                             }
                         },
@@ -157,9 +157,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 String email = binding.email.getText().toString().trim();
                 final String password = binding.password.getText().toString().trim();
                 if (binding.email.getText().toString().trim().isEmpty()){
-                    Utils.showToastMessage(LoginActivity.this,"Please Enter Email Address");
+                    Utils.showToastMessage(context,"Please Enter Email Address");
                 }else if (binding.password.getText().toString().trim().isEmpty()){
-                    Utils.showToastMessage(LoginActivity.this,"Please Enter Password");
+                    Utils.showToastMessage(context,"Please Enter Password");
                 }else {
                     startProgressHud();
                     loggedInViewModel.loginUser(email, password).observe(this, new Observer<LoginResponseModel>() {
@@ -172,7 +172,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     loggedInViewModel.getUserStatus(UUIID);
                                 } else {
                                     dismissProgressHud();
-                                    Utils.showToastMessage(getApplicationContext(), loginResponseModel.getError());
+                                    Utils.showToastMessage(context, loginResponseModel.getError());
                                 }
                             } else {
                                 dismissProgressHud();

@@ -6,6 +6,7 @@ import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Context;
@@ -14,6 +15,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import com.example.firebasedatabaseproject.admin.adminviewmodel.UpdateStatusViewModel;
 import com.example.firebasedatabaseproject.user.login.LoginActivity;
 import com.example.firebasedatabaseproject.PrograssBar;
 import com.example.firebasedatabaseproject.R;
@@ -28,7 +30,7 @@ public class AdminHomeActivity extends AppCompatActivity implements View.OnClick
     private Context context;
     private long pressedTime;
     private PrograssBar prograssBar;
-    LogOutViewModel logOutViewModel;
+    private LogOutViewModel logOutViewModel;
 
     Fragment selectedFragment;
 
@@ -37,9 +39,8 @@ public class AdminHomeActivity extends AppCompatActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         binding = ActivityUsersListBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        logOutViewModel = new ViewModelProvider(this).get(LogOutViewModel.class);
         initialise();
-
-        logOutViewModel = ViewModelProviders.of(this).get(LogOutViewModel.class);
     }
 
     private void initialise(){
@@ -100,7 +101,7 @@ public class AdminHomeActivity extends AppCompatActivity implements View.OnClick
                                 transaction.replace(R.id.frameContainer, new UsersListFragment()).commit();
                             }
                         },
-                        1500
+                        500
                 );
 
                 //setFragments(UsersListFragment.getNewInstance(2), null, false);
@@ -118,7 +119,7 @@ public class AdminHomeActivity extends AppCompatActivity implements View.OnClick
                                 setFragments(DepartmentFragment.getNewInstance(1), null, false);
                             }
                         },
-                        1500
+                        500
                 );
 
                 /*FragmentManager manager = getSupportFragmentManager();

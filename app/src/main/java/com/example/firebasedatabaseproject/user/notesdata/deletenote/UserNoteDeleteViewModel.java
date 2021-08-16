@@ -6,17 +6,19 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.firebasedatabaseproject.repository.UserTaskRepository;
+
 public class UserNoteDeleteViewModel extends AndroidViewModel {
     private final String TAG = UserNoteDeleteViewModel.class.getSimpleName();
-    private UserNoteDeleteRepository userNoteDeleteRepository;
+    private UserTaskRepository userTaskRepository;
 
     public UserNoteDeleteViewModel(@NonNull Application application) {
         super(application);
-        userNoteDeleteRepository = new UserNoteDeleteRepository(application);
+        userTaskRepository = new UserTaskRepository(application);
     }
 
     public MutableLiveData<UserNoteDeleteResponseModel> deleteNote(String sKey){
-        return userNoteDeleteRepository.deleteNote(sKey);
+        return userTaskRepository.deleteNote(sKey);
     }
 
 }

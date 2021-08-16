@@ -19,7 +19,7 @@
             android:orientation="vertical">-->
 
         <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="50dp"
             app:cardBackgroundColor="@color/maroonRed">
 
@@ -57,7 +57,7 @@
         <FrameLayout
             android:id="@+id/frameContainer"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 
