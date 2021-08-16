@@ -3,7 +3,10 @@ package com.example.firebasedatabaseproject.user.viewmodelss;
 import android.app.Application;
 
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.MutableLiveData;
 
+import com.example.firebasedatabaseproject.admin.responsemodel.DataMonthResponseModel;
+import com.example.firebasedatabaseproject.admin.responsemodel.LogOutResponseModel;
 import com.example.firebasedatabaseproject.repository.UsersListRepository;
 
 public class LogOutViewModel extends AndroidViewModel{
@@ -14,7 +17,7 @@ public class LogOutViewModel extends AndroidViewModel{
         usersListRepository = new UsersListRepository(application);
     }
 
-    public void logOut(){
-        usersListRepository.logOut();
+    public MutableLiveData<LogOutResponseModel> logOut(){
+        return usersListRepository.logOut();
     }
 }

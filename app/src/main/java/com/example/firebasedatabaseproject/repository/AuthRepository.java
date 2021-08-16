@@ -38,7 +38,6 @@ public class AuthRepository {
         this.firebaseDatabase = Utils.getDatabase();
         this.firebaseDatabase = firebaseDatabase.getInstance();
         this.firebaseAuth = FirebaseAuth.getInstance();
-        this.currentUser = firebaseAuth.getCurrentUser();
         this.loggedOutLiveData = new MutableLiveData<>();
     }
 
@@ -104,6 +103,7 @@ public class AuthRepository {
 
     public MutableLiveData<User> getGenerateUser(String email, String password, String fullName, String MobileNumber, String DmntData) {
         MutableLiveData<User> mutableLiveDataGenerateUser = new MutableLiveData<>();
+        currentUser = firebaseAuth.getCurrentUser();
         String currentUserUID = currentUser.getUid();
 
         databaseReference = firebaseDatabase.getReference().child(Constants.USERS).child(currentUserUID);

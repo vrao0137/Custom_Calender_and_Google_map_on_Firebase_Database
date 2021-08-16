@@ -34,6 +34,7 @@ import android.widget.PopupMenu;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.example.firebasedatabaseproject.admin.responsemodel.LogOutResponseModel;
 import com.example.firebasedatabaseproject.service.Constants;
 import com.example.firebasedatabaseproject.user.adapter.UserHeadingDataAdapter;
 import com.example.firebasedatabaseproject.databinding.DialogPickerBinding;
@@ -176,8 +177,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     binding.rcvListData.setAdapter(userHeadingDataAdapter);
                     userHeadingDataAdapter.notifyDataSetChanged();
                 }else {
-                    Utils.showToastMessage(getApplicationContext(),getUserNotesResponseModels.toString());
-                    Log.i(TAG, "Else_notesDataModels:- "+getUserNotesResponseModels);
+                   // Utils.showToastMessage(getApplicationContext(),getUserNotesResponseModels.toString());
+                    Log.i(TAG, "Else_notesDataModels:- "+getUserNotesResponseModels.toString());
                 }
             }
         });
@@ -249,17 +250,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String tTask = pickerBinding.edtDailyTast.getText().toString().trim();
 
                 if (pickerBinding.edtProjectName.getText().toString().trim().isEmpty()){
-                    Utils.showToastMessage(MainActivity.this,"Please Enter Project Name");
+                    Utils.showToastMessage(context,"Please Enter Project Name");
                 }else if (pickerBinding.edtDate.getText().toString().trim().isEmpty()){
-                    Utils.showToastMessage(MainActivity.this,"Please Select Date");
+                    Utils.showToastMessage(context,"Please Select Date");
                 }else if (pickerBinding.edtInTime.getText().toString().trim().isEmpty()){
-                    Utils.showToastMessage(MainActivity.this,"Please Select In-Time");
+                    Utils.showToastMessage(context,"Please Select In-Time");
                 }else if (pickerBinding.edtOutTime.getText().toString().trim().isEmpty()){
-                    Utils.showToastMessage(MainActivity.this,"Please Select Out-Time");
+                    Utils.showToastMessage(context,"Please Select Out-Time");
                 }else if (pickerBinding.edtHours.getText().toString().trim().isEmpty()){
-                    Utils.showToastMessage(MainActivity.this,"Please Enter Total Working Hours");
+                    Utils.showToastMessage(context,"Please Enter Total Working Hours");
                 }else if (pickerBinding.edtDailyTast.getText().toString().trim().isEmpty()){
-                    Utils.showToastMessage(MainActivity.this,"Please Enter Task");
+                    Utils.showToastMessage(context,"Please Enter Task");
                 }else {
                     // String currentTime = new SimpleDateFormat("h:mm a", Locale.getDefault()).format(new Date());
                     /*Calendar c = Calendar.getInstance();
@@ -292,7 +293,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (sKey != null){
                         addNotesViewModel.addNotesData(pProjectName, dDate, iInTime, oOutTime, hHours, dayOfTheWeek, mMonth, tTask, sKey);
                     }
-                    Utils.showToastMessage(MainActivity.this,"Task Save ");
+                    Utils.showToastMessage(context,"Task Save Successfully");
                    // userHeadingDataAdapter.notifyDataSetChanged();
                     dialog.dismiss();
                 }
@@ -446,19 +447,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 startProgressHud();
-                                new java.util.Timer().schedule(
-                                        new java.util.TimerTask() {
-                                            @Override
-                                            public void run() {
-                                                logOutViewModel.logOut();
-                                               // auth.signOut();
-                                                dismissProgressHud();
-                                                startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                                                finish();
-                                            }
-                                        },
-                                        1500
-                                );
+                                logOutViewModel.logOut().observe(MainActivity.this, new Observer<LogOutResponseModel>() {
+                                    @Override
+                                    public void onChanged(LogOutResponseModel logOutResponseModel) {
+                                        if (logOutResponseModel.getSuccess().equals("200")){
+                                            dismissProgressHud();
+                                            Log.e(TAG,"LogOut:- "+logOutResponseModel.getSuccess());
+                                            Utils.showToastMessage(context,"Logout Succesfull");
+                                            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                                            finish();
+                                        }else {
+                                            dismissProgressHud();
+                                            Utils.showToastMessage(context,"Not Logout this :- "+logOutResponseModel.getError());
+                                        }
+                                    }
+                                });
                             }
                         })
                         .setNegativeButton("No", null)

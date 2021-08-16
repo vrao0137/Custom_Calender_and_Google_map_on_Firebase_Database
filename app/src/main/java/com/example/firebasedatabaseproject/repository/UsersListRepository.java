@@ -9,6 +9,7 @@ import com.example.firebasedatabaseproject.Utils;
 import com.example.firebasedatabaseproject.admin.model.User;
 import com.example.firebasedatabaseproject.admin.responsemodel.AdminHomeUserListResponseModel;
 import com.example.firebasedatabaseproject.admin.responsemodel.DepartmentUserResponseModel;
+import com.example.firebasedatabaseproject.admin.responsemodel.LogOutResponseModel;
 import com.example.firebasedatabaseproject.admin.responsemodel.StatusChangesResponseModel;
 import com.example.firebasedatabaseproject.service.Constants;
 import com.example.firebasedatabaseproject.user.login.LoginStatusResponseModel;
@@ -137,9 +138,18 @@ public class UsersListRepository {
         return mutableLiveDataUpDateActivePendingUsers;
     }
 
-    public void logOut() {
-        firebaseAuth.signOut();
-        loggedOutLiveData.postValue(true);
+    public MutableLiveData<LogOutResponseModel> logOut(){
+        MutableLiveData<LogOutResponseModel> mutableLiveDataLogOut = new MutableLiveData<LogOutResponseModel>();
+        if (firebaseAuth.getCurrentUser() != null) {
+            firebaseAuth.signOut();
+            loggedOutLiveData.postValue(true);
+            LogOutResponseModel logOutResponseModel = new LogOutResponseModel("200","");
+            mutableLiveDataLogOut.setValue(logOutResponseModel);
+        }else {
+            LogOutResponseModel logOutResponseModel = new LogOutResponseModel("",firebaseAuth.getCurrentUser().getEmail());
+            mutableLiveDataLogOut.setValue(logOutResponseModel);
+        }
+        return mutableLiveDataLogOut;
     }
 
     public MutableLiveData<FirebaseUser> getUserLiveData() {

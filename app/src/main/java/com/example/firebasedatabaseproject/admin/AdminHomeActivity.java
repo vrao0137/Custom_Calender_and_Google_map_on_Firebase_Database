@@ -6,6 +6,7 @@ import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -13,9 +14,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
+import com.example.firebasedatabaseproject.MainActivity;
 import com.example.firebasedatabaseproject.admin.adminviewmodel.UpdateStatusViewModel;
+import com.example.firebasedatabaseproject.admin.responsemodel.LogOutResponseModel;
 import com.example.firebasedatabaseproject.user.login.LoginActivity;
 import com.example.firebasedatabaseproject.PrograssBar;
 import com.example.firebasedatabaseproject.R;
@@ -26,6 +30,7 @@ import com.example.firebasedatabaseproject.databinding.ActivityUsersListBinding;
 import com.example.firebasedatabaseproject.user.viewmodelss.LogOutViewModel;
 
 public class AdminHomeActivity extends AppCompatActivity implements View.OnClickListener {
+    private final String TAG = AdminHomeActivity.class.getSimpleName();
     private ActivityUsersListBinding binding;
     private Context context;
     private long pressedTime;
@@ -135,18 +140,20 @@ public class AdminHomeActivity extends AppCompatActivity implements View.OnClick
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 startProgressHud();
-                                new java.util.Timer().schedule(
-                                        new java.util.TimerTask() {
-                                            @Override
-                                            public void run() {
-                                                logOutViewModel.logOut();
-                                                dismissProgressHud();
-                                                startActivity(new Intent(AdminHomeActivity.this, LoginActivity.class));
-                                                finish();
-                                            }
-                                        },
-                                        1500
-                                );
+                                logOutViewModel.logOut().observe(AdminHomeActivity.this, new Observer<LogOutResponseModel>() {
+                                    @Override
+                                    public void onChanged(LogOutResponseModel logOutResponseModel) {
+                                        if (logOutResponseModel.getSuccess().equals("200")){
+                                            dismissProgressHud();
+                                            Utils.showToastMessage(context,"Logout Succesfull");
+                                            startActivity(new Intent(AdminHomeActivity.this, LoginActivity.class));
+                                            finish();
+                                        }else {
+                                            dismissProgressHud();
+                                            Utils.showToastMessage(context,"Not Logout this :- "+logOutResponseModel.getError());
+                                        }
+                                    }
+                                });
                             }
                         })
                         .setNegativeButton("No", null)

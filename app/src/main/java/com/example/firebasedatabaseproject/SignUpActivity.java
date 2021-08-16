@@ -40,8 +40,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         binding = ActivitySingUpBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        //   singUpViewModel = ViewModelProviders.of(this, new SingUpFactory(this.getApplication())).get(SingUpViewModel.class);
-        //  signUpViewModel = ViewModelProviders.of(this, new SingUpFactory(this.getApplication())).get(SignUpViewModel.class);
         signUpViewModel = new ViewModelProvider(this).get(SignUpViewModel.class);
         initialiseMethods();
     }
@@ -68,7 +66,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onChanged(User user) {
                 dismissProgressHud();
-                Utils.showToastMessage(getApplicationContext(), "Register Successfull please contact HR....");
+                Utils.showToastMessage(context, "Register Successfull please contact HR....");
             }
         });
     }
@@ -110,17 +108,14 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                 public void onChanged(SignUpResponseModel signUpResponseModel) {
                     if (signUpResponseModel != null) {
                         if (signUpResponseModel.getFirebaseUser() != null) {
-                            Log.i(TAG, "signUpResponseModel:- " + signUpResponseModel.getFirebaseUser().getUid());
                             signUpViewModel.createUserData(email, password, fullName, MobileNumber, DmntData);
                         } else {
                             dismissProgressHud();
-                            Utils.showToastMessage(getApplicationContext(), signUpResponseModel.getError());
-                        }
+                            Utils.showToastMessage(getApplicationContext(), signUpResponseModel.getError()); }
                     } else {
                         dismissProgressHud();
-                        Log.i(TAG, "signUpResponseModel:- " + "Null");
+                        Utils.showToastMessage(getApplicationContext(), signUpResponseModel.toString());
                     }
-
                 }
             });
 
@@ -138,7 +133,6 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                             public void run() {
                                 dismissProgressHud();
                                 startActivity(new Intent(context, LoginActivity.class));
-                                dismissProgressHud();
                                 finish();
                             }
                         },
