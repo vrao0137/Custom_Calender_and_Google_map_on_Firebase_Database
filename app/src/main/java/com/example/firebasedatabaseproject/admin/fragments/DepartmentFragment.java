@@ -7,14 +7,10 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
-
-import com.example.firebasedatabaseproject.admin.AdminUsersListDateActivity;
 import com.example.firebasedatabaseproject.admin.MonthlyUserListActivity;
 import com.example.firebasedatabaseproject.admin.adapter.ExpandableListAdapter;
 import com.example.firebasedatabaseproject.admin.adminviewmodel.DepartmentUsersDataViewModel;

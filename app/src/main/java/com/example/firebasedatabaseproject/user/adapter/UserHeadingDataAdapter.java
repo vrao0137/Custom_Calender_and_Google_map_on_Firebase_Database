@@ -39,8 +39,6 @@ public class UserHeadingDataAdapter extends RecyclerView.Adapter<UserHeadingData
         holder.binding.txvDate.setText(mDeveloperModel.get(position).getNotesDataResponse().getDate());
         holder.binding.txvDay.setText(mDeveloperModel.get(position).getNotesDataResponse().getWorkedHours());
         holder.binding.txvProjectName.setText(mDeveloperModel.get(position).getNotesDataResponse().getProjectName());
-        holder.binding.txvKey.setText(mDeveloperModel.get(position).getNotesDataResponse().getUniQKey());
-        Log.e("","mDeveloperModel.get(position).getNotesDataResponse().getUniQKey():- "+mDeveloperModel.get(position).getNotesDataResponse().getUniQKey());
        // Log.e("ListUniqueKey",""+mDeveloperModel.get(position).getUniQKey());
 
         holder.binding.ivEditOption.setOnClickListener(new View.OnClickListener() {
