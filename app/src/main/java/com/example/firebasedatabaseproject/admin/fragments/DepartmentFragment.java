@@ -7,26 +7,20 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
-import com.example.firebasedatabaseproject.Utils;
-import com.example.firebasedatabaseproject.admin.MonthlyUserListActivity;
-import com.example.firebasedatabaseproject.admin.adapter.ExpandableListAdapter;
-import com.example.firebasedatabaseproject.admin.adminviewmodel.DepartmentUsersDataViewModel;
-import com.example.firebasedatabaseproject.admin.adminviewmodel.ExpandableListViewModel;
-import com.example.firebasedatabaseproject.admin.model.User;
-import com.example.firebasedatabaseproject.admin.responsemodel.DepartmentUserResponseModel;
+import com.example.firebasedatabaseproject.services.Utils;
+import com.example.firebasedatabaseproject.admin.activities.MonthlyUserListActivity;
+import com.example.firebasedatabaseproject.admin.adapters.ExpandableListAdapter;
+import com.example.firebasedatabaseproject.admin.viewmodels.DepartmentFragmentViewModel;
+import com.example.firebasedatabaseproject.admin.models.User;
+import com.example.firebasedatabaseproject.admin.responsemodels.DepartmentUserResponseModel;
 import com.example.firebasedatabaseproject.databinding.FragmentDepartmentBinding;
-import com.example.firebasedatabaseproject.service.Constants;
-import com.example.firebasedatabaseproject.user.viewmodelss.LogOutViewModel;
+import com.example.firebasedatabaseproject.services.Constants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,18 +28,16 @@ import java.util.List;
 
 public class DepartmentFragment extends Fragment {
     private FragmentDepartmentBinding binding;
-    static int iID;
     private Context context;
-    ExpandableListViewModel expandableListViewModel;
+    private DepartmentFragmentViewModel departmentFragmentViewModel;
     ExpandableListAdapter expandableListAdapter;
     List<String> expandableDepartmentTitleList ;
 
     HashMap<String, List<User>> listUsersName = new HashMap<String, List<User>>();
 
-    DepartmentUsersDataViewModel departmentUsersDataViewModel;
+   // DepartmentUsersDataViewModel departmentUsersDataViewModel;
 
-    public static DepartmentFragment getNewInstance(int id) {
-        iID = id;
+    public static DepartmentFragment getNewInstance() {
         return new DepartmentFragment();
     }
 
@@ -53,18 +45,17 @@ public class DepartmentFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentDepartmentBinding.inflate(inflater,container,false);
 
-        expandableListViewModel = new ViewModelProvider(this).get(ExpandableListViewModel.class);
-
-        departmentUsersDataViewModel = new ViewModelProvider(this).get(DepartmentUsersDataViewModel.class);
+        departmentFragmentViewModel = new ViewModelProvider(this).get(DepartmentFragmentViewModel.class);
 
         initialiseView();
+
         return binding.getRoot();
     }
 
     private void initialiseView(){
         context = getContext();
 
-        expandableListViewModel.getDepartmentList().observe(getViewLifecycleOwner(), new Observer<DepartmentUserResponseModel>() {
+        departmentFragmentViewModel.getDepartmentList().observe(getViewLifecycleOwner(), new Observer<DepartmentUserResponseModel>() {
             @Override
             public void onChanged(DepartmentUserResponseModel departmentUserResponseModel) {
 

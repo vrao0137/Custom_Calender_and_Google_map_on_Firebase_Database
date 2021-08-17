@@ -6,7 +6,7 @@
     android:layout_height="fill_parent"
     android:id="@+id/sideDrawer"
     android:background="@color/colorWhite"
-    tools:context=".admin.AdminHomeActivity">
+    tools:context=".admin.activities.AdminHomeActivity">
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -50,7 +50,9 @@
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:textColor="@color/colorWhite"
-                    android:text="ADMIN HOME PAGE"/>
+                    android:text="ADMIN HOME PAGE"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="50dp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 

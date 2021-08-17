@@ -1,17 +1,16 @@
 package com.example.firebasedatabaseproject.repository;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.firebasedatabaseproject.Utils;
-import com.example.firebasedatabaseproject.admin.model.User;
-import com.example.firebasedatabaseproject.service.Constants;
-import com.example.firebasedatabaseproject.user.login.LoginResponseModel;
-import com.example.firebasedatabaseproject.user.login.LoginStatusResponseModel;
-import com.example.firebasedatabaseproject.user.signup.SignUpResponseModel;
+import com.example.firebasedatabaseproject.services.Utils;
+import com.example.firebasedatabaseproject.admin.models.User;
+import com.example.firebasedatabaseproject.services.Constants;
+import com.example.firebasedatabaseproject.user.responsemodels.LoginResponseModel;
+import com.example.firebasedatabaseproject.user.responsemodels.LoginStatusResponseModel;
+import com.example.firebasedatabaseproject.user.responsemodels.SignUpResponseModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;

@@ -13,21 +13,22 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".admin.MonthlyUserListActivity"/>
+        <activity android:name=".admin.activities.MonthlyUserListActivity"
+            android:screenOrientation="portrait"/>
         <activity
-            android:name=".admin.AdminHomeActivity"
+            android:name=".admin.activities.AdminHomeActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".admin.activities.UserTaskActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".admin.UserTaskActivity"
+            android:name=".user.activities.UserShowDetailsDataActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".UserShowDetailsDataActivity"
+            android:name=".activities.WelcomeActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".WelcomeActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".SplashActivity"
+            android:name=".activities.SplashActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,16 +37,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ResetPasswordActivity"
+            android:name=".activities.ResetPasswordActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".user.login.LoginActivity"
+            android:name=".activities.LoginActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".SignUpActivity"
+            android:name=".activities.SignUpActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".MainActivity"
+            android:name=".user.activities.UserActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden" />
     </application>
 

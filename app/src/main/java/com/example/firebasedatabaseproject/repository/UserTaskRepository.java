@@ -6,12 +6,13 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.firebasedatabaseproject.R;
-import com.example.firebasedatabaseproject.Utils;
-import com.example.firebasedatabaseproject.admin.responsemodel.DataMonthResponseModel;
-import com.example.firebasedatabaseproject.service.Constants;
-import com.example.firebasedatabaseproject.user.model.NotesDataModel;
-import com.example.firebasedatabaseproject.user.notesdata.deletenote.UserNoteDeleteResponseModel;
-import com.example.firebasedatabaseproject.user.notesdata.shownotes.GetUserNotesResponseModel;
+import com.example.firebasedatabaseproject.services.Utils;
+import com.example.firebasedatabaseproject.admin.responsemodels.DataMonthResponseModel;
+import com.example.firebasedatabaseproject.admin.responsemodels.LogOutResponseModel;
+import com.example.firebasedatabaseproject.services.Constants;
+import com.example.firebasedatabaseproject.user.models.NotesDataModel;
+import com.example.firebasedatabaseproject.user.responsemodels.UserNoteDeleteResponseModel;
+import com.example.firebasedatabaseproject.user.responsemodels.GetUserNotesResponseModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -21,13 +22,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class UserTaskRepository {
     private final String TAG = UserTaskRepository.class.getSimpleName();
     private Application application;
     private FirebaseDatabase firebaseDatabase;
     private final FirebaseUser currentUser;
+    private FirebaseAuth firebaseAuth;
+    private MutableLiveData<Boolean> loggedOutLiveData;
+
 
     //----------User data are found-----------------
     ArrayList<NotesDataModel> lstUserNotesData = new ArrayList<>();
@@ -39,8 +42,13 @@ public class UserTaskRepository {
         this.application = application;
         this.firebaseDatabase = Utils.getDatabase();
         this.firebaseDatabase = FirebaseDatabase.getInstance();
+        this.firebaseAuth = FirebaseAuth.getInstance();
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         this.currentUser = firebaseAuth.getCurrentUser();
+
+        if (firebaseAuth.getCurrentUser() != null) {
+            loggedOutLiveData.postValue(false);
+        }
     }
 
     public MutableLiveData<DataMonthResponseModel> getMutableLiveDataCheck(String uId){
@@ -268,5 +276,20 @@ public class UserTaskRepository {
             }
         });
         return mutableLiveUpdateNote;
+    }
+
+    //-------------------Log Out User------------------
+    public MutableLiveData<LogOutResponseModel> logOut(){
+        MutableLiveData<LogOutResponseModel> mutableLiveDataLogOut = new MutableLiveData<LogOutResponseModel>();
+        if (firebaseAuth.getCurrentUser() != null) {
+            firebaseAuth.signOut();
+            loggedOutLiveData.postValue(true);
+            LogOutResponseModel logOutResponseModel = new LogOutResponseModel("200","");
+            mutableLiveDataLogOut.setValue(logOutResponseModel);
+        }else {
+            LogOutResponseModel logOutResponseModel = new LogOutResponseModel("",firebaseAuth.getCurrentUser().getEmail());
+            mutableLiveDataLogOut.setValue(logOutResponseModel);
+        }
+        return mutableLiveDataLogOut;
     }
 }

@@ -14,25 +14,24 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
-import com.example.firebasedatabaseproject.OnListItemClicked;
+import com.example.firebasedatabaseproject.services.OnListItemClicked;
 import com.example.firebasedatabaseproject.R;
-import com.example.firebasedatabaseproject.Utils;
-import com.example.firebasedatabaseproject.admin.adapter.NewAllUsersListAdapter;
-import com.example.firebasedatabaseproject.admin.adminviewmodel.UpdateStatusViewModel;
-import com.example.firebasedatabaseproject.admin.adminviewmodel.UsersListViewModel;
-import com.example.firebasedatabaseproject.admin.model.User;
-import com.example.firebasedatabaseproject.admin.responsemodel.AdminHomeUserListResponseModel;
-import com.example.firebasedatabaseproject.admin.responsemodel.StatusChangesResponseModel;
+import com.example.firebasedatabaseproject.services.Utils;
+import com.example.firebasedatabaseproject.admin.adapters.NewAllUsersListAdapter;
+import com.example.firebasedatabaseproject.admin.viewmodels.UsersListFragmentViewModel;
+import com.example.firebasedatabaseproject.admin.models.User;
+import com.example.firebasedatabaseproject.admin.responsemodels.AdminHomeUserListResponseModel;
+import com.example.firebasedatabaseproject.admin.responsemodels.StatusChangesResponseModel;
 import com.example.firebasedatabaseproject.databinding.FragmentUsersListBinding;
-import com.example.firebasedatabaseproject.service.Constants;
+import com.example.firebasedatabaseproject.services.Constants;
 import java.util.ArrayList;
 import java.util.HashSet;
 
 public class UsersListFragment extends Fragment implements View.OnClickListener, OnListItemClicked {
     private FragmentUsersListBinding binding;
-    static int buId;
-    private UsersListViewModel usersListViewModel;
-    private UpdateStatusViewModel updateStatusViewModel;
+
+    private UsersListFragmentViewModel usersListFragmentViewModel;
+
     private NewAllUsersListAdapter newAllUsersListAdapter;
 
     HashSet<User> hashActiveUsers= new HashSet<User>();
@@ -51,8 +50,7 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
     String userStatus = "";
     String userDelete = "";
 
-    public static DepartmentFragment getNewInstance(int id) {
-        buId = id;
+    public static DepartmentFragment getNewInstance() {
         return new DepartmentFragment();
     }
 
@@ -62,9 +60,7 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
       //  return inflater.inflate(R.layout.fragment_users_list, container, false);
         binding = FragmentUsersListBinding.inflate(inflater,container,false);
 
-        usersListViewModel = new ViewModelProvider(this).get(UsersListViewModel.class);
-
-        updateStatusViewModel = new ViewModelProvider(this).get(UpdateStatusViewModel.class);
+        usersListFragmentViewModel = new ViewModelProvider(this).get(UsersListFragmentViewModel.class);
 
         initialiseView();
         return binding.getRoot();
@@ -89,7 +85,7 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
     }
 
     private void getAllUsersLst(){
-        usersListViewModel.getAllUsersList().observe(getViewLifecycleOwner(), new Observer<AdminHomeUserListResponseModel>() {
+        usersListFragmentViewModel.getAllUsersList().observe(getViewLifecycleOwner(), new Observer<AdminHomeUserListResponseModel>() {
             @Override
             public void onChanged(AdminHomeUserListResponseModel adminHomeUserListResponseModel) {
                 hashActiveUsers.clear();
@@ -222,7 +218,7 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
                                         .setCancelable(false)
                                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {
-                                                updateStatusViewModel.getDeleteUser(userUId,userStatus,userDelete).observe(getViewLifecycleOwner(), new Observer<StatusChangesResponseModel>() {
+                                                usersListFragmentViewModel.getDeleteUser(userUId,userStatus,userDelete).observe(getViewLifecycleOwner(), new Observer<StatusChangesResponseModel>() {
                                                     @Override
                                                     public void onChanged(StatusChangesResponseModel statusChangesResponseModel) {
                                                         if (statusChangesResponseModel !=null && !statusChangesResponseModel.getDatabaseReference().toString().isEmpty()){
@@ -249,7 +245,7 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
                                         .setCancelable(false)
                                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {
-                                                updateStatusViewModel.getUpDateActivePendingUsers(userUId,userStatus,userDelete).observe(getViewLifecycleOwner(), new Observer<StatusChangesResponseModel>() {
+                                                usersListFragmentViewModel.getUpDateActivePendingUsers(userUId,userStatus,userDelete).observe(getViewLifecycleOwner(), new Observer<StatusChangesResponseModel>() {
                                                     @Override
                                                     public void onChanged(StatusChangesResponseModel statusChangesResponseModel) {
                                                         if (statusChangesResponseModel !=null && !statusChangesResponseModel.getDatabaseReference().toString().isEmpty()){
@@ -276,7 +272,7 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
                                         .setCancelable(false)
                                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {
-                                                updateStatusViewModel.getUpDateActivePendingUsers(userUId,userStatus,userDelete).observe(getViewLifecycleOwner(), new Observer<StatusChangesResponseModel>() {
+                                                usersListFragmentViewModel.getUpDateActivePendingUsers(userUId,userStatus,userDelete).observe(getViewLifecycleOwner(), new Observer<StatusChangesResponseModel>() {
                                                     @Override
                                                     public void onChanged(StatusChangesResponseModel statusChangesResponseModel) {
                                                         if (statusChangesResponseModel !=null && !statusChangesResponseModel.getDatabaseReference().toString().isEmpty()){
@@ -305,7 +301,7 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
                                             .setCancelable(false)
                                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                                 public void onClick(DialogInterface dialog, int id) {
-                                                    updateStatusViewModel.getUpDateUserStatus(userUId,userStatus).observe(getViewLifecycleOwner(), new Observer<StatusChangesResponseModel>() {
+                                                    usersListFragmentViewModel.getUpDateUserStatus(userUId,userStatus).observe(getViewLifecycleOwner(), new Observer<StatusChangesResponseModel>() {
                                                         @Override
                                                         public void onChanged(StatusChangesResponseModel statusChangesResponseModel) {
                                                             if (statusChangesResponseModel !=null && !statusChangesResponseModel.getDatabaseReference().toString().isEmpty()){
@@ -328,7 +324,7 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
                                             .setCancelable(false)
                                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                                 public void onClick(DialogInterface dialog, int id) {
-                                                    updateStatusViewModel.getUpDateUserStatus(userUId,userStatus).observe(getViewLifecycleOwner(), new Observer<StatusChangesResponseModel>() {
+                                                    usersListFragmentViewModel.getUpDateUserStatus(userUId,userStatus).observe(getViewLifecycleOwner(), new Observer<StatusChangesResponseModel>() {
                                                         @Override
                                                         public void onChanged(StatusChangesResponseModel statusChangesResponseModel) {
                                                             if (statusChangesResponseModel !=null && !statusChangesResponseModel.getDatabaseReference().toString().isEmpty()){
