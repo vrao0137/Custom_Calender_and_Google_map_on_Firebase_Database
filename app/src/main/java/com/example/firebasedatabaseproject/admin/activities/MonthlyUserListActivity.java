@@ -38,29 +38,30 @@ public class MonthlyUserListActivity extends AppCompatActivity implements View.O
     private Context context;
     private MonthlyUserListActivityViewModel monthlyUserListViewModel;
 
-    ArrayList<String>getNewMonthStringList = new ArrayList<>();
-    HashSet<String>getHashMonthStringList = new HashSet<>();
-    Boolean currentMotnhBoolean = false;
-    ArrayList<String>getMonthStringList = new ArrayList<>();
-    HashSet<String>getNewHashMonthStringList = new HashSet<>();
+    private ArrayList<String>getNewMonthStringList = new ArrayList<>();
+    private HashSet<String>getHashMonthStringList = new HashSet<>();
+    private Boolean currentMotnhBoolean = false;
+    private ArrayList<String>getMonthStringList = new ArrayList<>();
+    private HashSet<String>getNewHashMonthStringList = new HashSet<>();
 
     String MonthName = "";
     String uUIID = "";
     String uUniqKey = "";
 
-    ArrayList<NotesDataModel> lstUserNotesData = new ArrayList<>();
-    ArrayList<NotesDataModel> lstUserNotesDataCheck = new ArrayList<>();
-    MonthlyUserDataAdapter monthlyUserDataAdapter;
+    private ArrayList<NotesDataModel> lstUserNotesData = new ArrayList<>();
+    private ArrayList<NotesDataModel> lstUserNotesDataCheck = new ArrayList<>();
+    private MonthlyUserDataAdapter monthlyUserDataAdapter;
+
     //ArrayList
-    ArrayList<NotesDataModel> newObserverList = new ArrayList<NotesDataModel>();
-    ArrayList<NotesDataModel> newMonthList = new ArrayList<NotesDataModel>();
-    ArrayList<NotesDataModel> newExtraData = new ArrayList<NotesDataModel>();
+    private ArrayList<NotesDataModel> newObserverList = new ArrayList<NotesDataModel>();
+    private ArrayList<NotesDataModel> newMonthList = new ArrayList<NotesDataModel>();
+    private ArrayList<NotesDataModel> newExtraData = new ArrayList<NotesDataModel>();
 
     //HashSet List
-    HashSet<NotesDataModel> hashObserverList = new HashSet<NotesDataModel>();
-    HashSet<NotesDataModel> hashMonthList = new HashSet<NotesDataModel>();
-    HashSet<NotesDataModel> hashExtraData = new HashSet<NotesDataModel>();
-    ArrayAdapter adapter;
+    private HashSet<NotesDataModel> hashObserverList = new HashSet<NotesDataModel>();
+    private HashSet<NotesDataModel> hashMonthList = new HashSet<NotesDataModel>();
+    private HashSet<NotesDataModel> hashExtraData = new HashSet<NotesDataModel>();
+    private ArrayAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

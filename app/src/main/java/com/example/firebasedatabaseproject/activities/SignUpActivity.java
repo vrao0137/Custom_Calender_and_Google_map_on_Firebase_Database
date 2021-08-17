@@ -65,9 +65,9 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             public void onChanged(User user) {
                 dismissProgressHud();
                 Utils.showToastMessage(context, "Register Successfull please contact HR....");
+                signUpViewModel.logOut();
                 startActivity(new Intent(context, WelcomeActivity.class));
                 finishAffinity();
-                signUpViewModel.logOut();
             }
         });
     }

@@ -63,10 +63,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         String role = loginStatusResponseModel.getUserStatus().getDepartment();
 
                         if (role != null){
-                            Log.i(TAG, "If_Status_Active:- "+role);
+                            Log.i(TAG, "If_Status_Role:- "+role);
                             getUserInfomation(active,delete,role);
                         }else {
-                            Log.i(TAG, "Else_Status_Active:- "+active);
+                            Log.i(TAG, "Else_Status_Role:- "+role);
                         }
                     }
                     else {
@@ -75,6 +75,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     }
                 } else {
                     dismissProgressHud();
+                    Utils.showToastMessage(context, loginStatusResponseModel.getError());
                     Log.i(TAG, "loginStatusResponseModel:- " + "Null");
                 }
             }
@@ -157,6 +158,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 }
                             } else {
                                 dismissProgressHud();
+                                Utils.showToastMessage(context, loginResponseModel.getError());
                                 Log.i(TAG, "loginResponseModel:- " + "Null");
                             }
                         }

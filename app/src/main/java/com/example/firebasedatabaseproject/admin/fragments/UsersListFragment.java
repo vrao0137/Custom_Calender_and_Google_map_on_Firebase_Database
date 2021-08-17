@@ -28,17 +28,20 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 public class UsersListFragment extends Fragment implements View.OnClickListener, OnListItemClicked {
+    private final String TAG = UsersListFragment.class.getSimpleName();
     private FragmentUsersListBinding binding;
 
     private UsersListFragmentViewModel usersListFragmentViewModel;
 
     private NewAllUsersListAdapter newAllUsersListAdapter;
 
-    HashSet<User> hashActiveUsers= new HashSet<User>();
+    private HashSet<User> hashActiveUsers= new HashSet<User>();
     private ArrayList<User> lstAllActiveUsers = new ArrayList<>();
-    HashSet<User> hashPandingUsers= new HashSet<User>();
+
+    private HashSet<User> hashPandingUsers= new HashSet<User>();
     private ArrayList<User> lstAllPendingUsers = new ArrayList<>();
-    HashSet<User> hashDeletedUsers= new HashSet<User>();
+
+    private HashSet<User> hashDeletedUsers= new HashSet<User>();
     private ArrayList<User> lstAllDeletedUsers = new ArrayList<>();
 
     private PopupMenu popActDeact;
@@ -222,7 +225,6 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
                                                     @Override
                                                     public void onChanged(StatusChangesResponseModel statusChangesResponseModel) {
                                                         if (statusChangesResponseModel !=null && !statusChangesResponseModel.getDatabaseReference().toString().isEmpty()){
-                                                            /*newAllUsersListAdapter.notifyDataSetChanged();*/
                                                             Utils.showToastMessage(getContext(),"User account deleted Successfull");
                                                             getAllUsersLst();
                                                         }else {

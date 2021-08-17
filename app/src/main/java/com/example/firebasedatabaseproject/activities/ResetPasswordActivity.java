@@ -27,19 +27,14 @@ public class ResetPasswordActivity extends AppCompatActivity implements View.OnC
         super.onCreate(savedInstanceState);
         binding = ActivityResetPasswordBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        auth = FirebaseAuth.getInstance();
+        initialize();
     }
 
     private void initialize(){
         context = this;
         binding.btnReset.setOnClickListener(this);
         binding.btnBack.setOnClickListener(this);
-    }
-
-    @Override
-    public void onResume(){
-        super.onResume();
-        auth = FirebaseAuth.getInstance();
-        initialize();
     }
 
     public void startProgressHud() {

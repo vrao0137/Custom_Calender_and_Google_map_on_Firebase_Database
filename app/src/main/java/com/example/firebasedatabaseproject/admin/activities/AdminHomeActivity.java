@@ -59,11 +59,6 @@ public class AdminHomeActivity extends AppCompatActivity implements View.OnClick
         if (addToBackStack)
             transaction.addToBackStack(fragment.getClass().getName());
         transaction.commit();
-
-        /*binding.txvToolbarTitle.setText("USERS LIST");
-                                FragmentManager manager = getSupportFragmentManager();
-                                FragmentTransaction transaction = manager.beginTransaction();
-                                transaction.replace(R.id.frameContainer, new UsersListFragment()).commit();*/
     }
 
     private void setDefaultFragemment() {

@@ -11,8 +11,9 @@ import com.example.firebasedatabaseproject.R;
 import com.example.firebasedatabaseproject.databinding.ActivityWelcomeBinding;
 
 public class WelcomeActivity extends AppCompatActivity implements View.OnClickListener{
-    ActivityWelcomeBinding binding;
-    Context context;
+    private final String TAG = WelcomeActivity.class.getSimpleName();
+    private ActivityWelcomeBinding binding;
+    private Context context;
     private long pressedTime;
 
     @Override

@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
+import com.example.firebasedatabaseproject.activities.LoginActivity;
 import com.example.firebasedatabaseproject.services.Utils;
 import com.example.firebasedatabaseproject.admin.activities.MonthlyUserListActivity;
 import com.example.firebasedatabaseproject.admin.adapters.ExpandableListAdapter;
@@ -27,15 +28,14 @@ import java.util.HashMap;
 import java.util.List;
 
 public class DepartmentFragment extends Fragment {
+    private final String TAG = DepartmentFragment.class.getSimpleName();
     private FragmentDepartmentBinding binding;
     private Context context;
     private DepartmentFragmentViewModel departmentFragmentViewModel;
-    ExpandableListAdapter expandableListAdapter;
-    List<String> expandableDepartmentTitleList ;
+    private ExpandableListAdapter expandableListAdapter;
+    private List<String> expandableDepartmentTitleList ;
 
-    HashMap<String, List<User>> listUsersName = new HashMap<String, List<User>>();
-
-   // DepartmentUsersDataViewModel departmentUsersDataViewModel;
+    private HashMap<String, List<User>> listUsersName = new HashMap<String, List<User>>();
 
     public static DepartmentFragment getNewInstance() {
         return new DepartmentFragment();
