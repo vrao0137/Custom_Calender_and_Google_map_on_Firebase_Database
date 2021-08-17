@@ -5,6 +5,7 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.firebasedatabaseproject.admin.responsemodels.LogOutResponseModel;
 import com.example.firebasedatabaseproject.services.Utils;
 import com.example.firebasedatabaseproject.admin.models.User;
 import com.example.firebasedatabaseproject.services.Constants;
@@ -112,8 +113,18 @@ public class AuthRepository {
         return mutableLiveDataGenerateUser;
     }
 
-    public void logOut() {
-        firebaseAuth.signOut();
-        loggedOutLiveData.postValue(true);
+    //-------------------Log Out User------------------
+    public MutableLiveData<LogOutResponseModel> logOut(){
+        MutableLiveData<LogOutResponseModel> mutableLiveDataLogOut = new MutableLiveData<LogOutResponseModel>();
+        if (firebaseAuth.getCurrentUser() != null) {
+            firebaseAuth.signOut();
+            loggedOutLiveData.postValue(true);
+            LogOutResponseModel logOutResponseModel = new LogOutResponseModel("200","");
+            mutableLiveDataLogOut.setValue(logOutResponseModel);
+        }else {
+            LogOutResponseModel logOutResponseModel = new LogOutResponseModel("",firebaseAuth.getCurrentUser().getEmail());
+            mutableLiveDataLogOut.setValue(logOutResponseModel);
+        }
+        return mutableLiveDataLogOut;
     }
 }

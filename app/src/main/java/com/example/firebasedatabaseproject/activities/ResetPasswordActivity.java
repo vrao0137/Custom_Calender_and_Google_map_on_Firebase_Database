@@ -79,19 +79,8 @@ public class ResetPasswordActivity extends AppCompatActivity implements View.OnC
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnBack:
-                startProgressHud();
-                new java.util.Timer().schedule(
-                        new java.util.TimerTask() {
-                            @Override
-                            public void run() {
-                                dismissProgressHud();
-                                startActivity(new Intent(context, LoginActivity.class));
-                                dismissProgressHud();
-                                finish();
-                            }
-                        },
-                        1500
-                );
+                startActivity(new Intent(context, LoginActivity.class));
+                finish();
                 break;
 
             case R.id.btnReset:

@@ -65,6 +65,9 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             public void onChanged(User user) {
                 dismissProgressHud();
                 Utils.showToastMessage(context, "Register Successfull please contact HR....");
+                startActivity(new Intent(context, WelcomeActivity.class));
+                finishAffinity();
+                signUpViewModel.logOut();
             }
         });
     }
@@ -87,17 +90,17 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         fullName = binding.edtFullName.getText().toString().trim();
         MobileNumber = binding.edtMobileNumber.getText().toString().trim();
         if (binding.edtFullName.getText().toString().trim().isEmpty()) {
-            Utils.showToastMessage(SignUpActivity.this, "Please Enter Full Name");
+            Utils.showToastMessage(context, "Please Enter Full Name");
         } else if (binding.edtMobileNumber.getText().toString().trim().isEmpty()) {
-            Utils.showToastMessage(SignUpActivity.this, "Please Enter Mobile Number");
+            Utils.showToastMessage(context, "Please Enter Mobile Number");
         } else if (DmntData.equals("Please select department")) {
-            Utils.showToastMessage(SignUpActivity.this, "Please Select Department");
+            Utils.showToastMessage(context, "Please Select Department");
         } else if (binding.email.getText().toString().trim().isEmpty()) {
-            Utils.showToastMessage(SignUpActivity.this, "Please Enter Email Address");
+            Utils.showToastMessage(context, "Please Enter Email Address");
         } else if (binding.password.getText().toString().trim().isEmpty()) {
-            Utils.showToastMessage(SignUpActivity.this, "Please Enter Password");
+            Utils.showToastMessage(context, "Please Enter Password");
         } else if (binding.password.length() < 6) {
-            Utils.showToastMessage(SignUpActivity.this, "Password too short, enter minimum 6 characters!");
+            Utils.showToastMessage(context, "Password too short, enter minimum 6 characters!");
         } else {
             //create user
             startProgressHud();
@@ -109,10 +112,10 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                             signUpViewModel.createUserData(email, password, fullName, MobileNumber, DmntData);
                         } else {
                             dismissProgressHud();
-                            Utils.showToastMessage(getApplicationContext(), signUpResponseModel.getError()); }
+                            Utils.showToastMessage(context, signUpResponseModel.getError()); }
                     } else {
                         dismissProgressHud();
-                        Utils.showToastMessage(getApplicationContext(), signUpResponseModel.toString());
+                        Utils.showToastMessage(context, signUpResponseModel.toString());
                     }
                 }
             });
@@ -124,18 +127,8 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnSignIn:
-                startProgressHud();
-                new java.util.Timer().schedule(
-                        new java.util.TimerTask() {
-                            @Override
-                            public void run() {
-                                dismissProgressHud();
-                                startActivity(new Intent(context, LoginActivity.class));
-                                finish();
-                            }
-                        },
-                        1500
-                );
+                startActivity(new Intent(context, LoginActivity.class));
+                finish();
                 break;
 
             case R.id.btnSignUp:

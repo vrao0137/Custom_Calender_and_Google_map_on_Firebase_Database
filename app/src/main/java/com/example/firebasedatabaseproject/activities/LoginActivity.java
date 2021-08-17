@@ -125,33 +125,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnSignup:
-                startProgressHud();
-                new java.util.Timer().schedule(
-                        new java.util.TimerTask() {
-                            @Override
-                            public void run() {
-                                dismissProgressHud();
-                                startActivity(new Intent(context, SignUpActivity.class));
-                                finish();
-                            }
-                        },
-                        1500
-                );
+                startActivity(new Intent(context, SignUpActivity.class));
+                finish();
                 break;
 
             case R.id.btnReset:
-                startProgressHud();
-                new java.util.Timer().schedule(
-                        new java.util.TimerTask() {
-                            @Override
-                            public void run() {
-                                dismissProgressHud();
-                                startActivity(new Intent(context, ResetPasswordActivity.class));
-                                finish();
-                            }
-                        },
-                        1500
-                );
+                startActivity(new Intent(context, ResetPasswordActivity.class));
+                finish();
                 break;
 
             case R.id.btnLogin:

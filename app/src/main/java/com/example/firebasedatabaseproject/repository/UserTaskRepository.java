@@ -29,6 +29,7 @@ public class UserTaskRepository {
     private FirebaseDatabase firebaseDatabase;
     private final FirebaseUser currentUser;
     private FirebaseAuth firebaseAuth;
+    private MutableLiveData<FirebaseUser> userLiveData;
     private MutableLiveData<Boolean> loggedOutLiveData;
 
 
@@ -44,11 +45,18 @@ public class UserTaskRepository {
         this.firebaseDatabase = FirebaseDatabase.getInstance();
         this.firebaseAuth = FirebaseAuth.getInstance();
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        this.userLiveData = new MutableLiveData<>();
+        this.loggedOutLiveData = new MutableLiveData<>();
         this.currentUser = firebaseAuth.getCurrentUser();
 
         if (firebaseAuth.getCurrentUser() != null) {
+            userLiveData.postValue(firebaseAuth.getCurrentUser());
             loggedOutLiveData.postValue(false);
         }
+    }
+
+    public MutableLiveData<FirebaseUser> getUserLiveData() {
+        return userLiveData;
     }
 
     public MutableLiveData<DataMonthResponseModel> getMutableLiveDataCheck(String uId){
