@@ -9,11 +9,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.example.firebasedatabaseproject.services.Utils;
+import com.example.firebasedatabaseproject.commanclasses.Utils;
 import com.example.firebasedatabaseproject.admin.viewmodels.UserTaskActivityViewModel;
 import com.example.firebasedatabaseproject.admin.responsemodels.DataMonthResponseModel;
 import com.example.firebasedatabaseproject.databinding.ActivityAdminDeshboardUserDataBinding;
-import com.example.firebasedatabaseproject.services.Constants;
+import com.example.firebasedatabaseproject.commanclasses.Constants;
 import com.example.firebasedatabaseproject.user.models.NotesDataModel;
 
 import java.text.ParseException;
@@ -51,7 +51,7 @@ public class UserTaskActivity extends AppCompatActivity {
         Intent intent = getIntent();
         UuIid = intent.getStringExtra(Constants.USER_UIID);
         UniqKeee = intent.getStringExtra(Constants.UNIQKEY);
-        binding.toolbarTop.txvToolbarTitle.setText("USER TASK");
+        binding.toolbarTop.txvToolbarTitle.setText(Constants.UserTask);
         getUserTaskData();
 
         binding.toolbarTop.ivToolbarButtonBack.setOnClickListener(new View.OnClickListener() {

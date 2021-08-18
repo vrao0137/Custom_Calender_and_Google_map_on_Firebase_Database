@@ -14,16 +14,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
-import com.example.firebasedatabaseproject.services.OnListItemClicked;
+import com.example.firebasedatabaseproject.commanclasses.OnListItemClicked;
 import com.example.firebasedatabaseproject.R;
-import com.example.firebasedatabaseproject.services.Utils;
+import com.example.firebasedatabaseproject.commanclasses.Utils;
 import com.example.firebasedatabaseproject.admin.adapters.NewAllUsersListAdapter;
 import com.example.firebasedatabaseproject.admin.viewmodels.UsersListFragmentViewModel;
 import com.example.firebasedatabaseproject.admin.models.User;
 import com.example.firebasedatabaseproject.admin.responsemodels.AdminHomeUserListResponseModel;
 import com.example.firebasedatabaseproject.admin.responsemodels.StatusChangesResponseModel;
 import com.example.firebasedatabaseproject.databinding.FragmentUsersListBinding;
-import com.example.firebasedatabaseproject.services.Constants;
+import com.example.firebasedatabaseproject.commanclasses.Constants;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -187,7 +187,7 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
 
                 menuOpts = popActDeact.getMenu();
                 if (IsActive.equals(true)) {
-                    menuOpts.findItem(R.id.changeStatus).setTitle("Disable");
+                    menuOpts.findItem(R.id.changeStatus).setTitle(Constants.Disable);
                     menuOpts.findItem(R.id.activeUser).setVisible(false);
                     menuOpts.findItem(R.id.pandingUser).setVisible(false);
                 }else if (DeleteUser.equals(true)){
@@ -196,7 +196,7 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
                     menuOpts.findItem(R.id.activeUser).setVisible(true);
                     menuOpts.findItem(R.id.pandingUser).setVisible(true);
                 }else if (IsActive.equals(false)){
-                    menuOpts.findItem(R.id.changeStatus).setTitle("Enable");
+                    menuOpts.findItem(R.id.changeStatus).setTitle(Constants.Enable);
                     menuOpts.findItem(R.id.activeUser).setVisible(false);
                     menuOpts.findItem(R.id.pandingUser).setVisible(false);
                 }
@@ -225,7 +225,7 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
                                                     @Override
                                                     public void onChanged(StatusChangesResponseModel statusChangesResponseModel) {
                                                         if (statusChangesResponseModel !=null && !statusChangesResponseModel.getDatabaseReference().toString().isEmpty()){
-                                                            Utils.showToastMessage(getContext(),"User account deleted Successfull");
+                                                            Utils.showToastMessage(getContext(),getContext().getResources().getString(R.string.delete_user));
                                                             getAllUsersLst();
                                                         }else {
                                                             Utils.showToastMessage(getContext(),statusChangesResponseModel.getError());
@@ -251,7 +251,7 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
                                                     @Override
                                                     public void onChanged(StatusChangesResponseModel statusChangesResponseModel) {
                                                         if (statusChangesResponseModel !=null && !statusChangesResponseModel.getDatabaseReference().toString().isEmpty()){
-                                                            Utils.showToastMessage(getContext(),"User Account Activated");
+                                                            Utils.showToastMessage(getContext(),getContext().getResources().getString(R.string.activated_user));
                                                             getAllUsersLst();
                                                         }else {
                                                             Utils.showToastMessage(getContext(),statusChangesResponseModel.getError());
@@ -278,7 +278,7 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
                                                     @Override
                                                     public void onChanged(StatusChangesResponseModel statusChangesResponseModel) {
                                                         if (statusChangesResponseModel !=null && !statusChangesResponseModel.getDatabaseReference().toString().isEmpty()){
-                                                            Utils.showToastMessage(getContext(),"User Account activated Please Contact to HR?");
+                                                            Utils.showToastMessage(getContext(),getContext().getResources().getString(R.string.pending_user));
                                                             getAllUsersLst();
                                                         }else {
                                                             Utils.showToastMessage(getContext(),statusChangesResponseModel.getError());
@@ -307,7 +307,7 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
                                                         @Override
                                                         public void onChanged(StatusChangesResponseModel statusChangesResponseModel) {
                                                             if (statusChangesResponseModel !=null && !statusChangesResponseModel.getDatabaseReference().toString().isEmpty()){
-                                                                Utils.showToastMessage(getContext(),"Status Change Successfull");
+                                                                Utils.showToastMessage(getContext(),getContext().getResources().getString(R.string.status_change));
                                                                 getAllUsersLst();
                                                             }else {
                                                                 Utils.showToastMessage(getContext(),statusChangesResponseModel.getError());
@@ -330,7 +330,7 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
                                                         @Override
                                                         public void onChanged(StatusChangesResponseModel statusChangesResponseModel) {
                                                             if (statusChangesResponseModel !=null && !statusChangesResponseModel.getDatabaseReference().toString().isEmpty()){
-                                                                Utils.showToastMessage(getContext(),"Status Change Successfull");
+                                                                Utils.showToastMessage(getContext(),getContext().getResources().getString(R.string.status_change));
                                                                 getAllUsersLst();
                                                             }else {
                                                                 Utils.showToastMessage(getContext(),statusChangesResponseModel.getError());

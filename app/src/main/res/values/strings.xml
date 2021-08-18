@@ -16,36 +16,47 @@
     </style>
     <!-- <string name="app_name">Firebase Auth</string>-->
     <string name="action_sign_in_short">REGISTER</string>
-    <string name="email">Email</string>
-    <string name="minimum_password">Password too short, enter minimum 6 characters!</string>
-    <string name="auth_failed">Authentication failed, check your email and password or sign up</string>
-    <string name="change_email">Change Email</string>
-    <string name="change_password">Change Password</string>
-    <string name="send_password_reset_email">Send Password reset email</string>
-    <string name="remove_user">Remove user</string>
-    <string name="new_pass">New Password</string>
-    <string name="title_activity_profile">Firebase</string>
-    <string name="title_activity_login">Sign in</string>
-    <string name="hint_email">Enter Email</string>
-    <string name="hint_password">Password</string>
-    <string name="hint_name">Fullname</string>
     <string name="btn_login">LOGIN</string>
-    <string name="btn_link_to_register">Not a member? Get registered in Firebase now!</string>
-    <string name="btn_link_to_login">Already registered. Login Me!</string>
-    <string name="title_activity_reset_password">ResetPasswordActivity</string>
-    <string name="btn_forgot_password">Forgot your password?</string>
-    <string name="btn_reset_password">Reset Password</string>
+    <string name="reset_password">RESET PASSWORD</string>
     <string name="btn_back"><![CDATA[<< Back]]></string>
-    <string name="hint_new_email">New Email</string>
-    <string name="btn_change">Change</string>
-    <string name="btn_send">Send</string>
-    <string name="btn_remove">Remove</string>
-    <string name="btn_sign_out">Sign Out</string>
+    <string name="application_attendence">APPLICATION TO ATTENDENCE SHEET</string>
+    <string name="btn_signIn">SIGN IN</string>
+    <string name="btn_signUp">SING UP</string>
     <string name="lbl_forgot_password">Forgot password?</string>
-    <string name="forgot_password_msg">We just need your registered Email Id to sent you password reset instructions.</string>
 
-    <string name="update_succesfully">Update Successfully</string>
-    <string name="delete">Successfully Deleted</string>
+    <string name="enter_fullName">Please Enter Full Name</string>
+    <string name="enter_email">Please Enter Email Address</string>
+    <string name="enter_password">Please Enter Password</string>
+    <string name="enter_mobileNo">Please Enter Mobile Number</string>
+    <string name="select_department">Please Select Department</string>
+    <string name="minimum_password">Password too short, enter minimum 6 characters!</string>
+
+    <string name="enter_project">Please Enter Project Name</string>
+    <string name="select_date">Please Select Date</string>
+    <string name="select_InTime">Please Select In-Time</string>
+    <string name="select_OutTime">Please Select Out-Time</string>
+    <string name="enter_totalWork">Please Enter Total Working Hours</string>
+    <string name="enter_task">Please Enter Task</string>
+
+    <string name="admin_deshboard">Welcome to Admin dashboard page</string>
+    <string name="hr_deshboard">Welcome to HR dashboard page</string>
+    <string name="home_page">Welcome to Home Page</string>
+    <string name="account_is_Disable">Please Contact Us HR ! Your Account is Disable</string>
+    <string name="account_is_Deleted">Please Contact Us HR ! Your Account is Deleted</string>
+    <string name="task_save">Task Save</string>
+    <string name="status_change">Status Change Successfull</string>
+    <string name="pending_user">User Account activated Please Contact to HR?</string>
+    <string name="activated_user">User Account Activated</string>
+    <string name="delete_user">User account deleted Successfull</string>
+
+    <string name="btn_link_to_login">Already registered. Login Me!</string>
+    <string name="btn_forgot_password">Forgot your password?</string>
+    <string name="btn_link_to_register">Not a member? Get registered in Firebase now!</string>
+    <string name="forgot_password_msg">We just need your registered Email Id to sent you password reset instructions.</string>
+    <string name="reset_link">We have sent you instructions to reset your password!</string>
+    <string name="reset_failed">Failed to send reset email!</string>
+
     <string name="created_user_account">Your Account Created was Succeccfully Please Contact To HR.</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="logOut">Logout Succesfull</string>
+    <string name="back_press">Please 2 times press on back button</string>
 </resources>

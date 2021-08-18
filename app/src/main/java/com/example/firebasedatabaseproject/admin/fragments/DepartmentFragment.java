@@ -13,15 +13,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
-import com.example.firebasedatabaseproject.activities.LoginActivity;
-import com.example.firebasedatabaseproject.services.Utils;
+import com.example.firebasedatabaseproject.commanclasses.Utils;
 import com.example.firebasedatabaseproject.admin.activities.MonthlyUserListActivity;
 import com.example.firebasedatabaseproject.admin.adapters.ExpandableListAdapter;
 import com.example.firebasedatabaseproject.admin.viewmodels.DepartmentFragmentViewModel;
 import com.example.firebasedatabaseproject.admin.models.User;
 import com.example.firebasedatabaseproject.admin.responsemodels.DepartmentUserResponseModel;
 import com.example.firebasedatabaseproject.databinding.FragmentDepartmentBinding;
-import com.example.firebasedatabaseproject.services.Constants;
+import com.example.firebasedatabaseproject.commanclasses.Constants;
 
 import java.util.ArrayList;
 import java.util.HashMap;

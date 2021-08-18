@@ -1,8 +1,20 @@
-package com.example.firebasedatabaseproject.services;
+package com.example.firebasedatabaseproject.commanclasses;
 
 public class Constants {
     public static final String ADMIN = "Admin";
     public static final String HR = "HR";
+    public static final String ANDROID = "Android";
+    public static final String ANGULAR = "Angular";
+    public static final String JAVA = "Java";
+    public static final String MARKETING = "Marketing";
+    public static final String MANAGEMENT = "Management";
+    public static final String DepartmentList = "DEPARTMENT LIST";
+    public static final String UserList = "USER LIST";
+    public static final String Monthdata = "MONTH DATA";
+    public static final String UserTask = "USER TASK";
+    public static final String UserTaskDetails = "USER TASK DETAILS";
+    public static final String Disable = "Disable";
+    public static final String Enable = "Enable";
 
     public static final String PROJECTNAME = "projectName";
     public static final String DATE = "date";
@@ -29,4 +41,10 @@ public class Constants {
     public static final String FALSE = "false";
     public static final String YES = "yes";
     public static final String NO = "no";
+
+    public static final String Success = "200";
+
+    public static final String UpdateData = "Update Successfully";
+    public static final String DeleteData = "Deleted Successfully";
+
 }

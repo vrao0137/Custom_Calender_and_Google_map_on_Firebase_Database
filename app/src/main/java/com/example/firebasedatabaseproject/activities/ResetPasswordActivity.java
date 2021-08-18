@@ -10,8 +10,8 @@ import android.view.View;
 
 import com.example.firebasedatabaseproject.R;
 import com.example.firebasedatabaseproject.databinding.ActivityResetPasswordBinding;
-import com.example.firebasedatabaseproject.services.PrograssBar;
-import com.example.firebasedatabaseproject.services.Utils;
+import com.example.firebasedatabaseproject.commanclasses.PrograssBar;
+import com.example.firebasedatabaseproject.commanclasses.Utils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -52,7 +52,7 @@ public class ResetPasswordActivity extends AppCompatActivity implements View.OnC
     private void resetPassMethod(){
         String email = binding.email.getText().toString().trim();
         if (binding.email.getText().toString().trim().isEmpty()){
-            Utils.showToastMessage(context,"Please Enter Email Address");
+            Utils.showToastMessage(context,context.getResources().getString(R.string.enter_email));
         }else {
             startProgressHud();
             auth.sendPasswordResetEmail(email)
@@ -60,9 +60,9 @@ public class ResetPasswordActivity extends AppCompatActivity implements View.OnC
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                Utils.showToastMessage(ResetPasswordActivity.this,"We have sent you instructions to reset your password!");
+                                Utils.showToastMessage(context,context.getResources().getString(R.string.reset_link));
                             } else {
-                                Utils.showToastMessage(ResetPasswordActivity.this,"Failed to send reset email!");
+                                Utils.showToastMessage(context,context.getResources().getString(R.string.reset_failed));
                             }
                             dismissProgressHud();
                         }

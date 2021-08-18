@@ -11,10 +11,11 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.WindowManager;
 
+import com.example.firebasedatabaseproject.R;
 import com.example.firebasedatabaseproject.admin.activities.AdminHomeActivity;
 import com.example.firebasedatabaseproject.databinding.ActivitySplashBinding;
-import com.example.firebasedatabaseproject.services.Constants;
-import com.example.firebasedatabaseproject.services.Utils;
+import com.example.firebasedatabaseproject.commanclasses.Constants;
+import com.example.firebasedatabaseproject.commanclasses.Utils;
 import com.example.firebasedatabaseproject.user.activities.UserActivity;
 import com.example.firebasedatabaseproject.user.viewmodels.SplashActivityViewModel;
 import com.google.firebase.auth.FirebaseAuth;
@@ -74,29 +75,29 @@ public class SplashActivity extends AppCompatActivity {
                                     if (active.equalsIgnoreCase(Constants.TRUE)){
                                         switch (role) {
                                             case Constants.ADMIN:
-                                                Utils.showToastMessage(context, "Welcome to Admin dashboard page");
+                                                Utils.showToastMessage(context, context.getResources().getString(R.string.admin_deshboard));
                                                 startActivity(new Intent(context, AdminHomeActivity.class));
                                                 finish();
                                                 break;
                                             case Constants.HR:
-                                                Utils.showToastMessage(context, "Welcome to HR dashboard page");
+                                                Utils.showToastMessage(context, context.getResources().getString(R.string.hr_deshboard));
                                                 startActivity(new Intent(context, AdminHomeActivity.class));
                                                 finish();
                                                 break;
                                             default:
-                                                Utils.showToastMessage(context, "Welcome to Home Page");
+                                                Utils.showToastMessage(context, context.getResources().getString(R.string.home_page));
                                                 startActivity(new Intent(context, UserActivity.class));
                                                 finish();
                                                 break;
                                         }
                                     }else {
-                                        Utils.showToastMessage(context,"Please Contact Us HR ! Your Account is Disable");
+                                        Utils.showToastMessage(context,context.getResources().getString(R.string.account_is_Disable));
                                         splashActivityViewModel.logOut();
                                         startActivity(new Intent(context, WelcomeActivity.class));
                                         finish();
                                     }
                                 }else {
-                                    Utils.showToastMessage(getApplicationContext(),"Please Contact Us HR ! Your Account is Deleted");
+                                    Utils.showToastMessage(getApplicationContext(),context.getResources().getString(R.string.account_is_Deleted));
                                     splashActivityViewModel.logOut();
                                     startActivity(new Intent(context, WelcomeActivity.class));
                                     finish();

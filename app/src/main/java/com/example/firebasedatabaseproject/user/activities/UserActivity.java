@@ -33,12 +33,12 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.example.firebasedatabaseproject.activities.LoginActivity;
-import com.example.firebasedatabaseproject.services.OnListItemClicked;
-import com.example.firebasedatabaseproject.services.PrograssBar;
+import com.example.firebasedatabaseproject.commanclasses.OnListItemClicked;
+import com.example.firebasedatabaseproject.commanclasses.PrograssBar;
 import com.example.firebasedatabaseproject.R;
-import com.example.firebasedatabaseproject.services.Utils;
+import com.example.firebasedatabaseproject.commanclasses.Utils;
 import com.example.firebasedatabaseproject.admin.responsemodels.LogOutResponseModel;
-import com.example.firebasedatabaseproject.services.Constants;
+import com.example.firebasedatabaseproject.commanclasses.Constants;
 import com.example.firebasedatabaseproject.user.adapters.UserHeadingDataAdapter;
 import com.example.firebasedatabaseproject.databinding.DialogPickerBinding;
 import com.example.firebasedatabaseproject.databinding.PopupDialogBinding;
@@ -236,17 +236,17 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
                 String tTask = pickerBinding.edtDailyTast.getText().toString().trim();
 
                 if (pickerBinding.edtProjectName.getText().toString().trim().isEmpty()){
-                    Utils.showToastMessage(context,"Please Enter Project Name");
+                    Utils.showToastMessage(context,context.getResources().getString(R.string.enter_project));
                 }else if (pickerBinding.edtDate.getText().toString().trim().isEmpty()){
-                    Utils.showToastMessage(context,"Please Select Date");
+                    Utils.showToastMessage(context,context.getResources().getString(R.string.select_date));
                 }else if (pickerBinding.edtInTime.getText().toString().trim().isEmpty()){
-                    Utils.showToastMessage(context,"Please Select In-Time");
+                    Utils.showToastMessage(context,context.getResources().getString(R.string.select_InTime));
                 }else if (pickerBinding.edtOutTime.getText().toString().trim().isEmpty()){
-                    Utils.showToastMessage(context,"Please Select Out-Time");
+                    Utils.showToastMessage(context,context.getResources().getString(R.string.select_OutTime));
                 }else if (pickerBinding.edtHours.getText().toString().trim().isEmpty()){
-                    Utils.showToastMessage(context,"Please Enter Total Working Hours");
+                    Utils.showToastMessage(context,context.getResources().getString(R.string.enter_totalWork));
                 }else if (pickerBinding.edtDailyTast.getText().toString().trim().isEmpty()){
-                    Utils.showToastMessage(context,"Please Enter Task");
+                    Utils.showToastMessage(context,context.getResources().getString(R.string.enter_task));
                 }else {
                     // String currentTime = new SimpleDateFormat("h:mm a", Locale.getDefault()).format(new Date());
                     /*Calendar c = Calendar.getInstance();
@@ -279,7 +279,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
                     if (sKey != null){
                         userActivityViewModel.addNotesData(pProjectName, dDate, iInTime, oOutTime, hHours, dayOfTheWeek, mMonth, tTask, sKey);
                     }
-                    Utils.showToastMessage(context,"Task Save Successfully");
+                    Utils.showToastMessage(context,context.getResources().getString(R.string.task_save));
                    // userHeadingDataAdapter.notifyDataSetChanged();
                     dialog.dismiss();
                 }
@@ -436,10 +436,10 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
                                 userActivityViewModel.logOut().observe(UserActivity.this, new Observer<LogOutResponseModel>() {
                                     @Override
                                     public void onChanged(LogOutResponseModel logOutResponseModel) {
-                                        if (logOutResponseModel.getSuccess().equals("200")){
+                                        if (logOutResponseModel.getSuccess().equals(Constants.Success)){
                                             dismissProgressHud();
                                             Log.e(TAG,"LogOut:- "+logOutResponseModel.getSuccess());
-                                            Utils.showToastMessage(context,"Logout Succesfull");
+                                            Utils.showToastMessage(context,context.getResources().getString(R.string.logOut));
                                             startActivity(new Intent(UserActivity.this, LoginActivity.class));
                                             finish();
                                         }else {
@@ -628,7 +628,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
             // Visibility gone Edittext then close Inpute keyboard......
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(binding.edtSearchingText.getWindowToken(), 0);
-            Utils.showToastMessage(UserActivity.this,"Press back again to exit");
+            Utils.showToastMessage(context,context.getResources().getString(R.string.back_press));
         }
         pressedTime = System.currentTimeMillis();
     }

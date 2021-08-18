@@ -32,7 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:hint="@string/hint_email"
+                android:hint="@string/enter_email"
                 android:inputType="textEmailAddress"
                 android:textColor="@color/maroonRed" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -46,20 +46,11 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:hint="@string/hint_password"
+                android:hint="@string/enter_password"
                 android:inputType="textPassword"
                 android:textColor="@color/maroonRed" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Login Button -->
-
-        <!--<Button
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dip"
-            android:background="@color/colorAccent"
-            android:text="@string/btn_login"
-            android:textColor="@android:color/black" />-->
 
         <TextView
             android:layout_width="250dp"

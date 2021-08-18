@@ -9,9 +9,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import com.example.firebasedatabaseproject.services.Utils;
+import com.example.firebasedatabaseproject.commanclasses.Utils;
 import com.example.firebasedatabaseproject.databinding.ActivityUserShowDetailsDataBinding;
-import com.example.firebasedatabaseproject.services.Constants;
+import com.example.firebasedatabaseproject.commanclasses.Constants;
 import com.example.firebasedatabaseproject.user.responsemodels.GetUserNotesResponseModel;
 import com.example.firebasedatabaseproject.user.viewmodels.UserShowDetailsDataActivityViewModel;
 import java.text.ParseException;
@@ -45,7 +45,7 @@ public class UserShowDetailsDataActivity extends AppCompatActivity {
         UI_id = intent.getStringExtra(Constants.USER_UIID);
         Unq_Keee = intent.getStringExtra(Constants.UNIQKEY);
 
-        binding.toolbarTop.txvToolbarTitle.setText("USER TASK DETAILS");
+        binding.toolbarTop.txvToolbarTitle.setText(Constants.UserTaskDetails);
         getUserTaskData();
 
         binding.toolbarTop.ivToolbarButtonBack.setOnClickListener(new View.OnClickListener() {

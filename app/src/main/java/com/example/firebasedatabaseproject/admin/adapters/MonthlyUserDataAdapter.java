@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.firebasedatabaseproject.services.OnListItemClicked;
+import com.example.firebasedatabaseproject.commanclasses.OnListItemClicked;
 import com.example.firebasedatabaseproject.admin.activities.MonthlyUserListActivity;
 import com.example.firebasedatabaseproject.databinding.AdminUserDesignBinding;
 import com.example.firebasedatabaseproject.user.models.NotesDataModel;

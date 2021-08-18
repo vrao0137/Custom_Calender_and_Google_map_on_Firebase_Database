@@ -34,7 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:focusableInTouchMode="true"
-            android:hint="Enter Full Name"
+            android:hint="@string/enter_fullName"
             android:textColorHint="@color/colorWhite"
             android:imeOptions="actionUnspecified"
             android:inputType="textAutoComplete"
@@ -52,7 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:focusableInTouchMode="true"
-                android:hint="Enter Mobile Number"
+                android:hint="@string/enter_mobileNo"
                 android:imeOptions="actionUnspecified"
                 android:inputType="number"
                 android:maxLength="10"
@@ -110,7 +110,7 @@
                 android:id="@+id/email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter Email Address"
+                android:hint="@string/enter_email"
                 android:inputType="textEmailAddress"
                 android:maxLines="1"
                 android:singleLine="true"
@@ -126,23 +126,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:focusableInTouchMode="true"
-                android:hint="Enter Password"
+                android:hint="@string/enter_password"
                 android:imeOptions="actionUnspecified"
                 android:inputType="textPassword"
                 android:maxLines="1"
                 android:singleLine="true"
                 android:textColor="@color/maroonRed" />
         </com.google.android.material.textfield.TextInputLayout>
-
-        <!--<Button
-            style="?android:textAppearanceSmall"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@color/colorAccent"
-            android:text="@string/action_sign_in_short"
-            android:textColor="@android:color/black"
-            android:textStyle="bold" />-->
 
         <TextView
             android:layout_width="250dp"
@@ -157,8 +147,6 @@
             android:padding="5dp"
             android:textStyle="bold"
             android:text="@string/action_sign_in_short"/>
-
-        <!-- Link to Login Screen -->
 
         <Button
             android:id="@+id/btnSignIn"

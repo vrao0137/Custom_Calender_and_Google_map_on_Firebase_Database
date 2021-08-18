@@ -13,9 +13,9 @@ import android.view.View;
 import com.example.firebasedatabaseproject.R;
 import com.example.firebasedatabaseproject.admin.activities.AdminHomeActivity;
 import com.example.firebasedatabaseproject.databinding.ActivityLoginBinding;
-import com.example.firebasedatabaseproject.services.Constants;
-import com.example.firebasedatabaseproject.services.PrograssBar;
-import com.example.firebasedatabaseproject.services.Utils;
+import com.example.firebasedatabaseproject.commanclasses.Constants;
+import com.example.firebasedatabaseproject.commanclasses.PrograssBar;
+import com.example.firebasedatabaseproject.commanclasses.Utils;
 import com.example.firebasedatabaseproject.user.activities.UserActivity;
 import com.example.firebasedatabaseproject.user.responsemodels.LoginResponseModel;
 import com.example.firebasedatabaseproject.user.responsemodels.LoginStatusResponseModel;
@@ -50,8 +50,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         loginActivityViewModel.getUserStatus(UUIID).observe(this, new Observer<LoginStatusResponseModel>() {
             @Override
             public void onChanged(LoginStatusResponseModel loginStatusResponseModel) {
-                dismissProgressHud();
-
                 if (loginStatusResponseModel != null) {
 
                     if (loginStatusResponseModel.getUserStatus() != null) {
@@ -87,26 +85,26 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             if (active.equalsIgnoreCase(Constants.TRUE)){
                 switch (role) {
                     case Constants.ADMIN:
-                        Utils.showToastMessage(context, "Welcome to Admin dashboard page");
+                        Utils.showToastMessage(context, context.getResources().getString(R.string.admin_deshboard));
                         startActivity(new Intent(context, AdminHomeActivity.class));
                         finishAffinity();
                         break;
                     case Constants.HR:
-                        Utils.showToastMessage(context, "Welcome to HR dashboard page");
+                        Utils.showToastMessage(context, context.getResources().getString(R.string.hr_deshboard));
                         startActivity(new Intent(context, AdminHomeActivity.class));
                         finishAffinity();
                         break;
                     default:
-                        Utils.showToastMessage(context, "Welcome to Home Page");
+                        Utils.showToastMessage(context, context.getResources().getString(R.string.home_page));
                         startActivity(new Intent(context, UserActivity.class));
                         finishAffinity();
                         break;
                 }
             }else {
-                Utils.showToastMessage(context,"Please Contact Us HR ! Your Account is Disable");
+                Utils.showToastMessage(context,context.getResources().getString(R.string.account_is_Disable));
             }
         }else {
-            Utils.showToastMessage(context,"Please Contact Us HR ! Your Account is Deleted");
+            Utils.showToastMessage(context,context.getResources().getString(R.string.account_is_Deleted));
         }
     }
 
@@ -139,14 +137,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 String email = binding.email.getText().toString().trim();
                 final String password = binding.password.getText().toString().trim();
                 if (binding.email.getText().toString().trim().isEmpty()){
-                    Utils.showToastMessage(context,"Please Enter Email Address");
+                    Utils.showToastMessage(context,context.getResources().getString(R.string.enter_email));
                 }else if (binding.password.getText().toString().trim().isEmpty()){
-                    Utils.showToastMessage(context,"Please Enter Password");
+                    Utils.showToastMessage(context,context.getResources().getString(R.string.enter_password));
                 }else {
                     startProgressHud();
+                    Log.e(TAG,"Login Button Click: ");
                     loginActivityViewModel.loginUser(email, password).observe(this, new Observer<LoginResponseModel>() {
                         @Override
                         public void onChanged(LoginResponseModel loginResponseModel) {
+                            Log.e(TAG,"loginActivityViewModel Enter: ");
                             if (loginResponseModel != null) {
                                 if (loginResponseModel.getFirebaseUser() != null) {
                                     Log.i(TAG, "loginResponseModel:- " + loginResponseModel.getFirebaseUser().getUid());

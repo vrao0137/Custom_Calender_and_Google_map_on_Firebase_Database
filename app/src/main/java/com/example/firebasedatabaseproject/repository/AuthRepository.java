@@ -6,9 +6,9 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.firebasedatabaseproject.admin.responsemodels.LogOutResponseModel;
-import com.example.firebasedatabaseproject.services.Utils;
+import com.example.firebasedatabaseproject.commanclasses.Utils;
 import com.example.firebasedatabaseproject.admin.models.User;
-import com.example.firebasedatabaseproject.services.Constants;
+import com.example.firebasedatabaseproject.commanclasses.Constants;
 import com.example.firebasedatabaseproject.user.responsemodels.LoginResponseModel;
 import com.example.firebasedatabaseproject.user.responsemodels.LoginStatusResponseModel;
 import com.example.firebasedatabaseproject.user.responsemodels.SignUpResponseModel;
@@ -25,7 +25,6 @@ import com.google.firebase.database.ValueEventListener;
 
 public class AuthRepository {
     private final String TAG= AuthRepository.class.getSimpleName();
-    private Application application;
     private FirebaseAuth firebaseAuth;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
@@ -34,7 +33,6 @@ public class AuthRepository {
     private MutableLiveData<LoginStatusResponseModel> mutableLiveDataGenerateUser = new MutableLiveData<>();
 
     public AuthRepository(Application application) {
-        this.application = application;
         this.firebaseDatabase = Utils.getDatabase();
         this.firebaseDatabase = firebaseDatabase.getInstance();
         this.firebaseAuth = FirebaseAuth.getInstance();
@@ -119,7 +117,7 @@ public class AuthRepository {
         if (firebaseAuth.getCurrentUser() != null) {
             firebaseAuth.signOut();
             loggedOutLiveData.postValue(true);
-            LogOutResponseModel logOutResponseModel = new LogOutResponseModel("200","");
+            LogOutResponseModel logOutResponseModel = new LogOutResponseModel(Constants.Success,"");
             mutableLiveDataLogOut.setValue(logOutResponseModel);
         }else {
             LogOutResponseModel logOutResponseModel = new LogOutResponseModel("",firebaseAuth.getCurrentUser().getEmail());

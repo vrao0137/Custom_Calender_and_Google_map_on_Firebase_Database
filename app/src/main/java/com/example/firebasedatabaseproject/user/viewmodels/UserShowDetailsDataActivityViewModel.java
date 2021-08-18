@@ -5,7 +5,7 @@ import android.app.Application;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.firebasedatabaseproject.services.Utils;
+import com.example.firebasedatabaseproject.commanclasses.Utils;
 import com.example.firebasedatabaseproject.repository.UsersListRepository;
 import com.example.firebasedatabaseproject.user.responsemodels.GetUserNotesResponseModel;
 import com.google.firebase.database.DatabaseReference;

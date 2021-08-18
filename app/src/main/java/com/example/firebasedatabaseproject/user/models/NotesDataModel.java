@@ -1,6 +1,6 @@
 package com.example.firebasedatabaseproject.user.models;
 
-import com.example.firebasedatabaseproject.services.Constants;
+import com.example.firebasedatabaseproject.commanclasses.Constants;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

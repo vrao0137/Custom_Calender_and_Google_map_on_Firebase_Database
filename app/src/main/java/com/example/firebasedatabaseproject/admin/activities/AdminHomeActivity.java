@@ -15,9 +15,10 @@ import android.view.View;
 import com.example.firebasedatabaseproject.admin.viewmodels.AdminHomeViewModel;
 import com.example.firebasedatabaseproject.admin.responsemodels.LogOutResponseModel;
 import com.example.firebasedatabaseproject.activities.LoginActivity;
-import com.example.firebasedatabaseproject.services.PrograssBar;
+import com.example.firebasedatabaseproject.commanclasses.Constants;
+import com.example.firebasedatabaseproject.commanclasses.PrograssBar;
 import com.example.firebasedatabaseproject.R;
-import com.example.firebasedatabaseproject.services.Utils;
+import com.example.firebasedatabaseproject.commanclasses.Utils;
 import com.example.firebasedatabaseproject.admin.fragments.DepartmentFragment;
 import com.example.firebasedatabaseproject.admin.fragments.UsersListFragment;
 import com.example.firebasedatabaseproject.databinding.ActivityUsersListBinding;
@@ -62,7 +63,7 @@ public class AdminHomeActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void setDefaultFragemment() {
-        binding.txvToolbarTitle.setText("DEPARTMENT LIST");
+        binding.txvToolbarTitle.setText(Constants.DepartmentList);
         setFragments(DepartmentFragment.getNewInstance(), null, false);
     }
 
@@ -87,6 +88,7 @@ public class AdminHomeActivity extends AppCompatActivity implements View.OnClick
 
             case R.id.rlUserList:
                 binding.sideDrawer.closeDrawer(GravityCompat.START);
+                binding.txvToolbarTitle.setText(Constants.UserList);
                 setFragments(new UsersListFragment(), null, false);
 
                /* startProgressHud();
@@ -108,7 +110,7 @@ public class AdminHomeActivity extends AppCompatActivity implements View.OnClick
 
             case R.id.rlHome:
                 binding.sideDrawer.closeDrawer(GravityCompat.START);
-                binding.txvToolbarTitle.setText("DEPARTMENT LIST");
+                binding.txvToolbarTitle.setText(Constants.DepartmentList);
                 setFragments(DepartmentFragment.getNewInstance(), null, false);
                 break;
 
@@ -123,9 +125,9 @@ public class AdminHomeActivity extends AppCompatActivity implements View.OnClick
                                 adminHomeViewModel.logOut().observe(AdminHomeActivity.this, new Observer<LogOutResponseModel>() {
                                     @Override
                                     public void onChanged(LogOutResponseModel logOutResponseModel) {
-                                        if (logOutResponseModel.getSuccess().equals("200")){
+                                        if (logOutResponseModel.getSuccess().equals(Constants.Success)){
                                             dismissProgressHud();
-                                            Utils.showToastMessage(context,"Logout Succesfull");
+                                            Utils.showToastMessage(context,context.getResources().getString(R.string.logOut));
                                             startActivity(new Intent(AdminHomeActivity.this, LoginActivity.class));
                                             finish();
                                         }else {
@@ -148,7 +150,7 @@ public class AdminHomeActivity extends AppCompatActivity implements View.OnClick
             super.onBackPressed();
             finishAffinity();
         } else {
-           Utils.showToastMessage(context,"Please 2 times press on back button");
+           Utils.showToastMessage(context,context.getResources().getString(R.string.back_press));
         }
         pressedTime = System.currentTimeMillis();
     }

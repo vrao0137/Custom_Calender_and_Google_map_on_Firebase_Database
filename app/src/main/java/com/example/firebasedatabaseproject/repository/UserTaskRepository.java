@@ -4,12 +4,10 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
-
-import com.example.firebasedatabaseproject.R;
-import com.example.firebasedatabaseproject.services.Utils;
+import com.example.firebasedatabaseproject.commanclasses.Utils;
 import com.example.firebasedatabaseproject.admin.responsemodels.DataMonthResponseModel;
 import com.example.firebasedatabaseproject.admin.responsemodels.LogOutResponseModel;
-import com.example.firebasedatabaseproject.services.Constants;
+import com.example.firebasedatabaseproject.commanclasses.Constants;
 import com.example.firebasedatabaseproject.user.models.NotesDataModel;
 import com.example.firebasedatabaseproject.user.responsemodels.UserNoteDeleteResponseModel;
 import com.example.firebasedatabaseproject.user.responsemodels.GetUserNotesResponseModel;
@@ -25,10 +23,9 @@ import java.util.ArrayList;
 
 public class UserTaskRepository {
     private final String TAG = UserTaskRepository.class.getSimpleName();
-    private Application application;
     private FirebaseDatabase firebaseDatabase;
     private final FirebaseUser currentUser;
-    private FirebaseAuth firebaseAuth;
+    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private MutableLiveData<FirebaseUser> userLiveData;
     private MutableLiveData<Boolean> loggedOutLiveData;
 
@@ -40,17 +37,14 @@ public class UserTaskRepository {
     ArrayList<NotesDataModel> listUserDetailsData = new ArrayList<>();
 
     public UserTaskRepository(Application application){
-        this.application = application;
         this.firebaseDatabase = Utils.getDatabase();
-        this.firebaseDatabase = FirebaseDatabase.getInstance();
-        this.firebaseAuth = FirebaseAuth.getInstance();
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        this.firebaseDatabase = firebaseDatabase.getInstance();
         this.userLiveData = new MutableLiveData<>();
         this.loggedOutLiveData = new MutableLiveData<>();
         this.currentUser = firebaseAuth.getCurrentUser();
 
-        if (firebaseAuth.getCurrentUser() != null) {
-            userLiveData.postValue(firebaseAuth.getCurrentUser());
+        if (currentUser != null) {
+            userLiveData.postValue(currentUser);
             loggedOutLiveData.postValue(false);
         }
     }
@@ -197,12 +191,11 @@ public class UserTaskRepository {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot appleSnapshot: dataSnapshot.getChildren()) {
                     appleSnapshot.getRef().removeValue();
-                    mutableLiveDeleteNote.setValue(new UserNoteDeleteResponseModel(application.getResources().getString(R.string.delete), ""));
+                    mutableLiveDeleteNote.setValue(new UserNoteDeleteResponseModel(Constants.DeleteData, ""));
                 }
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Utils.showToastMessage(application,"onCancelled"+databaseError.toException());
                 mutableLiveDeleteNote.setValue(new UserNoteDeleteResponseModel("", databaseError.toException().toString()));
             }
         });
@@ -275,7 +268,7 @@ public class UserTaskRepository {
                         databaseReference.child(updateKey).child(Constants.TASK).setValue(tTask);
                         databaseReference.child(updateKey).child(Constants.UNIQKEY).setValue(getUniKey);
                     }
-                    mutableLiveUpdateNote.setValue(new UserNoteDeleteResponseModel(application.getResources().getString(R.string.update_succesfully), ""));
+                    mutableLiveUpdateNote.setValue(new UserNoteDeleteResponseModel(Constants.UpdateData, ""));
                 }
             }
             @Override
@@ -292,7 +285,7 @@ public class UserTaskRepository {
         if (firebaseAuth.getCurrentUser() != null) {
             firebaseAuth.signOut();
             loggedOutLiveData.postValue(true);
-            LogOutResponseModel logOutResponseModel = new LogOutResponseModel("200","");
+            LogOutResponseModel logOutResponseModel = new LogOutResponseModel(Constants.Success,"");
             mutableLiveDataLogOut.setValue(logOutResponseModel);
         }else {
             LogOutResponseModel logOutResponseModel = new LogOutResponseModel("",firebaseAuth.getCurrentUser().getEmail());

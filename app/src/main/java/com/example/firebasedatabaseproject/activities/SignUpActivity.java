@@ -15,8 +15,8 @@ import android.widget.ArrayAdapter;
 import com.example.firebasedatabaseproject.R;
 import com.example.firebasedatabaseproject.admin.models.User;
 import com.example.firebasedatabaseproject.databinding.ActivitySingUpBinding;
-import com.example.firebasedatabaseproject.services.PrograssBar;
-import com.example.firebasedatabaseproject.services.Utils;
+import com.example.firebasedatabaseproject.commanclasses.PrograssBar;
+import com.example.firebasedatabaseproject.commanclasses.Utils;
 import com.example.firebasedatabaseproject.user.responsemodels.SignUpResponseModel;
 import com.example.firebasedatabaseproject.user.viewmodels.SignUpActivityViewModel;
 
@@ -64,7 +64,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onChanged(User user) {
                 dismissProgressHud();
-                Utils.showToastMessage(context, "Register Successfull please contact HR....");
+                Utils.showToastMessage(context, context.getResources().getString(R.string.created_user_account));
                 signUpViewModel.logOut();
                 startActivity(new Intent(context, WelcomeActivity.class));
                 finishAffinity();
@@ -90,17 +90,17 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         fullName = binding.edtFullName.getText().toString().trim();
         MobileNumber = binding.edtMobileNumber.getText().toString().trim();
         if (binding.edtFullName.getText().toString().trim().isEmpty()) {
-            Utils.showToastMessage(context, "Please Enter Full Name");
+            Utils.showToastMessage(context, context.getResources().getString(R.string.enter_fullName));
         } else if (binding.edtMobileNumber.getText().toString().trim().isEmpty()) {
-            Utils.showToastMessage(context, "Please Enter Mobile Number");
+            Utils.showToastMessage(context, context.getResources().getString(R.string.enter_mobileNo));
         } else if (DmntData.equals("Please select department")) {
-            Utils.showToastMessage(context, "Please Select Department");
+            Utils.showToastMessage(context, context.getResources().getString(R.string.select_department));
         } else if (binding.email.getText().toString().trim().isEmpty()) {
-            Utils.showToastMessage(context, "Please Enter Email Address");
+            Utils.showToastMessage(context, context.getResources().getString(R.string.enter_email));
         } else if (binding.password.getText().toString().trim().isEmpty()) {
-            Utils.showToastMessage(context, "Please Enter Password");
+            Utils.showToastMessage(context, context.getResources().getString(R.string.enter_password));
         } else if (binding.password.length() < 6) {
-            Utils.showToastMessage(context, "Password too short, enter minimum 6 characters!");
+            Utils.showToastMessage(context, context.getResources().getString(R.string.minimum_password));
         } else {
             //create user
             startProgressHud();

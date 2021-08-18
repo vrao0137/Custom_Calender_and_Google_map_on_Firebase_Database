@@ -5,13 +5,13 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.firebasedatabaseproject.services.Utils;
 import com.example.firebasedatabaseproject.admin.models.User;
 import com.example.firebasedatabaseproject.admin.responsemodels.AdminHomeUserListResponseModel;
 import com.example.firebasedatabaseproject.admin.responsemodels.DepartmentUserResponseModel;
 import com.example.firebasedatabaseproject.admin.responsemodels.LogOutResponseModel;
 import com.example.firebasedatabaseproject.admin.responsemodels.StatusChangesResponseModel;
-import com.example.firebasedatabaseproject.services.Constants;
+import com.example.firebasedatabaseproject.commanclasses.Constants;
+import com.example.firebasedatabaseproject.commanclasses.Utils;
 import com.example.firebasedatabaseproject.user.models.NotesDataModel;
 import com.example.firebasedatabaseproject.user.responsemodels.GetUserNotesResponseModel;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,9 +29,9 @@ import java.util.List;
 
 public class UsersListRepository {
     private final String TAG = UsersListRepository.class.getSimpleName();
-    private Application application;
     private FirebaseDatabase firebaseDatabase;
     private FirebaseAuth firebaseAuth;
+    private final FirebaseUser currentUser;
     private MutableLiveData<FirebaseUser> userLiveData;
     private MutableLiveData<Boolean> loggedOutLiveData;
 
@@ -43,15 +43,15 @@ public class UsersListRepository {
     private ArrayList<User> mmAllUserList = new ArrayList<>();
 
     public UsersListRepository(Application application){
-        this.application = application;
         this.firebaseDatabase = Utils.getDatabase();
-        this.firebaseDatabase = FirebaseDatabase.getInstance();
+        this.firebaseDatabase = firebaseDatabase.getInstance();
         this.firebaseAuth = FirebaseAuth.getInstance();
+        this.currentUser = firebaseAuth.getCurrentUser();
         this.userLiveData = new MutableLiveData<>();
         this.loggedOutLiveData = new MutableLiveData<>();
 
-        if (firebaseAuth.getCurrentUser() != null) {
-            userLiveData.postValue(firebaseAuth.getCurrentUser());
+        if (currentUser != null) {
+            userLiveData.postValue(currentUser);
             loggedOutLiveData.postValue(false);
         }
     }
@@ -142,10 +142,10 @@ public class UsersListRepository {
         if (firebaseAuth.getCurrentUser() != null) {
             firebaseAuth.signOut();
             loggedOutLiveData.postValue(true);
-            LogOutResponseModel logOutResponseModel = new LogOutResponseModel("200","");
+            LogOutResponseModel logOutResponseModel = new LogOutResponseModel(Constants.Success,"");
             mutableLiveDataLogOut.setValue(logOutResponseModel);
         }else {
-            LogOutResponseModel logOutResponseModel = new LogOutResponseModel("",firebaseAuth.getCurrentUser().getEmail());
+            LogOutResponseModel logOutResponseModel = new LogOutResponseModel("",currentUser.getEmail());
             mutableLiveDataLogOut.setValue(logOutResponseModel);
         }
         return mutableLiveDataLogOut;
@@ -244,22 +244,23 @@ public class UsersListRepository {
                     lstAllUsers.add(new User(eEmail, mMobileNumber, pPassword, uUserName, uUserUID, dDepartment,isStatus,isDelete));
 
                     for (User obj1: lstAllUsers){
-                        if (obj1.getIsActive().equals("true")){
-                            if (obj1.getDepartment().equals("Android")){
+                        if (obj1.getIsActive().equals(Constants.TRUE)){
+                            if (obj1.getDepartment().equals(Constants.ANDROID)){
                                 hashAndroidList.add(obj1);
-                            }else if (obj1.getDepartment().equals("Angular")){
+                            }else if (obj1.getDepartment().equals(Constants.ANGULAR)){
                                 hashAngularList.add(obj1);
-                            }else if (obj1.getDepartment().equals("Java")){
+                            }else if (obj1.getDepartment().equals(Constants.JAVA)){
                                 hashJavaList.add(obj1);
-                            }else if (obj1.getDepartment().equals("HR")){
+                            }else if (obj1.getDepartment().equals(Constants.HR)){
                                 hashHRList.add(obj1);
-                            }else if (obj1.getDepartment().equals("Admin")){
+                            }else if (obj1.getDepartment().equals(Constants.ADMIN)){
                                 hashAdminList.add(obj1);
-                            }else if (obj1.getDepartment().equals("Marketing")){
+                            }else if (obj1.getDepartment().equals(Constants.MARKETING)){
                                 hashMarketingList.add(obj1);
-                            }else if (obj1.getDepartment().equals("Management")){
+                            }else if (obj1.getDepartment().equals(Constants.MANAGEMENT)){
                                 hashManagementList.add(obj1);
-                            }else {
+                            }
+                           /* else {
                                 if (obj1.getDepartment().equals("Android")){
                                     hashAndroidList.add(obj1);
                                 }else if (obj1.getDepartment().equals("Angular")){
@@ -275,7 +276,7 @@ public class UsersListRepository {
                                 }else if (obj1.getDepartment().equals("Management")){
                                     hashManagementList.add(obj1);
                                 }
-                            }
+                            }*/
                         }
                     }
                 }
@@ -303,13 +304,13 @@ public class UsersListRepository {
 
                 expandableDetailList = new HashMap<String, List<User>>();
 
-                expandableDetailList.put("Android", newAndroidList);
-                expandableDetailList.put("Angular", newAngularList);
-                expandableDetailList.put("Java", newJavaList);
-                expandableDetailList.put("HR", newHRList);
-                expandableDetailList.put("Admin", newAdminList);
-                expandableDetailList.put("Marketing", newMarketingList);
-                expandableDetailList.put("Management", newManagementList);
+                expandableDetailList.put(Constants.ANDROID, newAndroidList);
+                expandableDetailList.put(Constants.ANGULAR, newAngularList);
+                expandableDetailList.put(Constants.JAVA, newJavaList);
+                expandableDetailList.put(Constants.HR, newHRList);
+                expandableDetailList.put(Constants.ADMIN, newAdminList);
+                expandableDetailList.put(Constants.MARKETING, newMarketingList);
+                expandableDetailList.put(Constants.MANAGEMENT, newManagementList);
 
                 DepartmentUserResponseModel departmentUserResponseModel = new DepartmentUserResponseModel(expandableDetailList,"");
                 mutableLiveDataAllDepartment.setValue(departmentUserResponseModel);
