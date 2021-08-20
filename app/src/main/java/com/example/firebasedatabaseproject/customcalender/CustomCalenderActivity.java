@@ -48,6 +48,8 @@ public class CustomCalenderActivity extends AppCompatActivity implements View.On
         lstWorkHour.add(new CustomCalendarModel("12 August 2021","9 Hrs"));
         lstWorkHour.add(new CustomCalendarModel("17 August 2021","13 Hrs"));
         lstWorkHour.add(new CustomCalendarModel("21 August 2021","9 Hrs"));
+        lstWorkHour.add(new CustomCalendarModel("25 August 2021","5 Hrs"));
+        lstWorkHour.add(new CustomCalendarModel("29 August 2021","6 Hrs"));
 
         binding.ivPreviousBtn.setOnClickListener(this);
         binding.ivnextBtn.setOnClickListener(this);
