@@ -13,8 +13,10 @@
     <color name="transparent">#00ff0000</color>
     <color name="colorGrey">#808080</color>
     <color name="colorGrey1">#51808080</color>
+    <color name="colorGreyLight">#2F808080</color>
     <color name="quantum_grey200">#eeeeee</color>
     <color name="colorPrimary">#FF9703</color>
+    <color name="colorPrimaryLight">#68FF9800</color>
     <color name="blackLight">#515050</color>
     <color name="blackLight1">#F4F2F2</color>
     <color name="colorAccent">#f2fe71</color>

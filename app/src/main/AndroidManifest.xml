@@ -13,11 +13,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".admin.activities.MonthlyUserListActivity"
-            android:screenOrientation="portrait"/>
+        <activity android:name=".customcalender.CustomCalenderActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".admin.activities.MonthlyUserListActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".admin.activities.AdminHomeActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".admin.activities.UserTaskActivity"
             android:screenOrientation="portrait" />
@@ -30,11 +38,11 @@
         <activity
             android:name=".activities.SplashActivity"
             android:screenOrientation="portrait">
-            <intent-filter>
+            <!--<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            </intent-filter>-->
         </activity>
         <activity
             android:name=".activities.ResetPasswordActivity"

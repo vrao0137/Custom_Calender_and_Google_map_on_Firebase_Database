@@ -137,42 +137,42 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
                 IsActive = true;
                 DeleteUser = false;
                 getAllUsersLst();
-                binding.crdActiveUsers.setCardBackgroundColor(Color.parseColor("#FFFFFFFF"));
-                binding.txvActiveUsers.setTextColor(Color.parseColor("#800000"));
+                binding.crdActiveUsers.setCardBackgroundColor(Color.parseColor(Constants.whiteColor));
+                binding.txvActiveUsers.setTextColor(Color.parseColor(Constants.maroonColor));
 
-                binding.crdPendingUsers.setCardBackgroundColor(Color.parseColor("#800000"));
-                binding.txvPendingUser.setTextColor(Color.parseColor("#FFFFFFFF"));
+                binding.crdPendingUsers.setCardBackgroundColor(Color.parseColor(Constants.maroonColor));
+                binding.txvPendingUser.setTextColor(Color.parseColor(Constants.whiteColor));
 
-                binding.crdDeletedUser.setCardBackgroundColor(Color.parseColor("#800000"));
-                binding.txvDeletedUser.setTextColor(Color.parseColor("#FFFFFFFF"));
+                binding.crdDeletedUser.setCardBackgroundColor(Color.parseColor(Constants.maroonColor));
+                binding.txvDeletedUser.setTextColor(Color.parseColor(Constants.whiteColor));
                 break;
 
             case R.id.crdPendingUsers:
                 IsActive = false;
                 DeleteUser = false;
                 getAllUsersLst();
-                binding.crdPendingUsers.setCardBackgroundColor(Color.parseColor("#FFFFFFFF"));
-                binding.txvPendingUser.setTextColor(Color.parseColor("#800000"));
+                binding.crdPendingUsers.setCardBackgroundColor(Color.parseColor(Constants.whiteColor));
+                binding.txvPendingUser.setTextColor(Color.parseColor(Constants.maroonColor));
 
-                binding.crdActiveUsers.setCardBackgroundColor(Color.parseColor("#800000"));
-                binding.txvActiveUsers.setTextColor(Color.parseColor("#FFFFFFFF"));
+                binding.crdActiveUsers.setCardBackgroundColor(Color.parseColor(Constants.maroonColor));
+                binding.txvActiveUsers.setTextColor(Color.parseColor(Constants.whiteColor));
 
-                binding.crdDeletedUser.setCardBackgroundColor(Color.parseColor("#800000"));
-                binding.txvDeletedUser.setTextColor(Color.parseColor("#FFFFFFFF"));
+                binding.crdDeletedUser.setCardBackgroundColor(Color.parseColor(Constants.maroonColor));
+                binding.txvDeletedUser.setTextColor(Color.parseColor(Constants.whiteColor));
                 break;
 
             case R.id.crdDeletedUser:
                 DeleteUser = true;
                 IsActive = false;
                 getAllUsersLst();
-                binding.crdDeletedUser.setCardBackgroundColor(Color.parseColor("#FFFFFFFF"));
-                binding.txvDeletedUser.setTextColor(Color.parseColor("#800000"));
+                binding.crdDeletedUser.setCardBackgroundColor(Color.parseColor(Constants.whiteColor));
+                binding.txvDeletedUser.setTextColor(Color.parseColor(Constants.maroonColor));
 
-                binding.crdPendingUsers.setCardBackgroundColor(Color.parseColor("#800000"));
-                binding.txvPendingUser.setTextColor(Color.parseColor("#FFFFFFFF"));
+                binding.crdPendingUsers.setCardBackgroundColor(Color.parseColor(Constants.maroonColor));
+                binding.txvPendingUser.setTextColor(Color.parseColor(Constants.whiteColor));
 
-                binding.crdActiveUsers.setCardBackgroundColor(Color.parseColor("#800000"));
-                binding.txvActiveUsers.setTextColor(Color.parseColor("#FFFFFFFF"));
+                binding.crdActiveUsers.setCardBackgroundColor(Color.parseColor(Constants.maroonColor));
+                binding.txvActiveUsers.setTextColor(Color.parseColor(Constants.whiteColor));
                 break;
         }
     }
@@ -217,9 +217,9 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
                                     userDelete = Constants.YES;
                                 }
                                 new AlertDialog.Builder(getContext())
-                                        .setMessage("Are you sure that you want to delete this User?")
+                                        .setMessage(Constants.deleteUser)
                                         .setCancelable(false)
-                                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        .setPositiveButton(Constants.YES, new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {
                                                 usersListFragmentViewModel.getDeleteUser(userUId,userStatus,userDelete).observe(getViewLifecycleOwner(), new Observer<StatusChangesResponseModel>() {
                                                     @Override
@@ -234,7 +234,7 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
                                                 });
                                             }
                                         })
-                                        .setNegativeButton("No", null)
+                                        .setNegativeButton(Constants.NO, null)
                                         .show();
                                 return true;
 
@@ -243,9 +243,9 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
                                 userStatus = Constants.TRUE;
                                 userDelete = Constants.NO;
                                 new AlertDialog.Builder(getContext())
-                                        .setMessage("Are you sure that you want to Active this user Account?")
+                                        .setMessage(Constants.activeUserAccount)
                                         .setCancelable(false)
-                                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        .setPositiveButton(Constants.YES, new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {
                                                 usersListFragmentViewModel.getUpDateActivePendingUsers(userUId,userStatus,userDelete).observe(getViewLifecycleOwner(), new Observer<StatusChangesResponseModel>() {
                                                     @Override
@@ -261,7 +261,7 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
 
                                             }
                                         })
-                                        .setNegativeButton("No", null)
+                                        .setNegativeButton(Constants.NO, null)
                                         .show();
                                 return true;
 
@@ -270,9 +270,9 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
                                 userStatus = Constants.FALSE;
                                 userDelete = Constants.NO;
                                 new AlertDialog.Builder(getContext())
-                                        .setMessage("Are you sure that you want to Pending this user Account?")
+                                        .setMessage(Constants.pendingUserAccount)
                                         .setCancelable(false)
-                                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        .setPositiveButton(Constants.YES, new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {
                                                 usersListFragmentViewModel.getUpDateActivePendingUsers(userUId,userStatus,userDelete).observe(getViewLifecycleOwner(), new Observer<StatusChangesResponseModel>() {
                                                     @Override
@@ -288,7 +288,7 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
 
                                             }
                                         })
-                                        .setNegativeButton("No", null)
+                                        .setNegativeButton(Constants.NO, null)
                                         .show();
                                 return true;
 
@@ -299,9 +299,9 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
                                     userUId = lstAllActiveUsers.get(position).getUserUID();
                                     userStatus = Constants.FALSE;
                                     new AlertDialog.Builder(getContext())
-                                            .setMessage("Are you sure that you want to Disable this Account?")
+                                            .setMessage(Constants.disableUserAccount)
                                             .setCancelable(false)
-                                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                            .setPositiveButton(Constants.YES, new DialogInterface.OnClickListener() {
                                                 public void onClick(DialogInterface dialog, int id) {
                                                     usersListFragmentViewModel.getUpDateUserStatus(userUId,userStatus).observe(getViewLifecycleOwner(), new Observer<StatusChangesResponseModel>() {
                                                         @Override
@@ -316,15 +316,15 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
                                                     });
                                                 }
                                             })
-                                            .setNegativeButton("No", null)
+                                            .setNegativeButton(Constants.NO, null)
                                             .show();
                                 }else {
                                     userUId = lstAllPendingUsers.get(position).getUserUID();
                                     userStatus = Constants.TRUE;
                                     new AlertDialog.Builder(getContext())
-                                            .setMessage("Are you sure that you want to Enable this Account?")
+                                            .setMessage(Constants.enableUserAccount)
                                             .setCancelable(false)
-                                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                            .setPositiveButton(Constants.YES, new DialogInterface.OnClickListener() {
                                                 public void onClick(DialogInterface dialog, int id) {
                                                     usersListFragmentViewModel.getUpDateUserStatus(userUId,userStatus).observe(getViewLifecycleOwner(), new Observer<StatusChangesResponseModel>() {
                                                         @Override
@@ -339,7 +339,7 @@ public class UsersListFragment extends Fragment implements View.OnClickListener,
                                                     });
                                                 }
                                             })
-                                            .setNegativeButton("No", null)
+                                            .setNegativeButton(Constants.NO, null)
                                             .show();
                                 }
                                 return true;

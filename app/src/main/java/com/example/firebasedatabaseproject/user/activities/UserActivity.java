@@ -43,6 +43,7 @@ import com.example.firebasedatabaseproject.user.adapters.UserHeadingDataAdapter;
 import com.example.firebasedatabaseproject.databinding.DialogPickerBinding;
 import com.example.firebasedatabaseproject.databinding.PopupDialogBinding;
 import com.example.firebasedatabaseproject.databinding.UpdatePickerBinding;
+import com.example.firebasedatabaseproject.user.models.NotesDataModel;
 import com.example.firebasedatabaseproject.user.responsemodels.UserNoteDeleteResponseModel;
 import com.example.firebasedatabaseproject.user.responsemodels.GetUserNotesResponseModel;
 import com.example.firebasedatabaseproject.user.viewmodels.UserActivityViewModel;
@@ -58,6 +59,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class UserActivity extends AppCompatActivity implements View.OnClickListener, OnListItemClicked, LifecycleOwner {
@@ -137,14 +139,15 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         binding.rcvListData.setAdapter(userHeadingDataAdapter);
 
         binding.edtSearchingText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+            public void beforeTextChanged(CharSequence cs, int start, int count, int after) { }
 
             @Override
-            public void afterTextChanged(Editable s) { filter(s.toString()); }
+            public void onTextChanged(CharSequence cs, int start, int before, int count) { filter(cs.toString()); }
+
+            @Override
+            public void afterTextChanged(Editable cs) {  }
         });
 
     }
@@ -292,11 +295,14 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
     private void filter(String text) {
         ArrayList<GetUserNotesResponseModel> temp = new ArrayList();
         for (GetUserNotesResponseModel d : lstNotesData) {
-            if ((d.getNotesDataResponse().getProjectName().toLowerCase() + " " +
-                    d.getNotesDataResponse().getProjectName().toLowerCase() + " " +
-                    d.getNotesDataResponse().getProjectName()).contains(text.toLowerCase())) {
+            if ((d.getNotesDataResponse().getProjectName().toLowerCase().trim()).contains(text.toLowerCase().trim())) {
                 temp.add(d);
             }
+            /*if ((d.getNotesDataResponse().getProjectName().toLowerCase() + " " +
+                    d.getNotesDataResponse().getProjectName().toUpperCase() + " " +
+                    d.getNotesDataResponse().getProjectName()).contains(text.toLowerCase())) {
+                temp.add(d);
+            }*/
         }
         //update recyclerview data
         if (userHeadingDataAdapter != null) {
@@ -305,8 +311,10 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
             if (filteredArraylist.size() > 0) {
                 binding.txvNoDataFound.setVisibility(View.GONE);
                 userHeadingDataAdapter.setDeveloperList((ArrayList<GetUserNotesResponseModel>) filteredArraylist);
-            } else
+            } else {
                 binding.txvNoDataFound.setVisibility(View.VISIBLE);
+                userHeadingDataAdapter.setDeveloperList((ArrayList<GetUserNotesResponseModel>) filteredArraylist);
+            }
         }
     }
 
@@ -347,10 +355,12 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         txvSortByAlphabate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Collections.sort(lstNotesData, new Comparator<GetUserNotesResponseModel>() {
                     @Override
-                    public int compare(GetUserNotesResponseModel item1, GetUserNotesResponseModel item2) {
-                        return item1.getNotesDataResponse().getTask().compareToIgnoreCase(item2.getNotesDataResponse().getTask());
+                    public int compare(GetUserNotesResponseModel obj1, GetUserNotesResponseModel obj2) {
+                        Log.e(TAG,"txvSortByAlphabate:- "+obj1.getNotesDataResponse().getProjectName().compareToIgnoreCase(obj2.getNotesDataResponse().getProjectName()));
+                        return obj1.getNotesDataResponse().getProjectName().compareToIgnoreCase(obj2.getNotesDataResponse().getProjectName());
                     }
                 });
                 userHeadingDataAdapter.notifyDataSetChanged();
@@ -364,6 +374,8 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
                 Collections.sort(lstNotesData, new Comparator<GetUserNotesResponseModel>() {
                     @Override
                     public int compare(GetUserNotesResponseModel item1, GetUserNotesResponseModel item2) {
+                        Log.e(TAG,"txvDate:- "+item1.getNotesDataResponse().getDate());
+                        Log.e(TAG,"txvSortByDate:- "+item1.getNotesDataResponse().getDate().compareToIgnoreCase(item2.getNotesDataResponse().getDate()));
                         return item1.getNotesDataResponse().getDate().compareToIgnoreCase(item2.getNotesDataResponse().getDate());
                     }
                 });
@@ -389,6 +401,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
                 binding.ivPowerButton.setVisibility(View.VISIBLE);
                 binding.ivBack.setVisibility(View.GONE);
                 binding.edtSearchingText.setVisibility(View.GONE);
+                binding.edtSearchingText.getText().clear();
                 userHeadingDataAdapter.setDeveloperList((ArrayList<GetUserNotesResponseModel>) lstNotesData);
                 InputMethodManager immmm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 immmm.hideSoftInputFromWindow(binding.edtSearchingText.getWindowToken(), 0);
@@ -428,9 +441,9 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.ivPowerButton:
              //   binding.sideDrawer.closeDrawer(GravityCompat.START);
                 new AlertDialog.Builder(context)
-                        .setMessage("Are you sure that you want to Log out?")
+                        .setMessage(Constants.logoutUser)
                         .setCancelable(false)
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        .setPositiveButton(Constants.YES, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 startProgressHud();
                                 userActivityViewModel.logOut().observe(UserActivity.this, new Observer<LogOutResponseModel>() {
@@ -450,7 +463,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
                                 });
                             }
                         })
-                        .setNegativeButton("No", null)
+                        .setNegativeButton(Constants.NO, null)
                         .show();
                 break;
         }
@@ -460,11 +473,12 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
     public void onItemClicked(int position, View view, String value) {
         switch (view.getId()) {
             case R.id.crdShowUserData:
-                binding.txvNonUse.setVisibility(View.VISIBLE);
-                binding.ivSearchIcon.setVisibility(View.VISIBLE);
-                binding.ivMoreOption.setVisibility(View.VISIBLE);
-                binding.ivPowerButton.setVisibility(View.VISIBLE);
-                binding.edtSearchingText.setVisibility(View.GONE);
+                binding.txvNonUse.setVisibility(View.GONE);
+                binding.ivSearchIcon.setVisibility(View.GONE);
+                binding.ivMoreOption.setVisibility(View.GONE);
+                binding.ivPowerButton.setVisibility(View.GONE);
+                binding.ivBack.setVisibility(View.VISIBLE);
+                binding.edtSearchingText.setVisibility(View.VISIBLE);
                 InputMethodManager immm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 immm.hideSoftInputFromWindow(binding.edtSearchingText.getWindowToken(), 0);
 
@@ -494,9 +508,9 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
                                 popActDeact.dismiss();
                                 String uniqKey = lstNotesData.get(position).getNotesDataResponse().getUniQKey();
                                 new AlertDialog.Builder(context)
-                                        .setMessage("Are you sure that you want to delete this Note?")
+                                        .setMessage(Constants.deleteNote)
                                         .setCancelable(false)
-                                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        .setPositiveButton(Constants.YES, new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int id) {
                                                 userActivityViewModel.deleteNote(uniqKey).observe((LifecycleOwner) context,new Observer<UserNoteDeleteResponseModel>() {
                                                     @Override
@@ -513,7 +527,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
 
                                             }
                                         })
-                                        .setNegativeButton("No", null)
+                                        .setNegativeButton(Constants.NO, null)
                                         .show();
                                 return true;
 
@@ -625,6 +639,8 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
             binding.ivMoreOption.setVisibility(View.VISIBLE);
             binding.ivPowerButton.setVisibility(View.VISIBLE);
             binding.edtSearchingText.setVisibility(View.GONE);
+            binding.ivBack.setVisibility(View.GONE);
+            binding.edtSearchingText.getText().clear();
             // Visibility gone Edittext then close Inpute keyboard......
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(binding.edtSearchingText.getWindowToken(), 0);

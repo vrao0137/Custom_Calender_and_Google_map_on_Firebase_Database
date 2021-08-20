@@ -22,7 +22,7 @@ import java.util.Date;
 public class UserShowDetailsDataActivity extends AppCompatActivity {
     private final String TAG = UserShowDetailsDataActivity.class.getSimpleName();
     private ActivityUserShowDetailsDataBinding binding;
-    private Context context;
+    Context context;
     private ArrayList<GetUserNotesResponseModel> listUserDetailsData = new ArrayList<>();
     private UserShowDetailsDataActivityViewModel userShowDetailsDataActivityViewModel;
     String UI_id = "";

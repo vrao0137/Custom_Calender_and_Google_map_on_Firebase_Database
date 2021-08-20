@@ -21,6 +21,7 @@ import com.example.firebasedatabaseproject.R;
 import com.example.firebasedatabaseproject.commanclasses.Utils;
 import com.example.firebasedatabaseproject.admin.fragments.DepartmentFragment;
 import com.example.firebasedatabaseproject.admin.fragments.UsersListFragment;
+import com.example.firebasedatabaseproject.customcalender.CustomCalenderActivity;
 import com.example.firebasedatabaseproject.databinding.ActivityUsersListBinding;
 
 public class AdminHomeActivity extends AppCompatActivity implements View.OnClickListener {
@@ -48,6 +49,7 @@ public class AdminHomeActivity extends AppCompatActivity implements View.OnClick
         binding.drawerButton.setOnClickListener(this);
         binding.includDrawerAdmin.rlUserList.setOnClickListener(this);
         binding.includDrawerAdmin.rlSignOut.setOnClickListener(this);
+        binding.includDrawerAdmin.rlCustomCalendar.setOnClickListener(this);
         binding.includDrawerAdmin.rlHome.setOnClickListener(this);
     }
 
@@ -86,6 +88,11 @@ public class AdminHomeActivity extends AppCompatActivity implements View.OnClick
                 binding.sideDrawer.openDrawer(GravityCompat.START);
                 break;
 
+            case R.id.rlCustomCalendar:
+                binding.sideDrawer.openDrawer(GravityCompat.START);
+                startActivity(new Intent(context, CustomCalenderActivity.class));
+                break;
+
             case R.id.rlUserList:
                 binding.sideDrawer.closeDrawer(GravityCompat.START);
                 binding.txvToolbarTitle.setText(Constants.UserList);
@@ -117,9 +124,9 @@ public class AdminHomeActivity extends AppCompatActivity implements View.OnClick
             case R.id.rlSignOut:
                 binding.sideDrawer.closeDrawer(GravityCompat.START);
                 new AlertDialog.Builder(AdminHomeActivity.this)
-                        .setMessage("Are you sure that you want to Log out?")
+                        .setMessage(Constants.logoutUser)
                         .setCancelable(false)
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        .setPositiveButton(Constants.YES, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 startProgressHud();
                                 adminHomeViewModel.logOut().observe(AdminHomeActivity.this, new Observer<LogOutResponseModel>() {
@@ -138,7 +145,7 @@ public class AdminHomeActivity extends AppCompatActivity implements View.OnClick
                                 });
                             }
                         })
-                        .setNegativeButton("No", null)
+                        .setNegativeButton(Constants.NO, null)
                         .show();
                 break;
         }

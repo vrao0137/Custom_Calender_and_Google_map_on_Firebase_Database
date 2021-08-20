@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 
 import com.example.firebasedatabaseproject.R;
 import com.example.firebasedatabaseproject.admin.models.User;
+import com.example.firebasedatabaseproject.commanclasses.Constants;
 import com.example.firebasedatabaseproject.databinding.ActivitySingUpBinding;
 import com.example.firebasedatabaseproject.commanclasses.PrograssBar;
 import com.example.firebasedatabaseproject.commanclasses.Utils;
@@ -26,7 +27,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     private Context context;
     private PrograssBar prograssBar;
     private SignUpActivityViewModel signUpViewModel;
-    String[] department = {"Please select department", "Android", "Angular", "Java", "HR", "Admin", "Marketing", "Management"};
+    String[] department = {Constants.SelectedDepartment, Constants.ANDROID, Constants.ANGULAR, Constants.JAVA, Constants.HR, Constants.ADMIN, Constants.MARKETING, Constants.MANAGEMENT};
     String DmntData = "";
     String email = "";
     String password = "";
@@ -93,7 +94,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
             Utils.showToastMessage(context, context.getResources().getString(R.string.enter_fullName));
         } else if (binding.edtMobileNumber.getText().toString().trim().isEmpty()) {
             Utils.showToastMessage(context, context.getResources().getString(R.string.enter_mobileNo));
-        } else if (DmntData.equals("Please select department")) {
+        } else if (DmntData.equals(Constants.SelectedDepartment)) {
             Utils.showToastMessage(context, context.getResources().getString(R.string.select_department));
         } else if (binding.email.getText().toString().trim().isEmpty()) {
             Utils.showToastMessage(context, context.getResources().getString(R.string.enter_email));

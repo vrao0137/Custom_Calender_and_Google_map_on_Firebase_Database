@@ -8,6 +8,8 @@ public class Constants {
     public static final String JAVA = "Java";
     public static final String MARKETING = "Marketing";
     public static final String MANAGEMENT = "Management";
+    public static final String SelectedDepartment = "Please select department";
+
     public static final String DepartmentList = "DEPARTMENT LIST";
     public static final String UserList = "USER LIST";
     public static final String Monthdata = "MONTH DATA";
@@ -15,6 +17,18 @@ public class Constants {
     public static final String UserTaskDetails = "USER TASK DETAILS";
     public static final String Disable = "Disable";
     public static final String Enable = "Enable";
+
+//------------------Color----------------------------------
+    public static final String whiteColor = "#FFFFFFFF";
+    public static final String maroonColor = "#800000";
+
+    public static final String deleteUser = "Are you sure that you want to delete this User?";
+    public static final String activeUserAccount = "Are you sure that you want to Active this user Account?";
+    public static final String pendingUserAccount = "Are you sure that you want to Pending this user Account?";
+    public static final String disableUserAccount = "Are you sure that you want to Disable this Account?";
+    public static final String enableUserAccount = "Are you sure that you want to Enable this Account?";
+    public static final String logoutUser = "Are you sure that you want to Log out?";
+    public static final String deleteNote = "Are you sure that you want to delete this Note?";
 
     public static final String PROJECTNAME = "projectName";
     public static final String DATE = "date";
