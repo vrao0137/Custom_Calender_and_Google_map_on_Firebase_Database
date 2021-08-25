@@ -238,12 +238,14 @@ public class CustomCalenderActivity extends AppCompatActivity implements View.On
         switch (v.getId()) {
             case R.id.ivPreviousBtn:
                 calendar.add(Calendar.MONTH,-1);
+                lstTotalWeekWorkHours.clear();
                 workWeeklyTotalHour(calendar);
                 SetUpCalendar();
                 break;
 
             case R.id.ivnextBtn:
                 calendar.add(Calendar.MONTH,1);
+                lstTotalWeekWorkHours.clear();
                 workWeeklyTotalHour(calendar);
                 SetUpCalendar();
                 break;
