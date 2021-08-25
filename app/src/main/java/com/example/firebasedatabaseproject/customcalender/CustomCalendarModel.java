@@ -3,6 +3,13 @@ package com.example.firebasedatabaseproject.customcalender;
 public class CustomCalendarModel {
     private String dateFormat;
     private String hourWork;
+    private String leaves;
+
+    public CustomCalendarModel(String dateFormat, String hourWork, String leaves) {
+        this.dateFormat = dateFormat;
+        this.hourWork = hourWork;
+        this.leaves = leaves;
+    }
 
     public String getDateFormat() {
         return dateFormat;
@@ -20,8 +27,11 @@ public class CustomCalendarModel {
         this.hourWork = hourWork;
     }
 
-    public CustomCalendarModel(String dateFormat, String hourWork) {
-        this.dateFormat = dateFormat;
-        this.hourWork = hourWork;
+    public String getLeaves() {
+        return leaves;
+    }
+
+    public void setLeaves(String leaves) {
+        this.leaves = leaves;
     }
 }

@@ -26,17 +26,17 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
     private List<Date> dates;
     private Calendar currentDate;
     private Context context;
-    private ArrayList<CustomCalendarModel> lstWorkHour;
-    OnListItemClicked onListItemClicked;
+    private ArrayList<CustomCalendarModel> lstCustomCalendarModel;
+    CustomCalendarInterface calendarInterface;
     HashSet<CustomCalendarModel> hashlstWorkHour = new HashSet<CustomCalendarModel>();
     ArrayList<CustomCalendarModel> newlstWorkHour = new ArrayList<CustomCalendarModel>();
 
-    public CalendarAdapter(Context context, List<Date> dates, Calendar currentDate, ArrayList<CustomCalendarModel> lstWorkHour, OnListItemClicked onListItemClicked) {
+    public CalendarAdapter(Context context, List<Date> dates, Calendar currentDate, ArrayList<CustomCalendarModel> lstCustomCalendarModel, CustomCalendarInterface calendarInterface) {
         this.context = context;
         this.dates = dates;
         this.currentDate = currentDate;
-        this.lstWorkHour = lstWorkHour;
-        this.onListItemClicked = onListItemClicked;
+        this.lstCustomCalendarModel = lstCustomCalendarModel;
+        this.calendarInterface = calendarInterface;
     }
 
     @Override
@@ -58,37 +58,46 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
         int currentMonth = currentDate.get(Calendar.MONTH)+1;
         int currentYear = currentDate.get(Calendar.YEAR);
 
-        holder.binding.calendarDay.setText(String.valueOf(DayNo));
+        holder.binding.txvCalendarDate.setText(String.valueOf(DayNo));
 
-        SimpleDateFormat newDateFormat = new SimpleDateFormat("d MMMM yyyy",Locale.ENGLISH);
+        SimpleDateFormat newDateFormat = new SimpleDateFormat("EE d MMMM yyyy",Locale.ENGLISH);
         String newDate = newDateFormat.format(dateCalendar.getTime());
 
+
         if (displayMonth == currentMonth && displayYear == currentYear){
-            holder.binding.calendarDay.setTextColor(context.getResources().getColor(R.color.black));
-            for (CustomCalendarModel obj: lstWorkHour){
+            holder.binding.txvCalendarDate.setTextColor(context.getResources().getColor(R.color.black));
+            for (CustomCalendarModel obj: lstCustomCalendarModel){
 
                 if (obj.getDateFormat().equals(newDate)){
 
                     hashlstWorkHour.add(obj);
                     newlstWorkHour.clear();
                     newlstWorkHour.addAll(hashlstWorkHour);
-                    holder.binding.eventIid.setText(newlstWorkHour.get(0).getHourWork());
+                    if(newlstWorkHour.get(0).getLeaves().equals("Pending Leaves")){
+                        holder.binding.txvWorkHour.setText(newlstWorkHour.get(0).getHourWork());
+                        holder.binding.txvWorkHour.setTextColor(context.getResources().getColor(R.color.colorWhite));
+                        holder.binding.txvHrs.setTextColor(context.getResources().getColor(R.color.colorWhite));
+                        holder.binding.txvCalendarDate.setTextColor(context.getResources().getColor(R.color.colorWhite));
+                        holder.binding.llCurrentDate.setBackgroundColor(context.getResources().getColor(R.color.purple_700));
+                    }else if (newlstWorkHour.get(0).getLeaves().equals("Approved Leaves")){
+                        holder.binding.txvWorkHour.setText(newlstWorkHour.get(0).getHourWork());
+                        holder.binding.txvWorkHour.setTextColor(context.getResources().getColor(R.color.colorWhite));
+                        holder.binding.txvHrs.setTextColor(context.getResources().getColor(R.color.colorWhite));
+                        holder.binding.txvCalendarDate.setTextColor(context.getResources().getColor(R.color.colorWhite));
+                        holder.binding.llCurrentDate.setBackgroundColor(context.getResources().getColor(R.color.Green));
+                    } else {
+                        holder.binding.txvWorkHour.setText(newlstWorkHour.get(0).getHourWork());
+                    }
+
                 }
             }
 
         }else {
             holder.binding.llCurrentDate.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryLight));
-            holder.binding.calendarDay.setTextColor(context.getResources().getColor(R.color.colorGreyLight));
-            holder.binding.eventIid.setTextColor(context.getResources().getColor(R.color.colorGreyLight));
+            holder.binding.txvCalendarDate.setTextColor(context.getResources().getColor(R.color.colorGreyLight));
+            holder.binding.txvWorkHour.setTextColor(context.getResources().getColor(R.color.colorGreyLight));
+            holder.binding.txvHrs.setTextColor(context.getResources().getColor(R.color.colorGreyLight));
         }
-
-        holder.binding.llCurrentDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               // onListItemClicked.onItemClicked(position, v, "");
-                Utils.showToastMessage(context,""+newDate);
-            }
-        });
     }
 
     @Override
