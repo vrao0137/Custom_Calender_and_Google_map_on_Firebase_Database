@@ -310,21 +310,24 @@
                         android:text="14th "
                         android:textSize="16sp"
                         android:textStyle="bold"
+                        android:id="@+id/txvDdate"
                         android:textColor="@color/colorPrimary"/>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="August "
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/black"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="August "
+                            android:id="@+id/txvMonth"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="2021"
                         android:textSize="16sp"
+                        android:id="@+id/txvYear"
                         android:textStyle="bold"
                         android:textColor="@color/colorPrimary"/>
                     </LinearLayout>

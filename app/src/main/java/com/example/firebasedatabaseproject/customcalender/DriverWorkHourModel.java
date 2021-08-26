@@ -1,11 +1,11 @@
 package com.example.firebasedatabaseproject.customcalender;
 
-public class CustomCalendarModel {
+public class DriverWorkHourModel {
     private String dateFormat;
     private String hourWork;
     private String leaves;
 
-    public CustomCalendarModel(String dateFormat, String hourWork, String leaves) {
+    public DriverWorkHourModel(String dateFormat, String hourWork, String leaves) {
         this.dateFormat = dateFormat;
         this.hourWork = hourWork;
         this.leaves = leaves;

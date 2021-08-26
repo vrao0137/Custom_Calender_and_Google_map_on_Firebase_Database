@@ -1,18 +1,15 @@
 package com.example.firebasedatabaseproject.customcalender;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.firebasedatabaseproject.R;
-import com.example.firebasedatabaseproject.commanclasses.OnListItemClicked;
-import com.example.firebasedatabaseproject.commanclasses.Utils;
 import com.example.firebasedatabaseproject.databinding.SingleCellLayoutBinding;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -26,18 +23,19 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
     private List<Date> dates;
     private Calendar currentDate;
     private Context context;
-    private ArrayList<CustomCalendarModel> lstCustomCalendarModel;
+    ArrayList<DriverWorkHourModel> lstDriverWorkHour;
     CustomCalendarInterface calendarInterface;
-    HashSet<CustomCalendarModel> hashlstWorkHour = new HashSet<CustomCalendarModel>();
-    ArrayList<CustomCalendarModel> newlstWorkHour = new ArrayList<CustomCalendarModel>();
+    HashSet<DriverWorkHourModel> hashlstWorkHour = new HashSet<DriverWorkHourModel>();
+    ArrayList<DriverWorkHourModel> newlstWorkHour = new ArrayList<DriverWorkHourModel>();
 
-    public CalendarAdapter(Context context, List<Date> dates, Calendar currentDate, ArrayList<CustomCalendarModel> lstCustomCalendarModel, CustomCalendarInterface calendarInterface) {
+    public CalendarAdapter(Context context, List<Date> dates, Calendar currentDate, ArrayList<DriverWorkHourModel> lstDriverWorkHour, CustomCalendarInterface calendarInterface) {
         this.context = context;
         this.dates = dates;
         this.currentDate = currentDate;
-        this.lstCustomCalendarModel = lstCustomCalendarModel;
+        this.lstDriverWorkHour = lstDriverWorkHour;
         this.calendarInterface = calendarInterface;
     }
+
 
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -52,21 +50,31 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
         Calendar dateCalendar = Calendar.getInstance();
         dateCalendar.setTime(monthDate);
 
-        int DayNo = dateCalendar.get(Calendar.DAY_OF_MONTH);
+        int dayNo = dateCalendar.get(Calendar.DAY_OF_MONTH);
         int displayMonth = dateCalendar.get(Calendar.MONTH)+1;
         int displayYear = dateCalendar.get(Calendar.YEAR);
         int currentMonth = currentDate.get(Calendar.MONTH)+1;
         int currentYear = currentDate.get(Calendar.YEAR);
 
-        holder.binding.txvCalendarDate.setText(String.valueOf(DayNo));
+        /*Date cutomDate = lstCalendarDateModel.get(position).getCalendarDate();
+        Calendar dateCal = Calendar.getInstance();
+        dateCal.setTime(cutomDate);
+
+
+        int dayNo = dateCal.get(Calendar.DAY_OF_MONTH);
+        int displayMonth = dateCal.get(Calendar.MONTH)+1;
+        int displayYear = dateCal.get(Calendar.YEAR);
+        int currentMonth = currentDate.get(Calendar.MONTH)+1;
+        int currentYear = currentDate.get(Calendar.YEAR);*/
+
+        holder.binding.txvCalendarDate.setText(String.valueOf(dayNo));
 
         SimpleDateFormat newDateFormat = new SimpleDateFormat("EE d MMMM yyyy",Locale.ENGLISH);
         String newDate = newDateFormat.format(dateCalendar.getTime());
 
-
         if (displayMonth == currentMonth && displayYear == currentYear){
             holder.binding.txvCalendarDate.setTextColor(context.getResources().getColor(R.color.black));
-            for (CustomCalendarModel obj: lstCustomCalendarModel){
+            for (DriverWorkHourModel obj: lstDriverWorkHour){
 
                 if (obj.getDateFormat().equals(newDate)){
 
