@@ -16,6 +16,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class CustomCalenderActivity extends AppCompatActivity implements View.OnClickListener, CustomCalendarInterface{
     private final String TAG = CustomCalenderActivity.class.getSimpleName();
@@ -88,8 +89,8 @@ public class CustomCalenderActivity extends AppCompatActivity implements View.On
         int totalWrokHours = 0;
         List<Date> lstWeeklyHours = new ArrayList<>();
 
-        Log.e(TAG,"startDate:- "+startDate);
-        Log.e(TAG,"endDate:- "+endDate);
+        Log.e(TAG,"startWeekDate:- "+startDate);
+        Log.e(TAG,"endWeekDate:- "+endDate);
 
         for (int i=0; i<lstCustomCalendarModel.size(); i++){
             try {
@@ -103,20 +104,23 @@ public class CustomCalenderActivity extends AppCompatActivity implements View.On
             }
         }
         lstTotalWeekWorkHours.add(totalWrokHours);
-        Log.e(TAG,"TotalWorkHour:- "+totalWrokHours);
 
     }
 
-    private void workWeeklyTotalHour(Calendar calendar1){
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.DAY_OF_MONTH-1, cal.getActualMinimum(Calendar.DAY_OF_MONTH-1));
+    private void workWeeklyTotalHour(Calendar calendar1) {
+      //  Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT+05:30"));
+        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+        cal.set(Calendar.DAY_OF_MONTH-1, cal.getActualMinimum(Calendar.DAY_OF_MONTH));
+
         cal.set(Calendar.HOUR_OF_DAY, 0); // ! clear would not reset the hour of day !
         cal.clear(Calendar.MINUTE);
         cal.clear(Calendar.SECOND);
         cal.clear(Calendar.MILLISECOND);
-        int numberOfweek = calendar1.get(Calendar.WEEK_OF_MONTH)+1;
 
-        for (int i=1; i<=numberOfweek; i++){
+        int numberOfweek = calendar1.get(Calendar.WEEK_OF_MONTH)+1;
+       // Log.e(TAG,"numberOfweek:- "+numberOfweek);
+
+        for (int i=0; i<numberOfweek; i++){
             cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
             Date firstWkDay1 = cal.getTime();
 
@@ -125,35 +129,8 @@ public class CustomCalenderActivity extends AppCompatActivity implements View.On
 
             getTotalWeeklyWorkHours(firstWkDay1,lastWkDay1);
 
+            cal.add(Calendar.DATE, 1);
 
-           /* Integer firstTotal = 0;
-            if (flag == 0){
-
-                for (int j=0; j<7; j++){
-                    Integer workHour = Integer.valueOf(lstCustomCalendarModel.get(j).getHourWork());
-                    firstTotal = firstTotal + workHour;
-                }
-
-                flag = 1;
-            }else {
-                if (numberOfweek>i){
-
-                    for (int x=(i*7)-7; x<i*7; x++){
-                        Integer workHour = Integer.valueOf(lstCustomCalendarModel.get(x).getHourWork());
-                        firstTotal = firstTotal + workHour;
-                    }
-
-                }else {
-
-                    for (int y=(i*7)-7; y<lstCustomCalendarModel.size(); y++){
-                        Integer workHour = Integer.valueOf(lstCustomCalendarModel.get(y).getHourWork());
-                        firstTotal = firstTotal + workHour;
-                    }
-
-                }
-
-            }
-            listWeekworkTotal.add(firstTotal);*/
         }
 
         Log.e(TAG,"lstTotalWeekWorkHours:- "+lstTotalWeekWorkHours);
@@ -173,40 +150,6 @@ public class CustomCalenderActivity extends AppCompatActivity implements View.On
                 binding.txvSixWeekTotal.setText(String.valueOf(lstTotalWeekWorkHours.get(i)));
             }
         }
-        /*Integer firstTotal = 0;
-        for (int i=0; i<7; i++){
-            Integer workHour = Integer.valueOf(lstCustomCalendarModel.get(i).getHourWork());
-            firstTotal = firstTotal + workHour;
-        }
-        binding.txvFirstWeekTotal.setText(String.valueOf(firstTotal));
-
-        Integer secondTotal = 0;
-        for (int i=7; i<14; i++){
-            Integer workHour = Integer.valueOf(lstCustomCalendarModel.get(i).getHourWork());
-            secondTotal = secondTotal + workHour;
-        }
-        binding.txvSecondWeekTotal.setText(String.valueOf(secondTotal));
-
-        Integer thirdTotal = 0;
-        for (int i=14; i<21; i++){
-            Integer workHour = Integer.valueOf(lstCustomCalendarModel.get(i).getHourWork());
-            thirdTotal = thirdTotal + workHour;
-        }
-        binding.txvThirdWeekTotal.setText(String.valueOf(thirdTotal));
-
-        Integer forthTotal = 0;
-        for (int i=21; i<28; i++){
-            Integer workHour = Integer.valueOf(lstCustomCalendarModel.get(i).getHourWork());
-            forthTotal = forthTotal + workHour;
-        }
-        binding.txvFourthWeekTotal.setText(String.valueOf(forthTotal));
-
-        Integer fifthTotal = 0;
-        for (int i=28; i<31; i++){
-            Integer workHour = Integer.valueOf(lstCustomCalendarModel.get(i).getHourWork());
-            fifthTotal = fifthTotal + workHour;
-        }
-        binding.txvFithWeekTotal.setText(String.valueOf(fifthTotal));*/
 
     }
 
@@ -239,14 +182,16 @@ public class CustomCalenderActivity extends AppCompatActivity implements View.On
             case R.id.ivPreviousBtn:
                 calendar.add(Calendar.MONTH,-1);
                 lstTotalWeekWorkHours.clear();
-                workWeeklyTotalHour(calendar);
+                Calendar calPrev = Calendar.getInstance();
+                workWeeklyTotalHour(calPrev);
                 SetUpCalendar();
                 break;
 
             case R.id.ivnextBtn:
                 calendar.add(Calendar.MONTH,1);
                 lstTotalWeekWorkHours.clear();
-                workWeeklyTotalHour(calendar);
+                Calendar calNext = Calendar.getInstance();
+                workWeeklyTotalHour(calNext);
                 SetUpCalendar();
                 break;
         }
