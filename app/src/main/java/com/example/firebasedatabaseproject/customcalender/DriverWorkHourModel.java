@@ -1,30 +1,32 @@
 package com.example.firebasedatabaseproject.customcalender;
 
+import java.util.Date;
+
 public class DriverWorkHourModel {
-    private String dateFormat;
-    private String hourWork;
+    private Date newDate;
+    private String hours;
     private String leaves;
 
-    public DriverWorkHourModel(String dateFormat, String hourWork, String leaves) {
-        this.dateFormat = dateFormat;
-        this.hourWork = hourWork;
+    public DriverWorkHourModel(Date newDate, String hours, String leaves) {
+        this.newDate = newDate;
+        this.hours = hours;
         this.leaves = leaves;
     }
 
-    public String getDateFormat() {
-        return dateFormat;
+    public Date getNewDate() {
+        return newDate;
     }
 
-    public void setDateFormat(String dateFormat) {
-        this.dateFormat = dateFormat;
+    public void setNewDate(Date newDate) {
+        this.newDate = newDate;
     }
 
-    public String getHourWork() {
-        return hourWork;
+    public String getHours() {
+        return hours;
     }
 
-    public void setHourWork(String hourWork) {
-        this.hourWork = hourWork;
+    public void setHours(String hours) {
+        this.hours = hours;
     }
 
     public String getLeaves() {

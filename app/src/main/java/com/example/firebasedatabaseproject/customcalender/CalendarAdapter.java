@@ -9,31 +9,20 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.firebasedatabaseproject.R;
 import com.example.firebasedatabaseproject.databinding.SingleCellLayoutBinding;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
 
 
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyViewHolder>{
-    private List<Date> dates;
-    private Calendar currentDate;
     private Context context;
-    ArrayList<DriverWorkHourModel> lstDriverWorkHour;
-    CustomCalendarInterface calendarInterface;
-    HashSet<DriverWorkHourModel> hashlstWorkHour = new HashSet<DriverWorkHourModel>();
-    ArrayList<DriverWorkHourModel> newlstWorkHour = new ArrayList<DriverWorkHourModel>();
+    private Calendar currentDate;
+    private ArrayList<DriverWorkHourModel> lstDriverWorkHours;
 
-    public CalendarAdapter(Context context, List<Date> dates, Calendar currentDate, ArrayList<DriverWorkHourModel> lstDriverWorkHour, CustomCalendarInterface calendarInterface) {
+    public CalendarAdapter(Context context, Calendar currentDate, ArrayList<DriverWorkHourModel> lstDriverWorkHours) {
         this.context = context;
-        this.dates = dates;
         this.currentDate = currentDate;
-        this.lstDriverWorkHour = lstDriverWorkHour;
-        this.calendarInterface = calendarInterface;
+        this.lstDriverWorkHours = lstDriverWorkHours;
     }
 
 
@@ -44,9 +33,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
 
     @Override
     public void onBindViewHolder(@NonNull CalendarAdapter.MyViewHolder holder, int position) {
-        hashlstWorkHour.clear();
-
-        Date monthDate = dates.get(position);
+        Date monthDate = lstDriverWorkHours.get(position).getNewDate();
         Calendar dateCalendar = Calendar.getInstance();
         dateCalendar.setTime(monthDate);
 
@@ -56,61 +43,36 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.MyView
         int currentMonth = currentDate.get(Calendar.MONTH)+1;
         int currentYear = currentDate.get(Calendar.YEAR);
 
-        /*Date cutomDate = lstCalendarDateModel.get(position).getCalendarDate();
-        Calendar dateCal = Calendar.getInstance();
-        dateCal.setTime(cutomDate);
-
-
-        int dayNo = dateCal.get(Calendar.DAY_OF_MONTH);
-        int displayMonth = dateCal.get(Calendar.MONTH)+1;
-        int displayYear = dateCal.get(Calendar.YEAR);
-        int currentMonth = currentDate.get(Calendar.MONTH)+1;
-        int currentYear = currentDate.get(Calendar.YEAR);*/
-
         holder.binding.txvCalendarDate.setText(String.valueOf(dayNo));
 
-        SimpleDateFormat newDateFormat = new SimpleDateFormat("EE d MMMM yyyy",Locale.ENGLISH);
-        String newDate = newDateFormat.format(dateCalendar.getTime());
-
         if (displayMonth == currentMonth && displayYear == currentYear){
-            holder.binding.txvCalendarDate.setTextColor(context.getResources().getColor(R.color.black));
-            for (DriverWorkHourModel obj: lstDriverWorkHour){
-
-                if (obj.getDateFormat().equals(newDate)){
-
-                    hashlstWorkHour.add(obj);
-                    newlstWorkHour.clear();
-                    newlstWorkHour.addAll(hashlstWorkHour);
-                    if(newlstWorkHour.get(0).getLeaves().equals("Pending Leaves")){
-                        holder.binding.txvWorkHour.setText(newlstWorkHour.get(0).getHourWork());
-                        holder.binding.txvWorkHour.setTextColor(context.getResources().getColor(R.color.colorWhite));
-                        holder.binding.txvHrs.setTextColor(context.getResources().getColor(R.color.colorWhite));
-                        holder.binding.txvCalendarDate.setTextColor(context.getResources().getColor(R.color.colorWhite));
-                        holder.binding.llCurrentDate.setBackgroundColor(context.getResources().getColor(R.color.purple_700));
-                    }else if (newlstWorkHour.get(0).getLeaves().equals("Approved Leaves")){
-                        holder.binding.txvWorkHour.setText(newlstWorkHour.get(0).getHourWork());
-                        holder.binding.txvWorkHour.setTextColor(context.getResources().getColor(R.color.colorWhite));
-                        holder.binding.txvHrs.setTextColor(context.getResources().getColor(R.color.colorWhite));
-                        holder.binding.txvCalendarDate.setTextColor(context.getResources().getColor(R.color.colorWhite));
-                        holder.binding.llCurrentDate.setBackgroundColor(context.getResources().getColor(R.color.Green));
-                    } else {
-                        holder.binding.txvWorkHour.setText(newlstWorkHour.get(0).getHourWork());
-                    }
-
-                }
+            if(lstDriverWorkHours.get(position).getLeaves().equals("Pending Leaves")){
+                holder.binding.txvWorkHour.setText(lstDriverWorkHours.get(position).getHours());
+                holder.binding.txvWorkHour.setTextColor(context.getResources().getColor(R.color.colorWhite));
+                holder.binding.txvHrs.setTextColor(context.getResources().getColor(R.color.colorWhite));
+                holder.binding.txvCalendarDate.setTextColor(context.getResources().getColor(R.color.colorWhite));
+                holder.binding.llCurrentDate.setBackgroundColor(context.getResources().getColor(R.color.blue_700));
+            }else if (lstDriverWorkHours.get(position).getLeaves().equals("Approved Leaves")){
+                holder.binding.txvWorkHour.setText(lstDriverWorkHours.get(position).getHours());
+                holder.binding.txvWorkHour.setTextColor(context.getResources().getColor(R.color.colorWhite));
+                holder.binding.txvHrs.setTextColor(context.getResources().getColor(R.color.colorWhite));
+                holder.binding.txvCalendarDate.setTextColor(context.getResources().getColor(R.color.colorWhite));
+                holder.binding.llCurrentDate.setBackgroundColor(context.getResources().getColor(R.color.Green));
+            }  else {
+                holder.binding.txvWorkHour.setText(lstDriverWorkHours.get(position).getHours());
             }
-
         }else {
             holder.binding.llCurrentDate.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryLight));
             holder.binding.txvCalendarDate.setTextColor(context.getResources().getColor(R.color.colorGreyLight));
             holder.binding.txvWorkHour.setTextColor(context.getResources().getColor(R.color.colorGreyLight));
             holder.binding.txvHrs.setTextColor(context.getResources().getColor(R.color.colorGreyLight));
         }
+
     }
 
     @Override
     public int getItemCount() {
-        return dates.size();
+        return lstDriverWorkHours.size();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {

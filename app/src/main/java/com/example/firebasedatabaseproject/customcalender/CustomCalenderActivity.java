@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
-public class CustomCalenderActivity extends AppCompatActivity implements View.OnClickListener, CustomCalendarInterface{
+public class CustomCalenderActivity extends AppCompatActivity implements View.OnClickListener{
     private final String TAG = CustomCalenderActivity.class.getSimpleName();
     private ActivityCustomCalenderBinding binding;
     private Context context;
@@ -33,14 +33,14 @@ public class CustomCalenderActivity extends AppCompatActivity implements View.On
 
     List<Date> dates = new ArrayList<>();
 
-    ArrayList<DriverWorkHourModel> lstCustomCalendarModel = new ArrayList<>();
+    ArrayList<CustomCalendarModel> lstCustomCalendarModel = new ArrayList<>();
 
-    HashSet<DriverWorkHourModel> hashlstWorkHour = new HashSet<DriverWorkHourModel>();
-    ArrayList<DriverWorkHourModel> lstDriverWorkHour = new ArrayList<>();
+    ArrayList<DriverWorkHourModel> lstDriverWorkHours = new ArrayList<>();
 
     ArrayList<Integer> lstTotalWeekWorkHours = new ArrayList<>();
 
     CalendarAdapter calendarAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,41 +52,47 @@ public class CustomCalenderActivity extends AppCompatActivity implements View.On
     }
 
     private void initialize(){
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Sun 1 August 2021","1","Active"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Mon 2 August 2021","1","Active"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Tue 3 August 2021","1","Active"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Wed 4 August 2021","1","Active"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Thu 5 August 2021","0","Pending Leaves"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Fri 6 August 2021","1","Active"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Sat 7 August 2021","1","Active"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Sun 8 August 2021","2","Active"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Mon 9 August 2021","2","Active"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Tue 10 August 2021","0","Approved Leaves"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Wed 11 August 2021","2","Active"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Thu 12 August 2021","2","Active"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Fri 13 August 2021","2","Active"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Sat 14 August 2021","2","Active"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Sun 15 August 2021","0","Pending Leaves"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Mon 16 August 2021","3","Active"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Tue 17 August 2021","3","Active"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Wed 18 August 2021","3","Active"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Thu 19 August 2021","3","Active"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Fri 20 August 2021","0","Approved Leaves"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Sat 21 August 2021","3","Active"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Sun 22 August 2021","4","Active"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Mon 23 August 2021","4","Active"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Tue 24 August 2021","4","Active"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Wed 25 August 2021","0","Pending Leaves"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Thu 26 August 2021","4","Active"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Fri 27 August 2021","4","Active"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Sat 28 August 2021","4","Active"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Sun 29 August 2021","5","Active"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Mon 30 August 2021","0","Approved Leaves"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Tue 31 August 2021","5","Active"));
 
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Wed 1 September 2021","6","Active"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Thu 2 September 2021","6","Active"));
-        lstCustomCalendarModel.add(new DriverWorkHourModel("Fri 3 September 2021","6","Active"));
+       /* lstCustomCalendarModel.add(new CustomCalendarModel("Thu 29 July 2021","7","Active"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Fri 30 July 2021","7","Active"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Sat 31 July 2021","7","Active"));*/
+
+        lstCustomCalendarModel.add(new CustomCalendarModel("Sun 1 August 2021","1","Active"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Mon 2 August 2021","1","Active"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Tue 3 August 2021","1","Active"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Wed 4 August 2021","1","Active"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Thu 5 August 2021","0","Pending Leaves"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Fri 6 August 2021","1","Active"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Sat 7 August 2021","1","Active"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Sun 8 August 2021","2","Active"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Mon 9 August 2021","2","Active"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Tue 10 August 2021","0","Approved Leaves"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Wed 11 August 2021","2","Active"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Thu 12 August 2021","2","Active"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Fri 13 August 2021","2","Active"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Sat 14 August 2021","2","Active"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Sun 15 August 2021","0","Pending Leaves"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Mon 16 August 2021","3","Active"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Tue 17 August 2021","3","Active"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Wed 18 August 2021","3","Active"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Thu 19 August 2021","3","Active"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Fri 20 August 2021","0","Approved Leaves"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Sat 21 August 2021","3","Active"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Sun 22 August 2021","4","Active"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Mon 23 August 2021","4","Active"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Tue 24 August 2021","4","Active"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Wed 25 August 2021","0","Pending Leaves"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Thu 26 August 2021","4","Active"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Fri 27 August 2021","4","Active"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Sat 28 August 2021","4","Active"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Sun 29 August 2021","5","Active"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Mon 30 August 2021","0","Approved Leaves"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Tue 31 August 2021","5","Active"));
+
+        lstCustomCalendarModel.add(new CustomCalendarModel("Thu 2 September 2021","6","Active"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Fri 3 September 2021","6","Active"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Sat 4 September 2021","6","Active"));
+
 
         binding.ivPreviousBtn.setOnClickListener(this);
         binding.ivnextBtn.setOnClickListener(this);
@@ -96,19 +102,13 @@ public class CustomCalenderActivity extends AppCompatActivity implements View.On
 
     private void getTotalWeeklyWorkHours(Date startDate, Date endDate){
         int totalWrokHours = 0;
-        List<Date> lstWeeklyHours = new ArrayList<>();
 
-        /*Log.e(TAG,"startWeekDate:- "+startDate);
-        Log.e(TAG,"endWeekDate:- "+endDate);*/
+        Log.e(TAG,"startWeekDate:- "+startDate);
+        Log.e(TAG,"endWeekDate:- "+endDate);
 
-        for (int i=0; i<lstDriverWorkHour.size(); i++){
-            try {
-                lstWeeklyHours.add(customDateFormat.parse(lstDriverWorkHour.get(i).getDateFormat()));
-            } catch (ParseException e) {
-                Log.e(TAG,"ParseException:- "+e);
-            }
-            if (startDate.getTime() <= lstWeeklyHours.get(i).getTime() && endDate.getTime() >= (lstWeeklyHours.get(i).getTime())){
-                int workHour = Integer.parseInt(lstDriverWorkHour.get(i).getHourWork());
+        for (int i=0; i<lstDriverWorkHours.size(); i++){
+            if (startDate.getTime() <= lstDriverWorkHours.get(i).getNewDate().getTime() && endDate.getTime() >= lstDriverWorkHours.get(i).getNewDate().getTime()){
+                int workHour = Integer.parseInt(lstDriverWorkHours.get(i).getHours());
                 totalWrokHours = totalWrokHours + workHour;
             }
         }
@@ -127,7 +127,6 @@ public class CustomCalenderActivity extends AppCompatActivity implements View.On
         cal.clear(Calendar.MILLISECOND);
 
         int numberOfweek = calendar1.get(Calendar.WEEK_OF_MONTH)+1;
-       // Log.e(TAG,"numberOfweek:- "+numberOfweek);
 
         for (int i=0; i<numberOfweek; i++){
             cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
@@ -170,11 +169,13 @@ public class CustomCalenderActivity extends AppCompatActivity implements View.On
         SimpleDateFormat month = new SimpleDateFormat("MMMM ",Locale.ENGLISH);
         SimpleDateFormat year = new SimpleDateFormat("yyyy",Locale.ENGLISH);
 
+
         binding.txvDdate.setText(date.format(calendar.getTime()));
         binding.txvMonth.setText(month.format(calendar.getTime()));
         binding.txvYear.setText(year.format(calendar.getTime()));
 
         dates.clear();
+        lstDriverWorkHours.clear();
 
         Calendar monthCalendar = (Calendar) calendar.clone();
         monthCalendar.set(Calendar.DAY_OF_MONTH,1);
@@ -184,27 +185,38 @@ public class CustomCalenderActivity extends AppCompatActivity implements View.On
 
         while (dates.size() < MAX_CALENDER_DAYS){
             dates.add(monthCalendar.getTime());
+            monthCalendar.set(Calendar.HOUR_OF_DAY, 0); // ! clear would not reset the hour of day !
+            monthCalendar.clear(Calendar.MINUTE);
+            monthCalendar.clear(Calendar.SECOND);
+            monthCalendar.clear(Calendar.MILLISECOND);
+            lstDriverWorkHours.add(new DriverWorkHourModel(monthCalendar.getTime(),"0","Active"));
             monthCalendar.add(Calendar.DAY_OF_MONTH,1);
         }
 
-        hashlstWorkHour.clear();
+        Date changeDateFormat =null;
         for (int i=0; i<lstCustomCalendarModel.size(); i++){
-            String newDate = customDateFormat.format(dates.get(i).getTime());
-            if (newDate.equals(lstCustomCalendarModel.get(i).getDateFormat())){
-                hashlstWorkHour.addAll(lstCustomCalendarModel);
+            try {
+                changeDateFormat = customDateFormat.parse(lstCustomCalendarModel.get(i).getDateFormat());
+                Log.e(TAG,"lstCustomCalendarModel "+changeDateFormat);
+            } catch (ParseException e) {
+                Log.e(TAG,"ParseException:- "+e);
+            }
+            if (changeDateFormat.getTime() == lstDriverWorkHours.get(i).getNewDate().getTime()){
+                lstDriverWorkHours.get(i).setHours(lstCustomCalendarModel.get(i).getHourWork());
+                lstDriverWorkHours.get(i).setLeaves(lstCustomCalendarModel.get(i).getLeaves());
+                Log.e(TAG,"changeDateFormat "+changeDateFormat.getTime());
+                Log.e(TAG,"lstDriverWorkHours_Get "+lstDriverWorkHours.get(i).getNewDate().getTime());
+            }else {
+                Log.e(TAG,"Else_Condition_work");
             }
         }
 
-        lstDriverWorkHour.clear();
-        lstDriverWorkHour.addAll(hashlstWorkHour);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String ABC = gson.toJson(lstDriverWorkHours);
+        Log.e("","lstDriverWorkHours "+ABC);
 
         binding.rcCalender.setLayoutManager(new GridLayoutManager(context,7, RecyclerView.HORIZONTAL, false));
-        calendarAdapter = new CalendarAdapter(context,dates,calendar,lstDriverWorkHour,this);
-
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String ABC = gson.toJson(lstDriverWorkHour);
-        Log.e("","lstDriverWorkHour "+ABC);
-
+        calendarAdapter = new CalendarAdapter(context,calendar,lstDriverWorkHours);
         binding.rcCalender.setAdapter(calendarAdapter);
 
         lstTotalWeekWorkHours.clear();
@@ -228,8 +240,4 @@ public class CustomCalenderActivity extends AppCompatActivity implements View.On
         }
     }
 
-    @Override
-    public void onCreate(int position, View view, String value) {
-
-    }
 }
