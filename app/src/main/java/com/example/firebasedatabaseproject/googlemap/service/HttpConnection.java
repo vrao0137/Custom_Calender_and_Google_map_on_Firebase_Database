@@ -1,4 +1,4 @@
-package com.example.firebasedatabaseproject.map.activity.service;
+package com.example.firebasedatabaseproject.googlemap.service;
 
 import android.util.Log;
 

@@ -1,12 +1,5 @@
-package com.example.firebasedatabaseproject.map.activity.service;
-
-import android.content.Context;
-import android.util.Log;
-import android.widget.EditText;
+package com.example.firebasedatabaseproject.googlemap;
 import android.widget.TextView;
-
-import com.example.firebasedatabaseproject.map.activity.MapActivity;
-import com.example.firebasedatabaseproject.map.activity.models.Route;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
@@ -18,16 +11,15 @@ import java.util.HashMap;
 import java.util.List;
 
 public class DataParser {
+
     private static String distance;
     private static String duration;
-    public List<List<HashMap<String, String>>> parse(JSONObject jObject) {
 
+    public List<List<HashMap<String, String>>> parse(JSONObject jObject) {
         List<List<HashMap<String, String>>> routes = new ArrayList<>();
         JSONArray jRoutes;
         JSONArray jLegs;
         JSONArray jSteps;
-        JSONObject jDistance;
-        JSONObject jDuration;
 
         try {
             jRoutes = jObject.getJSONArray("routes");
@@ -36,12 +28,8 @@ public class DataParser {
                 jLegs = ((JSONObject) jRoutes.get(i)).getJSONArray("legs");
 
                 for (int d = 0; d<jLegs.length(); d++) {
-                    jDistance = ((JSONObject) jLegs.get(d)).getJSONObject("distance");
-                    jDuration = ((JSONObject) jLegs.get(d)).getJSONObject("duration");
-                    distance = jDistance.get("text").toString();
-                    duration = jDuration.get("text").toString();
-                    Log.e("DataParser:-","jDistance:- "+distance);
-                    Log.e("DataParser:-","jDuration:- "+duration);
+                    distance = ((JSONObject) jLegs.get(d)).getJSONObject("distance").get("text").toString();
+                    duration = ((JSONObject) jLegs.get(d)).getJSONObject("duration").get("text").toString();
                 }
 
                 List path = new ArrayList<>();
@@ -74,7 +62,6 @@ public class DataParser {
         }
         return routes;
     }
-
 
 
     /**
