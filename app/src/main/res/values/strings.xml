@@ -59,4 +59,7 @@
     <string name="created_user_account">Your Account Created was Succeccfully Please Contact To HR.</string>
     <string name="logOut">Logout Succesfull</string>
     <string name="back_press">Please 2 times press on back button</string>
+
+    <string name="googleMapAPIkey" translatable="false">AIzaSyBP0ej1goyRxrd5JYF5_b9wAA_4bKdLtFo</string>
+
 </resources>

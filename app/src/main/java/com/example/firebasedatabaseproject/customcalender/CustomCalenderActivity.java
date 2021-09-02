@@ -17,7 +17,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
@@ -89,9 +88,9 @@ public class CustomCalenderActivity extends AppCompatActivity implements View.On
         lstCustomCalendarModel.add(new CustomCalendarModel("Mon 30 August 2021","0","Approved Leaves"));
         lstCustomCalendarModel.add(new CustomCalendarModel("Tue 31 August 2021","5","Active"));
 
-        lstCustomCalendarModel.add(new CustomCalendarModel("Thu 2 September 2021","6","Active"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Wed 1 September 2021","6","Active"));
+        lstCustomCalendarModel.add(new CustomCalendarModel("Thu 2 September 2021","0","Active"));
         lstCustomCalendarModel.add(new CustomCalendarModel("Fri 3 September 2021","6","Active"));
-        lstCustomCalendarModel.add(new CustomCalendarModel("Sat 4 September 2021","6","Active"));
 
 
         binding.ivPreviousBtn.setOnClickListener(this);
@@ -121,7 +120,7 @@ public class CustomCalenderActivity extends AppCompatActivity implements View.On
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         cal.set(Calendar.DAY_OF_MONTH-1, cal.getActualMinimum(Calendar.DAY_OF_MONTH));
 
-        cal.set(Calendar.HOUR_OF_DAY, 0); // ! clear would not reset the hour of day !
+        cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.clear(Calendar.MINUTE);
         cal.clear(Calendar.SECOND);
         cal.clear(Calendar.MILLISECOND);
@@ -140,7 +139,6 @@ public class CustomCalenderActivity extends AppCompatActivity implements View.On
             cal.add(Calendar.DATE, 1);
 
         }
-
         Log.e(TAG,"lstTotalWeekWorkHours:- "+lstTotalWeekWorkHours);
 
         for (int i=0; i<lstTotalWeekWorkHours.size(); i++){
@@ -178,14 +176,14 @@ public class CustomCalenderActivity extends AppCompatActivity implements View.On
         lstDriverWorkHours.clear();
 
         Calendar monthCalendar = (Calendar) calendar.clone();
-        monthCalendar.set(Calendar.DAY_OF_MONTH,1);
 
+        monthCalendar.set(Calendar.DAY_OF_MONTH,1);
         int FirstDayOfMonth = monthCalendar.get(Calendar.DAY_OF_WEEK)-1;
         monthCalendar.add(Calendar.DAY_OF_MONTH, -FirstDayOfMonth);
 
         while (dates.size() < MAX_CALENDER_DAYS){
             dates.add(monthCalendar.getTime());
-            monthCalendar.set(Calendar.HOUR_OF_DAY, 0); // ! clear would not reset the hour of day !
+            monthCalendar.set(Calendar.HOUR_OF_DAY, 0);
             monthCalendar.clear(Calendar.MINUTE);
             monthCalendar.clear(Calendar.SECOND);
             monthCalendar.clear(Calendar.MILLISECOND);
@@ -201,11 +199,11 @@ public class CustomCalenderActivity extends AppCompatActivity implements View.On
             } catch (ParseException e) {
                 Log.e(TAG,"ParseException:- "+e);
             }
-            if (changeDateFormat.getTime() == lstDriverWorkHours.get(i).getNewDate().getTime()){
+            if (changeDateFormat.getTime() == lstDriverWorkHours.get(i).getNewDate().getTime() ){
                 lstDriverWorkHours.get(i).setHours(lstCustomCalendarModel.get(i).getHourWork());
                 lstDriverWorkHours.get(i).setLeaves(lstCustomCalendarModel.get(i).getLeaves());
                 Log.e(TAG,"changeDateFormat "+changeDateFormat.getTime());
-                Log.e(TAG,"lstDriverWorkHours_Get "+lstDriverWorkHours.get(i).getNewDate().getTime());
+                Log.e(TAG,"listWorkHour "+lstDriverWorkHours.get(i).getNewDate().getTime());
             }else {
                 Log.e(TAG,"Else_Condition_work");
             }
