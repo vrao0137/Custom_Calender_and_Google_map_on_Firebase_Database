@@ -1,4 +1,4 @@
-package com.example.firebasedatabaseproject.googlemap;
+package com.example.firebasedatabaseproject.googlemap.model;
 import android.widget.TextView;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -23,6 +23,7 @@ public class DataParser {
 
         try {
             jRoutes = jObject.getJSONArray("routes");
+
             /** Traversing all routes */
             for (int i = 0; i < jRoutes.length(); i++) {
                 jLegs = ((JSONObject) jRoutes.get(i)).getJSONArray("legs");

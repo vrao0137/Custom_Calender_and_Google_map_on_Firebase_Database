@@ -1,8 +1,8 @@
 package com.example.firebasedatabaseproject.googlemap;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.content.Context;
@@ -22,8 +22,9 @@ import android.widget.Toast;
 import com.example.firebasedatabaseproject.R;
 import com.example.firebasedatabaseproject.commanclasses.PrograssBar;
 import com.example.firebasedatabaseproject.databinding.ActivityGoogleMapBinding;
+import com.example.firebasedatabaseproject.googlemap.model.DataParser;
+import com.example.firebasedatabaseproject.googlemap.model.PolyLineModel;
 import com.example.firebasedatabaseproject.googlemap.service.HttpConnection;
-import com.example.firebasedatabaseproject.googlemap.service.TaskLoadedCallback;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -33,6 +34,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -41,24 +43,26 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
-public class GoogleMapActivity extends AppCompatActivity{
+public class GoogleMapActivity extends FragmentActivity implements OnMapReadyCallback {
     private final String TAG = GoogleMapActivity.class.getSimpleName();
     private ActivityGoogleMapBinding binding;
     private Context context;
     private GoogleMap mMap;
     private MarkerOptions source,destination;
-    private Polyline currentPolyline;
     private PrograssBar prograssBar;
 
     private FusedLocationProviderClient fusedLocationProviderClient;
@@ -67,15 +71,20 @@ public class GoogleMapActivity extends AppCompatActivity{
     private LocationRequest locationRequest;
     private PolylineOptions lineOptions = null;
 
+    private ArrayList<Polyline> polylineList;
+    private String dist = "";
+    private String time = "";
+    private final ArrayList<PolyLineModel> lstPolyLineModel = new ArrayList<>();
+
     LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
             if (locationResult == null) {
-                Log.e(TAG, "locationCallback:- " + locationResult);
+                Log.e(TAG, "locationCallback:- " + null);
                 return;
             }
             for (Location location : locationResult.getLocations()) {
-                callGoogleAPI(source);
+              //  callGoogleAPI(source);
                 Log.e(TAG, "OnLocationResult:- " + location.toString());
             }
         }
@@ -86,7 +95,6 @@ public class GoogleMapActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         binding = ActivityGoogleMapBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
         mapInitialize();
         initialize();
     }
@@ -102,37 +110,28 @@ public class GoogleMapActivity extends AppCompatActivity{
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
+
     private void checkSettingsAndStartLocationUpdates() {
         LocationSettingsRequest request = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest).build();
         SettingsClient client = LocationServices.getSettingsClient(this);
         Task<LocationSettingsResponse> locationSettingsResponseTask = client.checkLocationSettings(request);
 
-        locationSettingsResponseTask.addOnSuccessListener(new OnSuccessListener<LocationSettingsResponse>() {
-            @Override
-            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                startLocationUpdate();
-            }
-        });
+        locationSettingsResponseTask.addOnSuccessListener(locationSettingsResponse -> startLocationUpdate());
 
-        locationSettingsResponseTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                if (e instanceof ResolvableApiException) {
-                    ResolvableApiException apiException = (ResolvableApiException) e;
-                    try {
-                        apiException.startResolutionForResult(GoogleMapActivity.this, 1001);
-                    } catch (IntentSender.SendIntentException ex) {
-                        ex.printStackTrace();
-                    }
+        locationSettingsResponseTask.addOnFailureListener(e -> {
+            if (e instanceof ResolvableApiException) {
+                ResolvableApiException apiException = (ResolvableApiException) e;
+                try {
+                    apiException.startResolutionForResult(GoogleMapActivity.this, 1001);
+                } catch (IntentSender.SendIntentException ex) {
+                    ex.printStackTrace();
                 }
             }
         });
     }
 
     private void startLocationUpdate() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        } else {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
         }
     }
@@ -163,60 +162,9 @@ public class GoogleMapActivity extends AppCompatActivity{
     }
 
     private void getCurrentLocation() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        } else {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             Task<Location> task = fusedLocationProviderClient.getLastLocation();
-            task.addOnSuccessListener(new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    if (location != null) {
-                        supportMapFragment.getMapAsync(new OnMapReadyCallback() {
-                            @Override
-                            public void onMapReady(@NonNull GoogleMap googleMap) {
-                                lineOptions = new PolylineOptions();
-                                mMap = googleMap;
-                                Geocoder geocoder = new Geocoder(GoogleMapActivity.this, Locale.getDefault());
-                                // Initialize Address list
-                                try {
-                                    List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-                                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-
-                                    LatLng position = new LatLng(location.getLatitude(), location.getLongitude());
-
-                                    source = new MarkerOptions().position(latLng).title(addresses.get(0).getAddressLine(0));
-                                    // Zoom Map
-                                    if (ActivityCompat.checkSelfPermission(GoogleMapActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(GoogleMapActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                                        return;
-                                    }else {
-                                        googleMap.setMyLocationEnabled(true);
-                                    }
-
-                                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
-
-                                    binding.ivDirectionBtn.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            checkSettingsAndStartLocationUpdates();
-                                            /*source = new MarkerOptions().position(new LatLng(22.765210366707027, 75.88521583570233)).title("ICAI Indore Branch");*/
-
-                                            callGoogleAPI(source);
-
-                                            /*googleMap.addMarker(markerOptions).setTitle(markerOptions.getTitle());*/
-                                            binding.txvDurationName.setVisibility(View.VISIBLE);
-                                            binding.txvDuration.setVisibility(View.VISIBLE);
-                                            binding.txvDistanceName.setVisibility(View.VISIBLE);
-                                            binding.txvDistance.setVisibility(View.VISIBLE);
-                                        }
-                                    });
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-                    }
-                }
-            });
+            task.addOnSuccessListener(this::onSuccess);
         }
 
     }
@@ -228,7 +176,7 @@ public class GoogleMapActivity extends AppCompatActivity{
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 44) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -236,6 +184,86 @@ public class GoogleMapActivity extends AppCompatActivity{
                 checkSettingsAndStartLocationUpdates();
             }
         }
+    }
+
+    private void onSuccess(Location location) {
+        if (location != null) {
+            supportMapFragment.getMapAsync(googleMap -> {
+                lineOptions = new PolylineOptions();
+                polylineList = new ArrayList<>();
+
+                mMap = googleMap;
+                // mMap.getUiSettings().setZoomControlsEnabled(true);
+                Geocoder geocoder = new Geocoder(GoogleMapActivity.this, Locale.getDefault());
+                // Initialize Address list
+                try {
+                    List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+
+                    source = new MarkerOptions().position(latLng).title(addresses.get(0).getAddressLine(0));
+                    // Zoom Map
+                    if (ActivityCompat.checkSelfPermission(GoogleMapActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(GoogleMapActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    } else {
+                        googleMap.setMyLocationEnabled(true);
+                    }
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+
+                    binding.ivDirectionBtn.setOnClickListener(this::onClick);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+    }
+
+    private void onClick(View v) {
+        checkSettingsAndStartLocationUpdates();
+
+        callGoogleAPI(source);
+// Drawing polyline in the Google Map for the i-th route
+        mMap.setOnMapClickListener(latLng1 -> {
+            for (Polyline polyline : polylineList) {
+                for (LatLng polyCords : polyline.getPoints()) {
+                    float[] results = new float[1];
+                    Location.distanceBetween(latLng1.latitude, latLng1.longitude, polyCords.latitude, polyCords.longitude, results);
+
+                    if (results[0] < 100) {
+                        mMap.clear();
+                        for (Polyline pl : polylineList) {
+                            if (pl != polyline) {
+                                mMap.addPolyline(new PolylineOptions().width(10).color(Color.DKGRAY).addAll(pl.getPoints()));
+                            } else {
+                                mMap.addPolyline(new PolylineOptions().width(10).color(Color.BLUE).addAll(pl.getPoints()));
+                                mMap.addMarker(destination);
+
+                                for (int i = 0; i < lstPolyLineModel.size(); i++) {
+                                    if (pl.getId().equals(lstPolyLineModel.get(i).getPolyline().get(i).getId())) {
+                                        binding.txvDistance.setText(String.format("Distance  %s", lstPolyLineModel.get(i).getDistance()));
+                                        binding.txvDuration.setText(MessageFormat.format("Time  {0}", lstPolyLineModel.get(i).getDuration()));
+                                    } else {
+                                        Log.e(TAG, "ElseCondition " + lstPolyLineModel.get(i).getPolyline().get(i).getId());
+                                    }
+                                }
+                                Log.e(TAG, "results:- " + pl.getId());
+                            }
+                        }
+
+                    }
+
+                }
+            }
+            Log.e("PolyLine:- ", polylineList.toString());
+
+        });
+        binding.txvDistance.setVisibility(View.VISIBLE);
+        binding.txvDuration.setVisibility(View.VISIBLE);
+        /*googleMap.addMarker(markerOptions).setTitle(markerOptions.getTitle());*/
+    }
+
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        mMap = googleMap;
     }
 
     class ReadTask extends AsyncTask<String, Void, String> {
@@ -263,17 +291,94 @@ public class GoogleMapActivity extends AppCompatActivity{
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            ParserTask parserTask = new ParserTask(context,directionMode);
+            ParserTask parserTask = new ParserTask(directionMode);
             parserTask.execute(result);
+            try {
+                dismissProgressHud();
+                JSONObject  jsonRootObject = new JSONObject(result);
+                JSONArray routeArray=jsonRootObject.getJSONArray("routes");
+                lstPolyLineModel.clear();
+                Log.e("ROUTES ",routeArray.toString());
+                for(int i=routeArray.length()-1;i>=0;i--) {
+                    JSONObject routes = routeArray.getJSONObject(i);
+                    JSONObject overviewPolylines = routes.getJSONObject("overview_polyline");
+                    JSONArray legs=routes.getJSONArray("legs");
+
+                    for(int j=0;j<legs.length();j++)
+                    {
+                        JSONObject distObj=legs.getJSONObject(j);
+                        JSONObject distance =distObj.getJSONObject("distance");
+                        dist=distance.getString("text");
+                        JSONObject duration =distObj.getJSONObject("duration");
+                        time=duration.getString("text");
+
+                        binding.txvDistance.setText(String.format("Distance  %s", dist));
+                        binding.txvDuration.setText(MessageFormat.format("Time  {0}", time));
+
+                    }
+                    String encodedString = overviewPolylines.getString("points");
+                    List<LatLng> list = decodePoly(encodedString);
+
+                    /*Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                    String ABC = gson.toJson(lstPolyLineModel);*/
+
+               // Drawing polyline in the Google Map for the i-th route
+                    if(i==0) {
+                        Polyline line = mMap.addPolyline(new PolylineOptions().addAll(list).width(10).color(Color.BLUE).geodesic(true));
+                        polylineList.add(line);
+                        lstPolyLineModel.add(new PolyLineModel(dist,time,polylineList));
+                        Log.e(TAG,"newLsPolylineList:- "+lstPolyLineModel.get(i).getPolyline());
+                        mMap.addMarker(destination);
+                    }
+                    else{
+                        Polyline line = mMap.addPolyline(new PolylineOptions().addAll(list).width(10).color(Color.DKGRAY).geodesic(true));
+                        polylineList.add(line);
+                        lstPolyLineModel.add(new PolyLineModel(dist,time,polylineList));
+                    }
+
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 
+    private List<LatLng> decodePoly(String encoded) {
+        List<LatLng> poly = new ArrayList<>();
+        int index = 0, len = encoded.length();
+        int lat = 0, lng = 0;
+        while (index < len) {
+            int b, shift = 0, result = 0;
+            do {
+                b = encoded.charAt(index++) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            } while (b >= 0x20);
+            int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+            lat += dlat;
+            shift = 0;
+            result = 0;
+            do {
+                b = encoded.charAt(index++) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            } while (b >= 0x20);
+            int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+            lng += dlng;
+            LatLng p = new LatLng((((double) lat / 1E5)),
+                    (((double) lng / 1E5)));
+            poly.add(p);
+        }
+        return poly;
+    }
+
+
     public class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>>{
-        private TaskLoadedCallback taskCallback;
         private String directionMode = "DRIVING";
 
-        public ParserTask(Context mContext, String directionMode) {
-           // this.taskCallback = (TaskLoadedCallback) mContext;
+        public ParserTask( String directionMode) {
             this.directionMode = directionMode;
         }
 
@@ -288,7 +393,6 @@ public class GoogleMapActivity extends AppCompatActivity{
                 // Starts parsing data
                 routes = parser.parse(jObject);
             } catch (Exception e) {
-                Log.d("mylog", e.toString());
                 e.printStackTrace();
             }
             return routes;
@@ -299,31 +403,14 @@ public class GoogleMapActivity extends AppCompatActivity{
         protected void onPostExecute(List<List<HashMap<String, String>>> result) {
             ArrayList<LatLng> points = null;
 
-            List<LatLng> aline1 = new ArrayList<LatLng>();
-            List<LatLng> aline2 = new ArrayList<LatLng>();
-            List<LatLng> aline3 = new ArrayList<LatLng>();
-            Integer size1 = 0;
-            Integer size2 = 0;
-            Integer size3 = 0;
-
-            /*Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            String ABC = gson.toJson(result);
-            Log.e(TAG,"Response123result:- "+ABC);*/
-
             if (result.isEmpty()) {
                 dismissProgressHud();
                 Toast.makeText(context, "Data Not Found.....", Toast.LENGTH_SHORT).show();
             } else {
                 dismissProgressHud();
-                DataParser.DataDistance(binding.txvDistance);
-                DataParser.DataDuration(binding.txvDuration);
-
-                int x = 0;
-                while (x < result.size()) {
-                    points = new ArrayList<>();
                     // Traversing through all the routes
                     for (int i = 0; i < result.size(); i++) {
-
+                        points = new ArrayList<>();
                         lineOptions = new PolylineOptions();
                         // Fetching i-th route
                         List<HashMap<String, String>> path = result.get(i);
@@ -331,160 +418,19 @@ public class GoogleMapActivity extends AppCompatActivity{
                         for (int j = 0; j < path.size(); j++) {
                             HashMap<String, String> point = path.get(j);
 
-                            double lat = Double.parseDouble(point.get("lat"));
-                            double lng = Double.parseDouble(point.get("lng"));
+                            double lat = Double.parseDouble(Objects.requireNonNull(point.get("lat")));
+                            double lng = Double.parseDouble(Objects.requireNonNull(point.get("lng")));
                             LatLng position = new LatLng(lat, lng);
                             points.add(position);
                         }
                     }
 
-                    if (x == 0) {
-                        size1 = points.size();
-                        aline1.addAll(points);
-                    } else if (x == 1) {
-                        aline2.addAll(points);
-                        size2 = points.size();
-                    } else if (x == 2) {
-                        aline3.addAll(points);
-                        size3 = points.size();
-                    }x++;
-
-                    if (size3 != 0) {
-                        if ((size1 > size2 && size1 > size3)) {
-                            if (size2 > size3) {
-                                PolylineOptions line1 = new PolylineOptions().width(8).color(context.getResources().getColor(R.color.colorGrey));
-                                PolylineOptions line2 = new PolylineOptions().width(8).color(context.getResources().getColor(R.color.colorGrey));
-                                PolylineOptions line3 = new PolylineOptions().width(8).color(context.getResources().getColor(R.color.blue_700));
-
-                                line1.addAll(aline1);
-                                line2.addAll(aline2);
-                                line3.addAll(aline3);
-
-                                currentPolyline = mMap.addPolyline(line1);
-                                currentPolyline = mMap.addPolyline(line2);
-                                currentPolyline = mMap.addPolyline(line3);
-                                mMap.addMarker(destination);
-                            } else {
-                                PolylineOptions line1 = new PolylineOptions().width(8).color(context.getResources().getColor(R.color.colorGrey));
-                                PolylineOptions line2 = new PolylineOptions().width(8).color(context.getResources().getColor(R.color.blue_700));
-                                PolylineOptions line3 = new PolylineOptions().width(8).color(context.getResources().getColor(R.color.colorGrey));
-
-                                line1.addAll(aline1);
-                                line2.addAll(aline2);
-                                line3.addAll(aline3);
-
-                                currentPolyline = mMap.addPolyline(line1);
-                                currentPolyline = mMap.addPolyline(line3);
-                                currentPolyline = mMap.addPolyline(line2);
-                                mMap.addMarker(destination);
-                            }
-                        } else if ((size2 > size1 && size2 > size3)) {
-                            if (size1 > size3) {
-                                PolylineOptions line1 = new PolylineOptions().width(8).color(context.getResources().getColor(R.color.colorGrey));
-                                PolylineOptions line2 = new PolylineOptions().width(8).color(context.getResources().getColor(R.color.colorGrey));
-                                PolylineOptions line3 = new PolylineOptions().width(8).color(context.getResources().getColor(R.color.blue_700));
-
-                                line1.addAll(aline1);
-                                line2.addAll(aline2);
-                                line3.addAll(aline3);
-
-                                currentPolyline = mMap.addPolyline(line1);
-                                currentPolyline = mMap.addPolyline(line2);
-                                currentPolyline = mMap.addPolyline(line3);
-                                mMap.addMarker(destination);
-                            } else {
-                                PolylineOptions line1 = new PolylineOptions().width(8).color(context.getResources().getColor(R.color.blue_700));
-                                PolylineOptions line2 = new PolylineOptions().width(8).color(context.getResources().getColor(R.color.colorGrey));
-                                PolylineOptions line3 = new PolylineOptions().width(8).color(context.getResources().getColor(R.color.colorGrey));
-
-                                line1.addAll(aline1);
-                                line2.addAll(aline2);
-                                line3.addAll(aline3);
-
-                                currentPolyline = mMap.addPolyline(line2);
-                                currentPolyline = mMap.addPolyline(line3);
-                                currentPolyline = mMap.addPolyline(line1);
-                                mMap.addMarker(destination);
-                            }
-                        } else if ((size3 > size1 && size3 > size2)) {
-                            if (size1 > size2) {
-                                PolylineOptions line1 = new PolylineOptions().width(8).color(context.getResources().getColor(R.color.colorGrey));
-                                PolylineOptions line2 = new PolylineOptions().width(8).color(context.getResources().getColor(R.color.blue_700));
-                                PolylineOptions line3 = new PolylineOptions().width(8).color(context.getResources().getColor(R.color.colorGrey));
-
-                                line1.addAll(aline1);
-                                line2.addAll(aline2);
-                                line3.addAll(aline3);
-
-                                currentPolyline = mMap.addPolyline(line3);
-                                currentPolyline = mMap.addPolyline(line1);
-                                currentPolyline = mMap.addPolyline(line2);
-                                mMap.addMarker(destination);
-                            } else {
-                                PolylineOptions line1 = new PolylineOptions().width(8).color(context.getResources().getColor(R.color.blue_700));
-                                PolylineOptions line2 = new PolylineOptions().width(8).color(context.getResources().getColor(R.color.colorGrey));
-                                PolylineOptions line3 = new PolylineOptions().width(8).color(context.getResources().getColor(R.color.colorGrey));
-
-                                line1.addAll(aline1);
-                                line2.addAll(aline2);
-                                line3.addAll(aline3);
-
-                                currentPolyline = mMap.addPolyline(line3);
-                                currentPolyline = mMap.addPolyline(line2);
-                                currentPolyline = mMap.addPolyline(line1);
-                                mMap.addMarker(destination);
-                            }
-                        } else {
-                            System.out.println("ERROR!");
-                        }
-                    } else if (size2 != 0) {
-                        if (size1 > size2) {
-                            PolylineOptions line1 = new PolylineOptions().width(8).color(context.getResources().getColor(R.color.colorGrey));
-                            PolylineOptions line2 = new PolylineOptions().width(8).color(context.getResources().getColor(R.color.blue_700));
-
-                            line1.addAll(aline1);
-                            line2.addAll(aline2);
-
-                            currentPolyline = mMap.addPolyline(line1);
-                            currentPolyline = mMap.addPolyline(line2);
-                            mMap.addMarker(destination);
-                        } else {
-                            PolylineOptions line1 = new PolylineOptions().width(8).color(context.getResources().getColor(R.color.blue_700));
-                            PolylineOptions line2 = new PolylineOptions().width(8).color(context.getResources().getColor(R.color.colorGrey));
-
-                            line1.addAll(aline1);
-                            line2.addAll(aline2);
-
-                            currentPolyline = mMap.addPolyline(line2);
-                            currentPolyline = mMap.addPolyline(line1);
-                            mMap.addMarker(destination);
-                        }
-                    } else if (size1 != 0) {
-                        PolylineOptions line1 = new PolylineOptions().width(8).color(context.getResources().getColor(R.color.blue_700));
-                        line1.addAll(aline1);
-                        currentPolyline = mMap.addPolyline(line1);
-                        mMap.addMarker(destination);
-                    }
-
                     // Adding all the points in the route to LineOptions
-                    lineOptions.addAll(points);
 
-                    if (directionMode.equalsIgnoreCase("walking")) {
-                        lineOptions.width(10);
-                        lineOptions.color(Color.MAGENTA);
-                    } else {
-                        lineOptions.width(10);
-                        lineOptions.color(Color.BLUE);
-                    }
+                assert points != null;
+                lineOptions.addAll(points);
 
-                }
-                // Drawing polyline in the Google Map for the i-th route
-                if (lineOptions != null) {
-                    //mMap.addPolyline(lineOptions);
-                 //   taskCallback.onTaskDone(lineOptions);
-                } else {
-                    Log.d("mylog", "without Polylines drawn");
-                }
+                lineOptions.width(10);
             }
 
         }
@@ -510,26 +456,6 @@ public class GoogleMapActivity extends AppCompatActivity{
         Log.e(TAG, "getMapsApiDirectionsUrl: " + url);
         return url;
     }
-
-
-   /* @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        mMap.addMarker(source);
-        mMap.addMarker(dastination);
-        dismissProgressHud();
-    }*/
-
-    /*@Override
-    public void onTaskDone(Object... values) {
-        if (currentPolyline != null){
-            currentPolyline.remove();
-        }else {
-            dismissProgressHud();
-            mMap.addMarker(destination);
-            currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
-        }
-    }*/
 
     public void startProgressHud() {
         if (prograssBar == null)

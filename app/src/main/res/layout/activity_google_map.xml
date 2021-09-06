@@ -17,23 +17,9 @@
 
     <TextView
         android:layout_width="wrap_content"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="@color/black"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginBottom="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:visibility="gone"
-        android:id="@+id/txvDurationName"
-        android:text="Duration :-  "/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/txvDurationName"
         android:id="@+id/txvDuration"
         android:layout_marginBottom="20dp"
         android:visibility="gone"
@@ -44,24 +30,9 @@
 
     <TextView
         android:layout_width="wrap_content"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="@color/black"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginBottom="10dp"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/txvDuration"
-        android:id="@+id/txvDistanceName"
-        android:text="Distance :- "/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/txvDistanceName"
         app:layout_constraintBottom_toTopOf="@+id/txvDuration"
         android:layout_marginBottom="10dp"
         android:visibility="gone"
