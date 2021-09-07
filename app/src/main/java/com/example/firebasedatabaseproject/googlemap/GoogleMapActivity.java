@@ -52,6 +52,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -76,6 +77,9 @@ public class GoogleMapActivity extends FragmentActivity implements OnMapReadyCal
     private String time = "";
     private final ArrayList<PolyLineModel> lstPolyLineModel = new ArrayList<>();
 
+    private ArrayList<LatLng> points1; //added
+    Polyline line1;
+
     LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
@@ -85,7 +89,17 @@ public class GoogleMapActivity extends FragmentActivity implements OnMapReadyCal
             }
             for (Location location : locationResult.getLocations()) {
               //  callGoogleAPI(source);
-                Log.e(TAG, "OnLocationResult:- " + location.toString());
+
+                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                points1.add(latLng);
+                redrawLine();
+
+                Log.e(TAG, "OnLocationResult:- "+points1);
+                /*String encodedString = latLng.getString("points");
+                List<LatLng> list = decodePoly(encodedString);*/
+               /* Polyline line = mMap.addPolyline(new PolylineOptions().addAll(list).width(10).color(Color.BLUE).geodesic(true));
+                polylineList.add(line);*/
+
             }
         }
     };
@@ -95,18 +109,33 @@ public class GoogleMapActivity extends FragmentActivity implements OnMapReadyCal
         super.onCreate(savedInstanceState);
         binding = ActivityGoogleMapBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        mapInitialize();
+        points1 = new ArrayList<LatLng>();
+        initializeMap();
         initialize();
     }
 
-    private void mapInitialize() {
+    private void redrawLine(){
+        mMap.clear();
+        PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
+        for (int i = 0; i < points1.size(); i++) {
+            LatLng point = points1.get(i);
+            options.add(point);
+        }
+       // addMarker(); //add Marker in current position
+        Polyline line = mMap.addPolyline(options); //add Polyline
+        polylineList.add(line);
+        lstPolyLineModel.add(new PolyLineModel(dist,time,polylineList));
+        Log.e(TAG, "polylineList:- "+lstPolyLineModel);
+    }
+
+    private void initializeMap() {
         // Initialize fusedLocationProviderClient
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
 
         locationRequest = LocationRequest.create();
-        locationRequest.setInterval(90000);// 9 Min Update Latlng
-        locationRequest.setFastestInterval(90000);
+        locationRequest.setInterval(7000);// 7 Sec Update Latlng
+        locationRequest.setFastestInterval(7000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
@@ -193,6 +222,7 @@ public class GoogleMapActivity extends FragmentActivity implements OnMapReadyCal
                 polylineList = new ArrayList<>();
 
                 mMap = googleMap;
+
                 // mMap.getUiSettings().setZoomControlsEnabled(true);
                 Geocoder geocoder = new Geocoder(GoogleMapActivity.this, Locale.getDefault());
                 // Initialize Address list
@@ -206,6 +236,9 @@ public class GoogleMapActivity extends FragmentActivity implements OnMapReadyCal
                         return;
                     } else {
                         googleMap.setMyLocationEnabled(true);
+                        googleMap.getUiSettings().setCompassEnabled(true);
+                        googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+                        googleMap.getUiSettings().setRotateGesturesEnabled(true);
                     }
                     googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
 
