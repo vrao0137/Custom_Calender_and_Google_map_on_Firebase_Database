@@ -167,7 +167,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.setIndoorEnabled(false);
         mMap.setBuildingsEnabled(false);
         mMap.getUiSettings().setZoomControlsEnabled(true);
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
 
       //  mMap.addMarker(new MarkerOptions().position(currentLocation).title(source.getTitle()));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
