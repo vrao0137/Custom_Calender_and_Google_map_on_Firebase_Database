@@ -56,7 +56,11 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:28.1.0')
 
     implementation 'com.google.firebase:firebase-auth'
-    compile "com.google.firebase:firebase-auth:9.0.2"
+    implementation "com.google.firebase:firebase-auth:9.0.2"
+
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-scalars:2.3.0'
+    //implementation 'com.squareup.retrofit2:converter-scalars:2.9.0'
 
     //Map dependency
     implementation 'com.google.android.gms:play-services-maps:17.0.1'
