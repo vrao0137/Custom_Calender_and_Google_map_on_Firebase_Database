@@ -1,5 +1,5 @@
 package com.example.firebasedatabaseproject.googlemap.service;
 
-public interface TaskLoadedCallback {
+public interface TaskReloadedCallback {
     void onTaskDone(Object... values);
 }

@@ -1,4 +1,4 @@
-package com.example.firebasedatabaseproject.newmap.service;
+package com.example.firebasedatabaseproject.newmap.retrofit;
 
 import com.google.gson.JsonObject;
 

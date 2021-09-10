@@ -1,6 +1,30 @@
 package com.example.firebasedatabaseproject.commanclasses;
 
 public class Constants {
+    // API Google contains------------
+    public static final String BASEURL = "https://maps.googleapis.com/maps/api/directions/json?parameters";
+    public static final String MODE = "mode=driving&";
+    public static final String TRANSITROUTE = "transit_routing_preference=less_driving&";
+    public static final String SOURCE = "origin=";
+    public static final String AND = "&";
+    public static final String OR = ",";
+    public static final String DESTINATION = "destination=";
+    public static final String SENSOR = "&sensor=false&units=metric";
+    public static final String KEY = "key=";
+
+    // Parsing-----------------------
+    public static final String ROUTES = "routes";
+    public static final String LEGS = "legs";
+    public static final String DISTANCE = "distance";
+    public static final String DURATION = "duration";
+    public static final String TEXT = "text";
+    public static final String OVERVIEWPOLYLINE = "overview_polyline";
+    public static final String POINTS = "points";
+
+
+
+
+
     public static final String ADMIN = "Admin";
     public static final String HR = "HR";
     public static final String ANDROID = "Android";

@@ -102,7 +102,7 @@ public class GoogleMapActivity extends FragmentActivity implements OnMapReadyCal
             for (Location location : locationResult.getLocations()) {
                 mLastLocation = location;
                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-               // mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                // mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
             }
         }
     };
@@ -329,23 +329,22 @@ public class GoogleMapActivity extends FragmentActivity implements OnMapReadyCal
             parserTask.execute(result);
             try {
                 dismissProgressHud();
-                JSONObject  jsonRootObject = new JSONObject(result);
-                JSONArray routeArray=jsonRootObject.getJSONArray("routes");
+                JSONObject jsonRootObject = new JSONObject(result);
+                JSONArray routeArray = jsonRootObject.getJSONArray("routes");
                 lstPolyLineModel.clear();
-                Log.e("ROUTES ",routeArray.toString());
-                for(int i=routeArray.length()-1;i>=0;i--) {
+                Log.e("ROUTES ", routeArray.toString());
+                for (int i = routeArray.length() - 1; i >= 0; i--) {
                     lineOptions = new PolylineOptions();
                     JSONObject routes = routeArray.getJSONObject(i);
                     JSONObject overviewPolylines = routes.getJSONObject("overview_polyline");
-                    JSONArray legs=routes.getJSONArray("legs");
+                    JSONArray legs = routes.getJSONArray("legs");
 
-                    for(int j=0;j<legs.length();j++)
-                    {
-                        JSONObject distObj=legs.getJSONObject(j);
-                        JSONObject distance =distObj.getJSONObject("distance");
-                        dist=distance.getString("text");
-                        JSONObject duration =distObj.getJSONObject("duration");
-                        time=duration.getString("text");
+                    for (int j = 0; j < legs.length(); j++) {
+                        JSONObject distObj = legs.getJSONObject(j);
+                        JSONObject distance = distObj.getJSONObject("distance");
+                        dist = distance.getString("text");
+                        JSONObject duration = distObj.getJSONObject("duration");
+                        time = duration.getString("text");
 
                         binding.txvDistance.setText(String.format("Distance  %s", dist));
                         binding.txvDuration.setText(MessageFormat.format("Time  {0}", time));
@@ -357,18 +356,17 @@ public class GoogleMapActivity extends FragmentActivity implements OnMapReadyCal
                     /*Gson gson = new GsonBuilder().setPrettyPrinting().create();
                     String ABC = gson.toJson(lstPolyLineModel);*/
 
-                    if(i==0) {
+                    if (i == 0) {
                         Polyline line = mMap.addPolyline(new PolylineOptions().addAll(list).width(10).color(Color.BLUE).geodesic(true));
                         polylineList.add(line);
                         //  polyline_path = mMap.addPolyline(new PolylineOptions().addAll(list).width(10).color(Color.BLUE).geodesic(true));
-                        lstPolyLineModel.add(new PolyLineModel(dist,time,polylineList));
-                        Log.e(TAG,"newLsPolylineList:- "+lstPolyLineModel.get(i).getPolyline());
+                        lstPolyLineModel.add(new PolyLineModel(dist, time, polylineList));
+                        Log.e(TAG, "newLsPolylineList:- " + lstPolyLineModel.get(i).getPolyline());
                         mMap.addMarker(destination);
-                    }
-                    else{
+                    } else {
                         Polyline line = mMap.addPolyline(new PolylineOptions().addAll(list).width(10).color(Color.DKGRAY).geodesic(true));
                         polylineList.add(line);
-                        lstPolyLineModel.add(new PolyLineModel(dist,time,polylineList));
+                        lstPolyLineModel.add(new PolyLineModel(dist, time, polylineList));
                     }
 
                 }
@@ -410,10 +408,10 @@ public class GoogleMapActivity extends FragmentActivity implements OnMapReadyCal
     }
 
 
-    public class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>>{
+    public class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
         private String directionMode = "DRIVING";
 
-        public ParserTask( String directionMode) {
+        public ParserTask(String directionMode) {
             this.directionMode = directionMode;
         }
 
@@ -480,7 +478,7 @@ public class GoogleMapActivity extends FragmentActivity implements OnMapReadyCal
         // Sensor enabled
         String sensor = "sensor=false&alternatives=true&units=metric";
         // Building the parameters to the web service
-        String parameters = strSource + "&" + strDestination + "&" + "&" + mode + "&" +  sensor;
+        String parameters = strSource + "&" + strDestination + "&" + "&" + mode + "&" + sensor;
         // Key Or map
         String parKey = "&key=" + getString(R.string.googleMapAPIkey);
         // Building the url to the web service
