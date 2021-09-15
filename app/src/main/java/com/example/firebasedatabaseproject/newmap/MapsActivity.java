@@ -57,12 +57,26 @@ import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -241,6 +255,50 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
+    private int getNodeIndex(NodeList nl, String nodename) {
+        for (int i = 0; i < nl.getLength(); i++) {
+            if (nl.item(i).getNodeName().equals(nodename))
+                return i;
+        }
+        return -1;
+    }
+
+    private void getInstructions(String requestUrl) {
+        Log.e(TAG,"getInstructions");
+        try {
+            DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = null;
+            builder = builderFactory.newDocumentBuilder();
+            Document document = null;
+            String xml = requestUrl.replaceAll(">\\s+<", "><").trim();
+
+            InputSource is = new InputSource();
+            is.setCharacterStream(new StringReader(xml));
+            document = builder.parse(is);
+
+            ArrayList<String> instructions = new ArrayList<String>();
+            NodeList stepNodes = document.getElementsByTagName("steps");
+
+            if (stepNodes.getLength() > 0) {
+                for (int x = 0; x < stepNodes.getLength(); x++) {
+                    Node currentStepNode = stepNodes.item(x);
+                    NodeList currentStepNodeChildren = currentStepNode.getChildNodes();
+                    Node currentStepInstruction = currentStepNodeChildren.item(getNodeIndex(currentStepNodeChildren, "html_instructions"));
+                    instructions.add(currentStepInstruction.getTextContent());
+                }
+            }
+
+            Log.e(TAG, "instructions:-" + instructions);
+
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
@@ -262,12 +320,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     + currentLocation.longitude + Constants.AND /*+ waypoints + Constants.AND*/
                     + Constants.DESTINATION + destination + Constants.SENSOR + Constants.AND + Constants.KEY + getString(R.string.googleMapAPIkey);
 
+         //   getInstructions(requestUrl);
             Log.e(TAG, "URL:- " + requestUrl);
             mService.getDataFromGoogleApi(requestUrl).enqueue(new Callback<JsonObject>() {
                 @Override
                 public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                     try {
                         JSONObject jsonObject = new JSONObject(response.body().toString());
+                        Log.e(TAG,"ResponseBody:- "+response.body().toString());
+
                         JSONArray routeArray = jsonObject.getJSONArray(Constants.ROUTES);
                         for (int i = 0; i < routeArray.length(); i++) {
                             JSONObject route = routeArray.getJSONObject(i);
